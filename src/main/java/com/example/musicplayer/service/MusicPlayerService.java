@@ -8,6 +8,8 @@ import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -122,6 +124,16 @@ public class MusicPlayerService implements Runnable {
         } catch (JavaLayerException e) {
             e.printStackTrace();
         }
+    }
+
+    public ResponseEntity<InputStreamResource> playInBrowser() throws FileNotFoundException {
+        String file = track.getPathToFolder() + "/" + track.getTitle();
+        long length = new File(file).length();
+        InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentLength(length);
+        httpHeaders.setCacheControl(CacheControl.noCache().getHeaderValue());
+        return new ResponseEntity<>(inputStreamResource, httpHeaders, HttpStatus.OK);
     }
 
     public void playMp3() {

@@ -3,9 +3,14 @@ package com.example.musicplayer.controller;
 import com.example.musicplayer.object.Track;
 import com.example.musicplayer.service.MusicPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 
 @Controller
 public class MusicPlayerController {
@@ -30,7 +35,14 @@ public class MusicPlayerController {
                     track.getPathToFolder()));
         }
         model.addAttribute("pathToFolder", track.getPathToFolder());
+        model.addAttribute("trackTitle", track.getTitle());
         return "index.html";
+    }
+
+    @GetMapping(value = "/play/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    public ResponseEntity playInBrowser(HttpServletRequest request, @PathVariable String pathName, HttpServletResponse response) throws FileNotFoundException {
+        track.setTitle(pathName);
+        return musicPlayerService.playInBrowser();
     }
 
     @GetMapping("/{pathName}")

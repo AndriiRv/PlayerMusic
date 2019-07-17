@@ -25,12 +25,15 @@
             </form>
         </div>
     </div>
-
     <div th:if="${not #lists.isEmpty(trackList)}">
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
-                <th>Play</th>
+                <th>Play
+                    <audio id="audioId" controls="" preload="none">
+                        <source id="audioSrcId" type="audio/mpeg" src="">
+                    </audio>
+                </th>
                 <th>Stop</th>
                 <th>ID</th>
                 <th>
@@ -45,7 +48,7 @@
                     <select size="1" id="idSortTitle" class="custom-select d-block w-100 select"
                             oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
                             required onchange="location = this.value;">
-                        <option>Sort by title</option>
+                        <option>Sort by title *</option>
                         <option value="/">Sort by ID track</option>
                         <option value="/sortBy/title=ASC">Sort by title ascending</option>
                         <option value="/sortBy/title=DESC">Sort by title descending</option>
@@ -55,7 +58,7 @@
                     <select size="1" id="idSortSize" class="custom-select d-block w-100 select"
                             oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
                             required onchange="location = this.value;">
-                        <option>Sort by size</option>
+                        <option>Sort by size *</option>
                         <option value="/">Sort by ID track</option>
                         <option value="/sortBy/size=ASC">Sort by size ascending</option>
                         <option value="/sortBy/size=DESC">Sort by size descending</option>
@@ -66,7 +69,7 @@
                     <select size="1" id="idSortLength" class="custom-select d-block w-100 select"
                             oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
                             required onchange="location = this.value;">
-                        <option>Sort by length</option>
+                        <option>Sort by length *</option>
                         <option value="/">Sort by ID track</option>
                         <option value="/sortBy/length=ASC">Sort by length ascending</option>
                         <option value="/sortBy/length=DESC">Sort by length descending</option>
@@ -88,7 +91,7 @@
                 </td>
                 <td th:text="${track.id}"></td>
                 <td>
-                    <span th:text="${track.title}"></span>
+                    <span class="trackPlay" th:text="${track.title}"></span>
                 </td>
                 <td th:text="${track.size}"></td>
                 <td th:text="${track.date}"></td>
@@ -103,6 +106,7 @@
 </div>
 <a href="#" id="back-to-top" title="Back to top">&uarr;</a>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script th:src="@{/js/playInBrowser.js}"></script>
 <script th:src="@{/js/backToTop.js}"></script>
 </body>
 </html>
