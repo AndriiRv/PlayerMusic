@@ -39,18 +39,38 @@ public class MusicPlayerController {
         return "index.html";
     }
 
-    @GetMapping(value = "/play/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity playInBrowser(HttpServletRequest request, @PathVariable String pathName, HttpServletResponse response) throws FileNotFoundException {
+    @GetMapping(value = "/playInBrowser/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    public ResponseEntity playInBrowser(HttpServletRequest request, @PathVariable String pathName,
+                                        HttpServletResponse response) throws FileNotFoundException {
         track.setTitle(pathName);
         return musicPlayerService.playInBrowser();
     }
 
-    @GetMapping("/{pathName}")
-    public String play(Model model, @PathVariable String pathName) {
+    @GetMapping("/play/{trackTitle}")
+    public String play(Model model, @PathVariable String trackTitle) {
+        track.setTitle(trackTitle);
+        if (!trackTitle.isEmpty()) {
+            musicPlayerService.play(-1);
+        }
+        model.addAttribute("trackList", musicPlayerService.getMusic(
+                track.getPathToFolder()));
+        return "redirect:/";
+    }
+
+    @GetMapping("/pause")
+    public String pause() {
+        musicPlayerService.pause();
+        return "redirect:/";
+    }
+
+    @GetMapping("/resume/{pathName}")
+    public String resume(Model model, @PathVariable String pathName) {
         track.setTitle(pathName);
         if (!pathName.isEmpty()) {
-            musicPlayerService.playMp3();
+            musicPlayerService.resume();
         }
+        model.addAttribute("trackList", musicPlayerService.getMusic(
+                track.getPathToFolder()));
         return "redirect:/";
     }
 
@@ -60,7 +80,7 @@ public class MusicPlayerController {
         return "redirect:/";
     }
 
-    @GetMapping("/sortBy/{sort}={directory}")
+    @GetMapping("/{sort}={directory}")
     public String sort(Model model, @PathVariable String sort, @PathVariable String directory) {
         model.addAttribute("trackList", musicPlayerService.sort(
                 musicPlayerService.getMusic(track.getPathToFolder()), sort, directory));

@@ -1,0 +1,21 @@
+table, footer {
+    display: none;
+}
+
+audio {
+    position: fixed;
+    width: 500px;
+    top: 0;
+    left: 50%;
+    margin-top: 0;
+    margin-left: -250px;
+}
+
+#alignAudio {
+    text-align: center;
+}
+
+.titleTrackPlay:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

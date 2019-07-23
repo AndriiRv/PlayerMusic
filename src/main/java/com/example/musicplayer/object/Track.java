@@ -2,6 +2,8 @@ package com.example.musicplayer.object;
 
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class Track {
     private Integer id;
@@ -9,9 +11,9 @@ public class Track {
     private Double size;
     private String length;
     private String pathToFolder;
-    private String date;
+    private LocalDate date;
 
-    public Track(Integer id, String title, Double size, String length, String pathToFolder, String date) {
+    public Track(Integer id, String title, Double size, String length, String pathToFolder, LocalDate date) {
         this.id = id;
         this.title = title;
         this.size = size;
@@ -63,11 +65,11 @@ public class Track {
         this.pathToFolder = pathToFolder;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }
