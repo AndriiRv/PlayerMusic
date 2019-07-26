@@ -1,11 +1,27 @@
-var row_index = 0;
 $("table").css({"display": "block"});
 $("footer").css({"display": "block"});
-if (localStorage.getItem('scroll') === null) {
+var checkEnableInfiniteLoad = true;
+$("#disableInfiniteLoadButton").on("click", function () {
+    i = 1000000;
+    checkEnableInfiniteLoad = true;
+    $("table > tbody > tr").hide().slice(0, i).show();
+    sessionStorage.setItem("infiniteLoad", checkEnableInfiniteLoad);
+    $("#disableInfiniteLoadButton").hide();
+    $("#enableInfiniteLoadButton").css({"display": "block"});
+});
+$("#enableInfiniteLoadButton").on("click", function () {
+    window.sessionStorage.clear();
+    $("#disableInfiniteLoadButton").show();
+    $("#enableInfiniteLoadButton").css({"display": "none"});
+    location.reload();
+});
+checkEnableInfiniteLoad = true;
+var row_index = 0;
+if (sessionStorage.getItem('scroll') === null) {
     $("table > tbody > tr").hide().slice(0, 15).show();
-} else if (localStorage.getItem('row_index') >= 15) {
-    $("table > tbody > tr").hide().slice(0, parseInt(localStorage.getItem("row_index")) + 6).show();
-    window.scrollTo(0, parseInt(localStorage.getItem("row_index")));
+} else if (sessionStorage.getItem('row_index') >= 15) {
+    $("table > tbody > tr").hide().slice(0, parseInt(sessionStorage.getItem("row_index")) + 6).show();
+    window.scrollTo(0, parseInt(sessionStorage.getItem("row_index")));
 } else {
     $("table > tbody > tr").hide().slice(0, 15).show();
 }
@@ -18,7 +34,7 @@ $(document).ready(function () {
             $(".playInJava").on("click", function () {
                 $('td').click(function () {
                     row_index = $(this).parent().index() + 1;
-                    localStorage.setItem("row_index", row_index);
+                    sessionStorage.setItem("row_index", row_index);
                 });
             });
         }

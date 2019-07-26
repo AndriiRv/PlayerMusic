@@ -50,24 +50,7 @@ public class MusicPlayerController {
     public String play(Model model, @PathVariable String trackTitle) {
         track.setTitle(trackTitle);
         if (!trackTitle.isEmpty()) {
-            musicPlayerService.play(-1);
-        }
-        model.addAttribute("trackList", musicPlayerService.getMusic(
-                track.getPathToFolder()));
-        return "redirect:/";
-    }
-
-    @GetMapping("/pause")
-    public String pause() {
-        musicPlayerService.pause();
-        return "redirect:/";
-    }
-
-    @GetMapping("/resume/{pathName}")
-    public String resume(Model model, @PathVariable String pathName) {
-        track.setTitle(pathName);
-        if (!pathName.isEmpty()) {
-            musicPlayerService.resume();
+            musicPlayerService.play();
         }
         model.addAttribute("trackList", musicPlayerService.getMusic(
                 track.getPathToFolder()));

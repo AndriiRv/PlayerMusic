@@ -1,21 +1,31 @@
-table, footer {
+table, #enableInfiniteLoadButton {
     display: none;
+}
+
+footer {
+    position: fixed;
+    width: auto;
+    bottom: 0;
+    right: 1%;
 }
 
 audio {
     position: fixed;
-    width: 500px;
-    top: 0;
-    left: 50%;
-    margin-top: 0;
-    margin-left: -250px;
+    width: 350px;
+    bottom: 0;
+    left: 1%;
 }
 
-#alignAudio {
-    text-align: center;
+#titleOfTrack {
+    position: fixed;
+    width: 300px;
+    bottom: 50px;
+    left: 2%;
+    color: white;
+    background: black;
 }
 
-.titleTrackPlay:hover {
+.titleOfTrackInTable:hover {
     text-decoration: underline;
     cursor: pointer;
 }

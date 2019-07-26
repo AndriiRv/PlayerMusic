@@ -5,6 +5,7 @@ import com.example.musicplayer.repositories.MusicPlayerRepository;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Header;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -23,12 +24,6 @@ public class MusicPlayerService implements Runnable {
     private Player player;
     private Thread thread;
     private int counter;
-    private FileInputStream FIS;
-    private BufferedInputStream BIS;
-    private boolean canResume = false;
-    private int total;
-    private int stopped;
-    private boolean valid;
 
     @Autowired
     public MusicPlayerService(MusicPlayerRepository musicPlayerRepository,
@@ -118,60 +113,35 @@ public class MusicPlayerService implements Runnable {
         return list;
     }
 
-    public void pause() {
-        try {
-            stopped = FIS.available();
-            player.close();
-            FIS = null;
-            BIS = null;
-            player = null;
-            if (valid) canResume = true;
-        } catch (Exception ignored) {
-
-        }
-    }
-
-    public void resume() {
-        counter = counter + 1;
-        if (!canResume) {
-            return;
-        }
-        if (play(total - stopped)) {
-            canResume = false;
-        }
-    }
-
-    public boolean play(int pos) {
-        valid = true;
-        canResume = false;
+    public void play() {
         counter++;
-        try {
-            if (counter >= 1 && counter % 2 != 0) {
-                FIS = new FileInputStream(track.getPathToFolder() + "/" + track.getTitle());
-                total = FIS.available();
-                if (pos > -1) {
-                    FIS.skip(pos);
-                }
-                BIS = new BufferedInputStream(FIS);
-                player = new Player(BIS);
-                thread = new Thread(this);
-                thread.start();
-            } else {
-                close();
-                play(-1);
-            }
-        } catch (Exception e) {
-            valid = false;
+        if (counter >= 1 && counter % 2 != 0) {
+            thread = new Thread(this);
+            thread.start();
+        } else {
+            close();
+            play();
         }
-        return valid;
     }
 
     @Override
     public void run() {
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(track.getPathToFolder() + "/" + track.getTitle());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            assert stream != null;
+            player = new Player(stream);
+        } catch (JavaLayerException e) {
+            e.printStackTrace();
+        }
         try {
             player.play();
-        } catch (Exception e) {
-            valid = false;
+        } catch (JavaLayerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -186,7 +156,9 @@ public class MusicPlayerService implements Runnable {
     }
 
     public void close() {
-        player.close();
-        thread.stop();
+        if (player != null || thread != null) {
+            Objects.requireNonNull(player).close();
+            thread.stop();
+        }
     }
 }

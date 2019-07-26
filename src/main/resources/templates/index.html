@@ -11,26 +11,27 @@
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-<a th:href="@{'/'}" th:text="${pathToFolder}"></a>
+<button id="disableInfiniteLoadButton">Disable infinite load</button>
+<button id="enableInfiniteLoadButton">Enable infinite load</button>
 <div class="container">
     <div class="row d-flex justify-content-center">
         <div class="col-md-8 order-md-1">
-            <div id="alignAudio">
-                <audio id="audioId" controls="" autoplay>
-                    <source id="audioSrcId" type="audio/mp3" src="">
-                </audio>
-            </div>
+            <label id="titleOfTrack" text=""></label>
+            <audio id="audioId" class="audioClass" controls="" autoplay>
+                <source id="audioSrcId" type="audio/mp3" src="">
+            </audio>
             <form method="get" action="/folder">
                 <div class="mb-3">
-                    <label for="idPath">Path to folder</label>
+                    <label for="idPath">Path to folder (Current path:
+                        <a th:href="@{'/'}" th:text="${pathToFolder}"></a>)
+                    </label>
                     <input type="text" name="pathToFolder" id="idPath" class="form-control"
-                           value=""
-                           placeholder="D:/Music/musicvk" maxlength="120" required>
+                           value="" placeholder="Example: 'D:/'" maxlength="120" required>
                 </div>
             </form>
         </div>
     </div>
-    <table class="table table-bordered table-hover">
+    <table th:if="${not #lists.isEmpty(trackList)}" class="table table-bordered table-hover">
         <thead>
         <tr>
             <th>ID</th>
@@ -83,17 +84,15 @@
             </th>
         </tr>
         </thead>
-        <tbody th:if="${not #lists.isEmpty(trackList)}">
-        <tr th:each="track: ${trackList}" class="table-success">
-            <td th:text="${track.id}"></td>
+        <tbody>
+        <tr th:each="track: ${trackList}" class="table-success playlist">
+            <td th:text="${track.id}" id="idTitle"></td>
             <td>
-                <span class="titleTrackPlay" th:text="${track.title}"></span>
+                <span class="titleOfTrackInTable" th:text="${track.title}"></span>
                 <div style="width:100%;text-align:left;">
-                    <a th:href="@{'/play/' + ${track.title}}" class="playInJava">
+                    <a th:href="@{'/play/' + ${track.title}}" class="playInJava getTitle">
                         <img src="/images/playButton.png" alt="" height=50 width=50>
                     </a>
-                    <a th:href="@{'/pause'}" class="playInJava">Pause</a>
-                    <a th:href="@{'/resume/' + ${track.title}}" class="playInJava">Resume</a>
                     <a th:href="@{'/stop'}" class="playInJava">
                         <img src="/images/stopButton.png" alt="" height=50 width=50>
                     </a>
@@ -104,9 +103,10 @@
             <td th:text="${track.length}"></td>
         </tbody>
     </table>
+    <h1 th:if="${#lists.isEmpty(trackList)}">Music files not found.</h1>
     <footer class="mastfoot mt-auto">
         <div class="inner">
-            <p>Music Player, by <a href="https://www.facebook.com/andrey.reva">Andrii Reva</a></p>
+            <p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii Reva</a></p>
         </div>
     </footer>
 </div>
