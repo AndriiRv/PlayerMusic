@@ -40,6 +40,12 @@ public class MusicPlayerService implements Runnable {
         }
     }
 
+    public List<Track> getShuffleMusic(String pathToFolder) {
+        List<Track> shuffledMusic = getMusic(pathToFolder);
+        Collections.shuffle(shuffledMusic);
+        return shuffledMusic;
+    }
+
     public static String getExtension(String pathname) {
         int index = pathname.lastIndexOf('.');
         if (index > 0 && index < pathname.length() - 1) {
@@ -88,7 +94,7 @@ public class MusicPlayerService implements Runnable {
                 variable = Comparator.comparing(Track::getTitle);
                 break;
             case "date":
-                variable = Comparator.comparing(Track::getDate);
+                variable = Comparator.comparing(Track::getDateTime).thenComparing(Track::getTitle);
                 break;
         }
         if (directory.equals("ASC")) {
@@ -96,8 +102,6 @@ public class MusicPlayerService implements Runnable {
         } else if (directory.equals("DESC")) {
             assert variable != null;
             tracks.sort(variable.reversed());
-        } else {
-            tracks.sort(Comparator.comparing(Track::getId));
         }
         return tracks;
     }

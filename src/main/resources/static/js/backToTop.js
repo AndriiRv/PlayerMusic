@@ -1,22 +1,23 @@
-if ($('#back-to-top').length) {
+var backToTop = $('#back-to-top');
+if (backToTop.length) {
     var scrollTrigger = 100,
-        backToTop = function () {
+        doBackToTop = function () {
             var scrollTop = $(window).scrollTop();
             if (scrollTop > scrollTrigger) {
-                $('#back-to-top').fadeIn();
-                $('#back-to-top').addClass('show');
+                backToTop.fadeIn();
+                backToTop.addClass('show');
             } else {
-                $('#back-to-top').removeClass('show');
-                $('#back-to-top').fadeOut();
+                backToTop.removeClass('show');
+                backToTop.fadeOut();
             }
         };
-    backToTop();
+    doBackToTop();
     $(window).on('scroll', function () {
-        backToTop();
+        doBackToTop();
     });
-    $('#back-to-top').on('click', function (e) {
+    backToTop.on('click', function (e) {
         e.preventDefault();
-        $('html,body').animate({
+        $('html, body').animate({
             scrollTop: 0
         }, 700);
     });

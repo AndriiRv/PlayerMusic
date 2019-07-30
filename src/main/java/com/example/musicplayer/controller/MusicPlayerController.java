@@ -8,8 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 
 @Controller
@@ -34,14 +32,20 @@ public class MusicPlayerController {
             model.addAttribute("trackList", musicPlayerService.getMusic(
                     track.getPathToFolder()));
         }
-        model.addAttribute("pathToFolder", track.getPathToFolder());
-        model.addAttribute("trackTitle", track.getTitle());
+        model.addAttribute("currentPath", track.getPathToFolder());
+        return "index.html";
+    }
+
+    @GetMapping("/shuffle")
+    public String getShuffleMusic(Model model) {
+        model.addAttribute("trackList",
+                musicPlayerService.getShuffleMusic(track.getPathToFolder()));
+        model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }
 
     @GetMapping(value = "/playInBrowser/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity playInBrowser(HttpServletRequest request, @PathVariable String pathName,
-                                        HttpServletResponse response) throws FileNotFoundException {
+    public ResponseEntity playInBrowser(@PathVariable String pathName) throws FileNotFoundException {
         track.setTitle(pathName);
         return musicPlayerService.playInBrowser();
     }
@@ -67,7 +71,7 @@ public class MusicPlayerController {
     public String sort(Model model, @PathVariable String sort, @PathVariable String directory) {
         model.addAttribute("trackList", musicPlayerService.sort(
                 musicPlayerService.getMusic(track.getPathToFolder()), sort, directory));
-        model.addAttribute("pathToFolder", track.getPathToFolder());
+        model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }
 
@@ -75,14 +79,13 @@ public class MusicPlayerController {
     public String search(Model model, @RequestParam String trackTitle) {
         model.addAttribute("trackList", musicPlayerService.search(
                 musicPlayerService.getMusic(track.getPathToFolder()), trackTitle));
-        model.addAttribute("pathToFolder", track.getPathToFolder());
+        model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }
 
     @GetMapping("/folder")
     public String getPathToFolder(Model model, @RequestParam String pathToFolder) {
         track.setPathToFolder(pathToFolder);
-        model.addAttribute("pathToFolder", track.getPathToFolder());
         return "redirect:/";
     }
 }

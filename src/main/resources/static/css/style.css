@@ -9,20 +9,8 @@ footer {
     right: 1%;
 }
 
-audio {
-    position: fixed;
-    width: 350px;
-    bottom: 0;
-    left: 1%;
-}
-
-#titleOfTrack {
-    position: fixed;
-    width: 300px;
-    bottom: 50px;
-    left: 2%;
-    color: white;
-    background: black;
+.playInJava {
+    display: inline-block;
 }
 
 .titleOfTrackInTable:hover {
