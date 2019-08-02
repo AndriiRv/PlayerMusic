@@ -3,7 +3,6 @@ table, #enableInfiniteLoadButton {
 }
 
 footer {
-    position: fixed;
     width: auto;
     bottom: 0;
     right: 1%;

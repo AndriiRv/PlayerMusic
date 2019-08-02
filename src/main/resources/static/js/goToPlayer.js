@@ -1,12 +1,13 @@
 $(document).ready(function () {
-    $("span").click(function () {
+    $(".titleOfTrackInTable").on('click', function () {
+        var player = $(".wrapper");
         $(".list").hide();
-        $(".wrapper").css({"display": "flex"});
-        $(".wrapper").show();
+        $("#backToList").show();
+        player.css({"display": "flex"});
+        player.show();
     });
-    $("#backToList").click(function () {
+    $("#backToList").on('click', function () {
         $(".list").show();
-        $("body").css({"background": ""});
         $("#backToList").hide();
     });
 });

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="viewport" content="width=570"/>
     <title>Music Player</title>
     <link th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css}"
           rel="stylesheet"
@@ -16,13 +16,14 @@
     <div class="left"></div>
     <div class="main">
         <div class="player">
-            <button id="prevTrackId" class="nextPrevButtons">Previous</button>
-            <button id="play">Play</button>
-            <button id="pause">Pause</button>
-            <button id="nextTrackId" class="nextPrevButtons">Next</button>
+            <button id="prevTrackButton" class="nextPrevButtons"></button>
+            <button id="playButton"></button>
+            <button id="pauseButton"></button>
+            <button id="nextTrackButton" class="nextPrevButtons"></button>
         </div>
         <div class="title">
-            <h3 id="titleOfTrack" text=""></h3>
+            <h3 id="titleOfTrack"></h3>
+            <button id="download"></button>
             <div class="time">
                 <div id="currentTime"></div>
                 <div id="duration"></div>
@@ -30,11 +31,14 @@
         </div>
         <div class="volume">
             <label for="volumeSlider"></label>
+            <button id="volumeMin"></button>
+            <button id="volumeMute"></button>
             <input id="volumeSlider" type="range" min="0" max="1" step="0.1" value="0.3"/>
+            <button id="volumeMax" disabled></button>
         </div>
         <audio id="audioId" class="audioClass" src="" preload="auto" autoplay></audio>
         <div class="backToList">
-            <button id="backToList">Back to list</button>
+            <button id="backToList"></button>
         </div>
     </div>
     <div class="right"></div>
@@ -58,7 +62,6 @@
             <thead>
             <tr>
                 <th>
-                    <a th:href="@{'/shuffle'}">Shuffle!</a>
                     ID
                 </th>
                 <th>Play in Java</th>
@@ -112,24 +115,27 @@
             </tr>
             </thead>
             <tbody>
+            <tr>
+                <td colspan="5"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
+            </tr>
             <tr th:each="track: ${trackList}" class="table-success playlist">
-                <td th:text="${track.id}" class="backGround"></td>
+                <td th:text="${track.id}" class="backGround" style="text-align: center"></td>
                 <td style="width: 83px; height: 50px; overflow: hidden;">
                     <div style="width:100%;text-align:left;">
                         <a th:href="@{'/play/' + ${track.title}}" class="playInJava">
-                            <img src="/images/playButton.png" alt="" height=25 width=25>
+                            <img src="/images/play.svg" alt="" height=25 width=25>
                         </a>
                         <a th:href="@{'/stop'}" class="playInJava">
-                            <img src="/images/stopButton.png" alt="" height=25 width=25>
+                            <img src="/images/pause.svg" alt="" height=25 width=25>
                         </a>
                     </div>
                 </td>
-                <td class="backGround">
+                <td>
                     <span class="titleOfTrackInTable" th:text="${track.title}"></span>
                 </td>
-                <td th:text="${track.size}" class="backGround"></td>
-                <td th:text="${track.date} + ' ' + ${track.time}" class="backGround"></td>
-                <td th:text="${track.length}" class="backGround"></td>
+                <td th:text="${track.size}" style="text-align: center"></td>
+                <td th:text="${track.date} + ' ' + ${track.time}" style="text-align: center"></td>
+                <td th:text="${track.length}" style="text-align: center"></td>
             </tbody>
         </table>
         <h1 th:if="${#lists.isEmpty(trackList)}">Music files not found.</h1>

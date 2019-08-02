@@ -2,7 +2,7 @@ $("table").css({"display": "block"});
 $("footer").css({"display": "block"});
 var checkEnableInfiniteLoad = true;
 $("#disableInfiniteLoadButton").on("click", function () {
-    i = 1000000;
+    var i = 1000000;
     checkEnableInfiniteLoad = true;
     $("table > tbody > tr").hide().slice(0, i).show();
     sessionStorage.setItem("infiniteLoad", checkEnableInfiniteLoad);
@@ -16,6 +16,7 @@ $("#enableInfiniteLoadButton").on("click", function () {
     location.reload();
 });
 checkEnableInfiniteLoad = true;
+
 var row_index = 0;
 if (sessionStorage.getItem('scroll') === null) {
     $("table > tbody > tr").hide().slice(0, 15).show();
@@ -25,6 +26,7 @@ if (sessionStorage.getItem('scroll') === null) {
 } else {
     $("table > tbody > tr").hide().slice(0, 15).show();
 }
+
 $(document).ready(function () {
     var i = 0;
     $(window).scroll(function () {
@@ -32,7 +34,7 @@ $(document).ready(function () {
             i = i + 30;
             $("table > tbody > tr").hide().slice(0, i).show();
             $(".playInJava").on("click", function () {
-                $('td').click(function () {
+                $('td').on('click', function () {
                     row_index = $(this).parent().index() + 1;
                     sessionStorage.setItem("row_index", row_index);
                 });

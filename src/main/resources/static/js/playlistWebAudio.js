@@ -1,59 +1,60 @@
 var titleOfTrack = null;
-var rowIndex = 0;
-var rowCount = $('table tr').length - 1;
-$('table tr').click(function () {
+var tableTr = $('table tr');
+var rowCount = tableTr.length - 1;
+var indexIteration = 0;
+tableTr.on('click', function () {
+    $("#playButton").hide();
+    $("#pauseButton").show();
     $(".nextPrevButtons").show();
-    if (rowIndex <= 0) {
-        $("#prevTrackId").hide();
-    }
-    var indexIteration = $(this).index();
-    rowIndex = indexIteration;
-    var currentTrack = $('#titleOfTrack');
+    indexIteration = $(this).index();
     $(".audioClass").bind("ended", function () {
-        if (rowIndex >= 0) {
-            $("#prevTrackId").show();
+        if (indexIteration >= 0) {
+            $("#prevTrackButton").show();
         }
+        var currentTrack = $('#titleOfTrack');
         currentTrack.empty();
-        indexIteration = indexIteration + 1;
-        rowIndex = indexIteration;
-        titleOfTrack = $(".titleOfTrackInTable").eq(rowIndex);
+        indexIteration++;
+        titleOfTrack = $(".titleOfTrackInTable").eq(indexIteration);
         $(".audioClass").attr("src", "playInBrowser/" + titleOfTrack.text());
         currentTrack.append(titleOfTrack.text());
-        if (rowIndex >= rowCount - 1) {
-            $("#nextTrackId").hide();
+        if (indexIteration >= rowCount - 1) {
+            $("#nextTrackButton").hide();
         }
     });
 });
 
-$("#nextTrackId").on("click", function () {
-    $("#play").hide();
-    if (rowIndex >= 0) {
-        $("#prevTrackId").show();
-    }
+function nextPrevTrackButtons() {
     var currentTrack = $('#titleOfTrack');
     currentTrack.empty();
-    rowIndex++;
-    titleOfTrack = $(".titleOfTrackInTable").eq(rowIndex);
+    titleOfTrack = $(".titleOfTrackInTable").eq(indexIteration);
     $(".audioClass").attr("src", "playInBrowser/" + titleOfTrack.text());
     currentTrack.append(titleOfTrack.text());
-    if (rowIndex >= rowCount - 1) {
-        $("#nextTrackId").hide();
+    if (indexIteration >= rowCount - 1) {
+        $("#nextTrackButton").hide();
     }
+}
+
+$("#nextTrackButton").on("click", function () {
+    $("#playButton").hide();
+    $("#pauseButton").show();
+    if (indexIteration >= 0) {
+        $("#prevTrackButton").show();
+    }
+    indexIteration++;
+    nextPrevTrackButtons();
 });
 
-$("#prevTrackId").on("click", function () {
-    $("#play").hide();
-    $("#nextTrackId").show();
-    if (rowIndex <= 1) {
-        $("#prevTrackId").hide();
+$("#prevTrackButton").on("click", function () {
+    $("#playButton").hide();
+    $("#pauseButton").show();
+    $("#nextTrackButton").show();
+    if (indexIteration <= 1) {
+        $("#prevTrackButton").hide();
     }
-    var currentTrack = $('#titleOfTrack');
-    currentTrack.empty();
-    rowIndex--;
-    titleOfTrack = $(".titleOfTrackInTable").eq(rowIndex);
-    $(".audioClass").attr("src", "playInBrowser/" + titleOfTrack.text());
-    currentTrack.append(titleOfTrack.text());
-    if (rowIndex >= rowCount - 1) {
-        $("#nextTrackId").hide();
-    }
+    indexIteration--;
+    nextPrevTrackButtons();
+});
+
+$("#download").on('click', function () {
+    window.location.href = 'playInBrowser/' + titleOfTrack.text();
 });

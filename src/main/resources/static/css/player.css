@@ -11,11 +11,7 @@ html, body {
     rgba(0, 0, 0, 0.2)),
     url('../images/player.jpg');
     background-size: cover;
-}
-
-.playerButtons{
-    height: 100px;
-    width:100px
+    overflow: hidden;
 }
 
 .main {
@@ -43,7 +39,7 @@ html, body {
     flex-direction: row;
     justify-content: center;
     margin-top: auto;
-    padding-bottom: 5%
+    margin-bottom: 60px
 }
 
 .title {
@@ -75,17 +71,96 @@ html, body {
 }
 
 #currentTime {
-    padding-right: 1%;
+    margin-right: 10px;
 }
 
 #duration {
-    left: 1%;
+    margin-left: 10px;
 }
 
-#play {
+#playButton {
     display: none;
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/play.svg');
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
 }
 
-.nextPrevButtons {
+#pauseButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/pause.svg');
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+}
+
+#prevTrackButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/prev.svg');
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+}
+
+#nextTrackButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/next.svg');
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+}
+
+#volumeSlider {
+    margin-right: 10px;
+}
+
+#download {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/download.svg');
+    background-size: 60px 60px;
+    height: 60px;
+    width: 60px;
+}
+
+#volumeMute {
     display: none;
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/volumeMin.svg');
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+}
+
+#volumeMin {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/volumeMin.svg');
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+}
+
+#volumeMax {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/volumeMax.svg');
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+}
+
+#backToList {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/backToList.svg');
+    background-size: 30px 30px;
+    height: 30px;
+    width: 30px;
 }

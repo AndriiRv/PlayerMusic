@@ -1,56 +1,70 @@
-$(".titleOfTrackInTable").click(function () {
-    var currentTrack = $('#titleOfTrack');
-    var duration = $("#duration");
-    var currentTime = $("#currentTime");
+var audio = $("#audioId");
+var durationSelector = $("#duration");
+var currentTimeSelector = $("#currentTime");
+var titleToHref = null;
+$(".titleOfTrackInTable").on('click', function () {
     var nameOfTrack = $(this).text();
-    var audio = $("#audioId");
+    var currentTrack = $('#titleOfTrack');
+    currentTrack.empty();
     audio.attr("src", "playInBrowser/" + nameOfTrack);
+    titleToHref = nameOfTrack;
     currentTrack.append(nameOfTrack);
-    $('#audioId').get(0).onloadedmetadata = function () {
-        var length = $('#audioId').get(0).duration;
-        var hr = Math.floor(length / 3600).toString();
-        var min = Math.floor((length - (hr * 3600)) / 60).toString();
-        var sec = Math.floor(length - (hr * 3600) - (min * 60)).toString();
-        if (min.length === 1) {
-            min = "0" + min;
-        }
-        if (sec.length === 1) {
-            sec = "0" + sec;
-        }
-        if (hr.length === 1) {
-            hr = "0" + hr;
-        }
-        duration.html(hr + ":" + min + ':' + sec);
+    audio.get(0).onloadedmetadata = function () {
+        var duration = audio.get(0).duration;
+        getTime(duration, durationSelector);
     };
     setInterval(function () {
-        var hr = Math.floor($('#audioId').get(0).currentTime / 3600).toString();
-        var min = Math.floor(($('#audioId').get(0).currentTime - (hr * 3600)) / 60).toString();
-        var sec = Math.floor($('#audioId').get(0).currentTime - (hr * 3600) - (min * 60)).toString();
-        if (min.length === 1) {
-            min = "0" + min;
-        }
-        if (sec.length === 1) {
-            sec = "0" + sec;
-        }
-        if (hr.length === 1) {
-            hr = "0" + hr;
-        }
-        currentTime.html(hr + ":" + min + ':' + sec);
+        var currentTime = audio.get(0).currentTime;
+        getTime(currentTime, currentTimeSelector);
     }, 10);
 });
 
-$("#play").click(function () {
-    $('#audioId').get(0).play();
-    $("#play").hide();
-    $("#pause").show();
+function getTime(time, selector) {
+    var hr = Math.floor(time / 3600).toString();
+    var min = Math.floor((time - (hr * 3600)) / 60).toString();
+    var sec = Math.floor(time - (hr * 3600) - (min * 60)).toString();
+    if (min.length === 1) {
+        min = "0" + min;
+    }
+    if (sec.length === 1) {
+        sec = "0" + sec;
+    }
+    if (hr.length === 1) {
+        hr = "0" + hr;
+    }
+    selector.html(hr + ":" + min + ':' + sec);
+}
+
+$("#playButton").on('click', function () {
+    audio.get(0).play();
+    $("#playButton").hide();
+    $("#pauseButton").show();
 });
 
-$("#pause").click(function () {
-    $('#audioId').get(0).pause();
-    $("#pause").hide();
-    $("#play").show();
+$("#pauseButton").on('click', function () {
+    audio.get(0).pause();
+    $("#pauseButton").hide();
+    $("#playButton").show();
 });
 
-$("#volumeSlider").change(function(){
-    $('#audioId').get(0).volume = $(this).val();
+$("#volumeSlider").change(function () {
+    audio.get(0).volume = $(this).val();
+});
+
+$("#download").on('click', function () {
+    window.location.href = 'playInBrowser/' + titleToHref;
+});
+
+$("#volumeMin").on('click', function () {
+    audio.get(0).muted = true;
+    $("#volumeMin").hide();
+    $("#volumeMute").show();
+    $("#volumeMax").css("background-image", "url('../images/volumeMute.svg')");
+});
+
+$("#volumeMute").on('click', function () {
+    audio.get(0).muted = false;
+    $("#volumeMute").hide();
+    $("#volumeMin").show();
+    $("#volumeMax").css("background-image", "url('../images/volumeMax.svg')");
 });

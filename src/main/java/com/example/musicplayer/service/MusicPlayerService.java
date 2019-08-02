@@ -108,13 +108,19 @@ public class MusicPlayerService implements Runnable {
 
     public List<Track> search(List<Track> tracks, String trackTitle) {
         String lowerCaseTrackTitle = trackTitle.toLowerCase();
-        List<Track> list = new ArrayList<>();
+        List<Track> listOfTracks = new ArrayList<>();
         for (Track track : tracks) {
-            if (track.getTitle().toLowerCase().contains(lowerCaseTrackTitle)) {
-                list.add(track);
+            if (lowerCaseTrackTitle.length() != 1) {
+                if (track.getTitle().toLowerCase().contains(lowerCaseTrackTitle)) {
+                    listOfTracks.add(track);
+                }
+            } else {
+                if (track.getTitle().toLowerCase().startsWith(lowerCaseTrackTitle)) {
+                    listOfTracks.add(track);
+                }
             }
         }
-        return list;
+        return listOfTracks;
     }
 
     public void play() {
