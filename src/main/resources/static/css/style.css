@@ -1,5 +1,19 @@
-table, #enableInfiniteLoadButton {
+table {
     display: none;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+    width: auto;
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        height: 700px;
+        overflow-y: auto;
+    }
 }
 
 footer {
@@ -8,11 +22,38 @@ footer {
     right: 1%;
 }
 
-.playInJava {
+.ASC {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/sortAsc.svg');
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+}
+
+.DESC {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/sortDesc.png');
+    background-size: 25px 25px;
+    height: 25px;
+    width: 25px;
+}
+
+.sort {
     display: inline-block;
 }
 
 .titleOfTrackInTable:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#shuffle {
+    color: #007bff;
+}
+
+#shuffle:hover {
     text-decoration: underline;
     cursor: pointer;
 }

@@ -20,18 +20,12 @@ public class MusicPlayerController {
                                  Track track) {
         this.musicPlayerService = musicPlayerService;
         this.track = track;
+        track.setPathToFolder("D:/Music/musicvk");
     }
 
     @GetMapping("/")
     public String getMusic(Model model) {
-        if (track.getPathToFolder() != null) {
-            model.addAttribute("trackList", musicPlayerService.getMusic(
-                    track.getPathToFolder()));
-        } else {
-            track.setPathToFolder("D:/Music/musicvk");
-            model.addAttribute("trackList", musicPlayerService.getMusic(
-                    track.getPathToFolder()));
-        }
+        model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
         model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }

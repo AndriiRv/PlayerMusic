@@ -1,4 +1,4 @@
-#back-to-top {
+#backToTop {
     position: fixed;
     bottom: 50px;
     right: 40px;
@@ -18,10 +18,10 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-#back-to-top:hover {
+#backToTop:hover {
     background: #e9ebec;
 }
 
-#back-to-top.show {
+#backToTop.show {
     opacity: 1;
 }

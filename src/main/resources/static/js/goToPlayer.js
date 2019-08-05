@@ -1,13 +1,16 @@
 $(document).ready(function () {
     $(".titleOfTrackInTable").on('click', function () {
-        var player = $(".wrapper");
-        $(".list").hide();
-        $("#backToList").show();
+        var player = $("#player");
+        $("#listOfTrack").hide();
+        $("#backToListButton").show();
         player.css({"display": "flex"});
         player.show();
     });
     $("#backToList").on('click', function () {
-        $(".list").show();
-        $("#backToList").hide();
+        $("#listOfTrack").show();
+        $("#backToListButton").hide();
+        $('html, body').animate({
+            scrollTop: 900
+        }, 700);
     });
 });

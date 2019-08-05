@@ -7,29 +7,37 @@
           rel="stylesheet"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
+    <link th:href="@{css/preload.css}" rel="stylesheet">
     <link th:href="@{css/player.css}" type="text/css" rel="stylesheet">
     <link th:href="@{css/style.css}" rel="stylesheet">
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-<div class="wrapper">
-    <div class="left"></div>
-    <div class="main">
-        <div class="player">
+<div id="preloader">
+    <div class="mainPreloader">
+        <span class="animation"></span>
+        <br>Please wait<br>
+        <small>Music player is loading...</small>
+    </div>
+</div>
+<div id="player">
+    <div id="left"></div>
+    <div id="main">
+        <div id="controller">
             <button id="prevTrackButton" class="nextPrevButtons"></button>
             <button id="playButton"></button>
             <button id="pauseButton"></button>
             <button id="nextTrackButton" class="nextPrevButtons"></button>
         </div>
-        <div class="title">
+        <div id="common">
             <h3 id="titleOfTrack"></h3>
             <button id="download"></button>
-            <div class="time">
+            <div id="time">
                 <div id="currentTime"></div>
                 <div id="duration"></div>
             </div>
         </div>
-        <div class="volume">
+        <div id="volume">
             <label for="volumeSlider"></label>
             <button id="volumeMin"></button>
             <button id="volumeMute"></button>
@@ -37,40 +45,30 @@
             <button id="volumeMax" disabled></button>
         </div>
         <audio id="audioId" class="audioClass" src="" preload="auto" autoplay></audio>
-        <div class="backToList">
-            <button id="backToList"></button>
+        <div id="backToList">
+            <button id="backToListButton"></button>
         </div>
     </div>
-    <div class="right"></div>
+    <div id="right"></div>
 </div>
-<div class="list">
-    <button id="disableInfiniteLoadButton">Disable infinite load</button>
-    <button id="enableInfiniteLoadButton">Enable infinite load</button>
+<div id="listOfTrack">
     <div class="container">
         <div class="row d-flex justify-content-center">
-            <form method="get" action="/folder">
-                <div class="mb-3">
-                    <label for="idPath">Path to folder (Current path:
-                        <a th:href="@{'/'}" th:text="${currentPath}"></a>)
-                    </label>
-                    <input type="text" name="pathToFolder" id="idPath" class="form-control"
-                           value="" placeholder="Example: 'D:/'" maxlength="120" required>
-                </div>
-            </form>
+            <div class="mb-3">
+                Current path: <a th:href="@{'/'}" th:text="${currentPath}"></a>
+            </div>
         </div>
-        <table th:if="${not #lists.isEmpty(trackList)}" class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover">
             <thead>
             <tr>
                 <th>
                     ID
                 </th>
-                <th>Play in Java</th>
                 <th>
                     <form method="get" action="/search">
-                        <label for="idSearchTrack" hidden>Find track</label>
+                        <label for="searchTrack" hidden>Find track</label>
                         <input type="text" name="trackTitle" class="form-control" placeholder="Find track"
-                               id="idSearchTrack" maxlength="60"
-                               value="" required>
+                               id="searchTrack" maxlength="60" value="" required>
                     </form>
                     Title of music
                     <label for="idSortTitle"></label>
@@ -114,23 +112,13 @@
                 </th>
             </tr>
             </thead>
-            <tbody>
+            <tbody th:if="${not #lists.isEmpty(trackList)}">
             <tr>
-                <td colspan="5"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
+                <td id="tdShuffle" colspan="5"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
             </tr>
-            <tr th:each="track: ${trackList}" class="table-success playlist">
-                <td th:text="${track.id}" class="backGround" style="text-align: center"></td>
-                <td style="width: 83px; height: 50px; overflow: hidden;">
-                    <div style="width:100%;text-align:left;">
-                        <a th:href="@{'/play/' + ${track.title}}" class="playInJava">
-                            <img src="/images/play.svg" alt="" height=25 width=25>
-                        </a>
-                        <a th:href="@{'/stop'}" class="playInJava">
-                            <img src="/images/pause.svg" alt="" height=25 width=25>
-                        </a>
-                    </div>
-                </td>
-                <td>
+            <tr th:each="track: ${trackList}" class="table-success">
+                <td th:text="${track.id}" style="text-align: center">
+                <td class="tdTitle">
                     <span class="titleOfTrackInTable" th:text="${track.title}"></span>
                 </td>
                 <td th:text="${track.size}" style="text-align: center"></td>
@@ -138,21 +126,21 @@
                 <td th:text="${track.length}" style="text-align: center"></td>
             </tbody>
         </table>
-        <h1 th:if="${#lists.isEmpty(trackList)}">Music files not found.</h1>
         <footer class="mastfoot mt-auto">
             <div class="inner">
                 <p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii Reva</a></p>
             </div>
         </footer>
     </div>
-    <a href="#" id="back-to-top" title="Back to top">&uarr;</a>
+    <a href="#" id="backToTop">&uarr;</a>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script th:src="@{/js/preloader.js}"></script>
 <script th:src="@{/js/goToPlayer.js}"></script>
-<script th:src="@{/js/playInBrowser.js}"></script>
-<script th:src="@{/js/playlistWebAudio.js}"></script>
+<script th:src="@{/js/audio/volume.js}"></script>
+<script th:src="@{/js/audio/playAudio.js}"></script>
+<script th:src="@{/js/audio/controllerAudio.js}"></script>
 <script th:src="@{/js/infiniteScrollTable.js}"></script>
-<script th:src="@{/js/scrollPosition.js}"></script>
 <script th:src="@{/js/backToTop.js}"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-var backToTop = $('#back-to-top');
+var backToTop = $('#backToTop');
 if (backToTop.length) {
     var scrollTrigger = 100,
         doBackToTop = function () {
