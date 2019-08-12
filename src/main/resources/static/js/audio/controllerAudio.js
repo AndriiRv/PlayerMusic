@@ -1,85 +1,127 @@
-var titleOfTrack = null;
-var tableTr = $('table tr');
-var rowCount = tableTr.length - 2;
+var currentTitle;
+var playButton = $("#playButton");
+var pauseButton = $("#pauseButton");
+var nextTrackButton = $("#nextTrackButton");
+var prevTrackButton = $("#prevTrackButton");
+var loopButton = $("#loopButton");
+var tableTr = $('#mainTable tbody tr');
+var rowCount = tableTr.length - 1;
 var indexIteration = 0;
+var counterForLoop = 0;
+nextTrackButton.prop('disabled', false);
+prevTrackButton.prop('disabled', false);
 
-$("#playButton").on('click', function () {
+playButton.on('click', function () {
     audio.get(0).play();
-    $("#playButton").hide();
-    $("#pauseButton").show();
+    $("#icon").attr("href", "/images/iconPlay.ico");
+    playButton.hide();
+    pauseButton.show();
 });
 
-$("#pauseButton").on('click', function () {
+pauseButton.on('click', function () {
     audio.get(0).pause();
-    $("#pauseButton").hide();
-    $("#playButton").show();
+    $("#icon").attr("href", "/images/iconPause.ico");
+    pauseButton.hide();
+    playButton.show();
 });
 
 tableTr.on('click', function () {
-    titleOfTrack = null;
-    $("#nextTrackButton").show();
-    $("#playButton").hide();
-    $("#pauseButton").show();
     indexIteration = $(this).index();
+    currentTitle = null;
+    nextTrackButton.show();
+    playButton.hide();
+    pauseButton.show();
 });
+
 $(".audioClass").bind("ended", function () {
-    $(".titleOfTrackInTable").css('color', 'black');
-    if (indexIteration >= 0) {
-        $("#prevTrackButton").show();
-    }
-    var currentTrack = $('#titleOfTrack');
-    currentTrack.empty();
-    titleOfTrack = $(".titleOfTrackInTable").eq(indexIteration);
-
-    $('.titleOfTrackInTable').filter(function () {
-        return $(this).text() === titleOfTrack.text();
-    }).css('color', 'red');
-
-    $(".audioClass").attr("src", "playInBrowser/" + titleOfTrack.text());
-    currentTrack.append(titleOfTrack.text());
+    titleOfTrackInTable.css({
+        "background": "none",
+        "color": "black"
+    });
+    showCurrentTrackAndPlayInPlayer();
+    titleOfTrackInTable.filter(function () {
+        return $(this).text() === currentTitle.text();
+    }).css({
+        "background": "-webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff))",
+        "color": "white"
+    });
+    console.log("After ended: " + currentTitle.text());
     indexIteration++;
     if (indexIteration >= rowCount) {
-        $("#nextTrackButton").hide();
+        nextTrackButton.css("opacity", "0.5");
+        nextTrackButton.prop('disabled', true);
     }
 });
 
-function nextPrevTrackButtons() {
-    $(".titleOfTrackInTable").css('color', 'black');
-    var currentTrack = $('#titleOfTrack');
+function showCurrentTrackAndPlayInPlayer() {
+    var currentTrack = $('#titleOfTrackInPlayer');
     currentTrack.empty();
-    titleOfTrack = $(".titleOfTrackInTable").eq(indexIteration);
-    $(".audioClass").attr("src", "playInBrowser/" + titleOfTrack.text());
-    currentTrack.append(titleOfTrack.text());
-    if (indexIteration >= rowCount - 1) {
-        $("#nextTrackButton").hide();
+    currentTitle = titleOfTrackInTable.eq(indexIteration);
+    if (indexIteration >= rowCount) {
+        currentTitle = null;
     }
-    $('.titleOfTrackInTable').filter(function () {
-        return $(this).text() === titleOfTrack.text();
-    }).css('color', 'red');
+    audio.attr("src", "play/" + currentTitle.text());
+    $("#titleOfTab").html(currentTitle.text());
+    hrefTitleForDownload = currentTitle.text();
+    currentTrack.append(currentTitle.text());
 }
 
-$("#nextTrackButton").on("click", function () {
-    $("#playButton").hide();
-    $("#pauseButton").show();
+function nextPrevTrackButtons() {
+    titleOfTrackInTable.css({
+        "background": "none",
+        "color": "black"
+    });
+    showCurrentTrackAndPlayInPlayer();
+    if (indexIteration >= rowCount - 1) {
+        nextTrackButton.css("opacity", "0.5");
+        nextTrackButton.prop('disabled', true);
+        playButton.css("opacity", "0.5");
+        playButton.prop('disabled', true);
+    }
+    titleOfTrackInTable.filter(function () {
+        return $(this).text() === currentTitle.text();
+    }).css({
+        "background": "-webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff))",
+        "color": "white"
+    });
+}
+
+nextTrackButton.on("click", function () {
+    playButton.hide();
+    pauseButton.show();
     if (indexIteration >= 0) {
-        $("#prevTrackButton").show();
+        prevTrackButton.css("opacity", "1");
+        prevTrackButton.prop('disabled', false);
     }
     nextPrevTrackButtons(indexIteration);
+    console.log("Next: " + currentTitle.text());
     indexIteration++;
 });
 
-$("#prevTrackButton").on("click", function () {
-    $("#playButton").hide();
-    $("#pauseButton").show();
-    $("#nextTrackButton").show();
+prevTrackButton.on("click", function () {
+    playButton.hide();
+    pauseButton.show();
+    nextTrackButton.css("opacity", "1");
+    nextTrackButton.prop('disabled', false);
     if (indexIteration <= 1) {
-        $("#prevTrackButton").hide();
+        prevTrackButton.css("opacity", "0.5");
+        prevTrackButton.prop('disabled', true);
     }
     indexIteration = indexIteration - 2;
     nextPrevTrackButtons(indexIteration);
+    console.log("Previous: " + currentTitle.text());
     indexIteration++;
 });
 
-$("#download").on('click', function () {
-    window.location.href = 'playInBrowser/' + titleOfTrack.text();
+loopButton.on("click", function () {
+    counterForLoop++;
+    if (counterForLoop % 2 !== 0) {
+        audio.attr("loop", "-1");
+        loopButton.css("opacity", "1");
+        console.log("Loop track: " + hrefTitleForDownload);
+    } else {
+        audio.removeAttr("loop");
+        loopButton.css("opacity", "0.5");
+        console.log("Remove loop from: " + hrefTitleForDownload);
+    }
 });

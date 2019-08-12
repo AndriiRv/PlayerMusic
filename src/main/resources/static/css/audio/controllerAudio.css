@@ -1,0 +1,32 @@
+#playButton, #pauseButton {
+    display: none;
+    background-color: transparent;
+    border: none;
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+}
+
+#playButton {
+    background-image: url('../../images/play.svg');
+}
+
+#pauseButton {
+    background-image: url('../../images/pause.svg');
+}
+
+#prevTrackButton, #nextTrackButton {
+    background-color: transparent;
+    border: none;
+    background-size: 100px 100px;
+    height: 100px;
+    width: 100px;
+}
+
+#prevTrackButton {
+    background-image: url('../../images/prev.svg');
+}
+
+#nextTrackButton {
+    background-image: url('../../images/next.svg');
+}

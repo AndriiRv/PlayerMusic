@@ -2,14 +2,18 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=570"/>
-    <title>Music Player</title>
+    <title id="titleOfTab">Music Player</title>
+    <link rel="icon" type="image/ico" id="icon" th:href="@{/images/iconPlay.ico}"/>
     <link th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css}"
           rel="stylesheet"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
     <link th:href="@{css/preload.css}" rel="stylesheet">
-    <link th:href="@{css/player.css}" type="text/css" rel="stylesheet">
     <link th:href="@{css/style.css}" rel="stylesheet">
+    <link th:href="@{css/player.css}" rel="stylesheet">
+    <link th:href="@{css/audio/controllerAudio.css}" rel="stylesheet">
+    <link th:href="@{css/audio/volumeRange.css}" rel="stylesheet">
+    <link th:href="@{css/audio/volume.css}" rel="stylesheet">
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -21,7 +25,12 @@
     </div>
 </div>
 <div id="player">
-    <div id="left"></div>
+    <canvas id="canvas"></canvas>
+    <div id="left">
+        <button id="soundWaveButton"></button>
+        <label for="soundWaveColorSlider"></label>
+        <input id="soundWaveColorSlider" type="range" min="0" max="255" step="10" value="100" style="width: auto;"/>
+    </div>
     <div id="main">
         <div id="controller">
             <button id="prevTrackButton" class="nextPrevButtons"></button>
@@ -30,18 +39,21 @@
             <button id="nextTrackButton" class="nextPrevButtons"></button>
         </div>
         <div id="common">
-            <h3 id="titleOfTrack"></h3>
+            <button id="loopButton"></button>
+            <h3 id="titleOfTrackInPlayer" class="showAdditionalTable"></h3>
             <button id="download"></button>
+            <div id="barAllPlayed">
+                <div id="barPlay"></div>
+            </div>
             <div id="time">
                 <div id="currentTime"></div>
                 <div id="duration"></div>
             </div>
         </div>
         <div id="volume">
-            <label for="volumeSlider"></label>
             <button id="volumeMin"></button>
-            <button id="volumeMute"></button>
-            <input id="volumeSlider" type="range" min="0" max="1" step="0.1" value="0.3"/>
+            <label for="volumeSlider"></label>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.5"/>
             <button id="volumeMax" disabled></button>
         </div>
         <audio id="audioId" class="audioClass" src="" preload="auto" autoplay></audio>
@@ -49,81 +61,99 @@
             <button id="backToListButton"></button>
         </div>
     </div>
-    <div id="right"></div>
+    <div id="right">
+        <div id="additionalTable">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title of music</th>
+                    <th>Length (hh:mm:ss)</th>
+                </tr>
+                </thead>
+                <tbody th:if="${not #lists.isEmpty(trackList)}">
+                <tr th:each="track: ${trackList}" class="table-success">
+                    <td th:text="${track.id}" style="text-align: center">
+                    <td>
+                        <span class="titleOfTrackInTable" th:text="${track.title}"></span>
+                    </td>
+                    <td th:text="${track.length}" style="text-align: center"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div id="listOfTrack">
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="mb-3">
-                Current path: <a th:href="@{'/'}" th:text="${currentPath}"></a>
+                Current path:
+                <a href="/" th:text="${currentPath}"></a>
+                <form method="post" id="submitFormPath" action="/welcome">
+                    <label for="idSelectPath">Select new path:</label>
+                    <select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">
+                        <option th:each="folder: ${folderList}"
+                                th:value="${folder.path}"
+                                th:text="${folder.id} + '. ' +  ${folder.path}">
+                        </option>
+                    </select>
+                    <button type="submit" id="submitPathToFolderButton">Accept</button>
+                </form>
             </div>
         </div>
-        <table class="table table-bordered table-hover">
+        <table id="mainTable" class="table table-bordered table-hover" th:if="${not #lists.isEmpty(trackList)}">
             <thead>
             <tr>
+                <th style="text-align: center">ID</th>
                 <th>
-                    ID
+                    Upload mp3 tracks
+                    <form method="post" action="/upload" id="uploadForm" enctype="multipart/form-data">
+                        <input type="file" id="uploadId" name="uploadTrack" accept="audio/*" required/><br/>
+                        <button type="submit" id="uploadSendButton">Send</button>
+                    </form>
+                    <span th:text="${resultUpload}"></span>
                 </th>
                 <th>
+                    <label for="idSort"></label>
+                    <select size="1" id="idSort"
+                            oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
+                            class="custom-select"
+                            required onchange="location = this.value;">
+                        <option value="/"></option>
+                        <option value="/title=ASC">By title ascending</option>
+                        <option value="/title=DESC">By title descending</option>
+                        <option value="/size=ASC">By size ascending</option>
+                        <option value="/size=DESC">By size descending</option>
+                        <option value="/date=ASC">By date ascending</option>
+                        <option value="/date=DESC">By date descending</option>
+                        <option value="/length=ASC">By length ascending</option>
+                        <option value="/length=DESC">By length descending</option>
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <td colspan="3">
                     <form method="get" action="/search">
                         <label for="searchTrack" hidden>Find track</label>
                         <input type="text" name="trackTitle" class="form-control" placeholder="Find track"
                                id="searchTrack" maxlength="60" value="" required>
                     </form>
-                    Title of music
-                    <label for="idSortTitle"></label>
-                    <select size="1" id="idSortTitle" class="custom-select d-block w-100 select"
-                            oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
-                            required onchange="location = this.value;">
-                        <option>Sort by title *</option>
-                        <option value="/">Sort by ID track</option>
-                        <option value="/title=ASC">Sort by title ascending</option>
-                        <option value="/title=DESC">Sort by title descending</option>
-                    </select>
-                </th>
-                <th>Size (MB)<label for="idSortSize"></label>
-                    <select size="1" id="idSortSize" class="custom-select d-block w-100 select"
-                            oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
-                            required onchange="location = this.value;">
-                        <option>Sort by size *</option>
-                        <option value="/">Sort by ID track</option>
-                        <option value="/size=ASC">Sort by size ascending</option>
-                        <option value="/size=DESC">Sort by size descending</option>
-                    </select>
-                </th>
-                <th>Date of create<label for="idSortDate"></label>
-                    <select size="1" id="idSortDate" class="custom-select d-block w-100 select"
-                            oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
-                            required onchange="location = this.value;">
-                        <option>Sort by date *</option>
-                        <option value="/">Sort by ID track</option>
-                        <option value="/date=ASC">Sort by date ascending</option>
-                        <option value="/date=DESC">Sort by date descending</option>
-                    </select></th>
-                <th>Length (hh:mm:ss)<label for="idSortLength"></label>
-                    <select size="1" id="idSortLength" class="custom-select d-block w-100 select"
-                            oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
-                            required onchange="location = this.value;">
-                        <option>Sort by length *</option>
-                        <option value="/">Sort by ID track</option>
-                        <option value="/length=ASC">Sort by length ascending</option>
-                        <option value="/length=DESC">Sort by length descending</option>
-                    </select>
-                </th>
+                </td>
             </tr>
             </thead>
-            <tbody th:if="${not #lists.isEmpty(trackList)}">
+            <tbody>
             <tr>
-                <td id="tdShuffle" colspan="5"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
+                <td colspan="1" style="text-align: center">#</td>
+                <td colspan="2"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
             </tr>
             <tr th:each="track: ${trackList}" class="table-success">
                 <td th:text="${track.id}" style="text-align: center">
-                <td class="tdTitle">
+                <td colspan="3">
                     <span class="titleOfTrackInTable" th:text="${track.title}"></span>
+                    <h5 th:text="${track.date} + ' | ' + ${track.size} + 'MB | ' + ${track.length}"></h5>
                 </td>
-                <td th:text="${track.size}" style="text-align: center"></td>
-                <td th:text="${track.date} + ' ' + ${track.time}" style="text-align: center"></td>
-                <td th:text="${track.length}" style="text-align: center"></td>
+            </tr>
             </tbody>
         </table>
         <footer class="mastfoot mt-auto">
@@ -136,11 +166,13 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script th:src="@{/js/preloader.js}"></script>
+<script th:src="@{/js/pathToFolder.js}"></script>
 <script th:src="@{/js/goToPlayer.js}"></script>
 <script th:src="@{/js/audio/volume.js}"></script>
 <script th:src="@{/js/audio/playAudio.js}"></script>
 <script th:src="@{/js/audio/controllerAudio.js}"></script>
-<script th:src="@{/js/infiniteScrollTable.js}"></script>
+<script th:src="@{/js/visualizer.js}"></script>
+<script th:src="@{/js/uploadTrack.js}"></script>
 <script th:src="@{/js/backToTop.js}"></script>
 </body>
 </html>
