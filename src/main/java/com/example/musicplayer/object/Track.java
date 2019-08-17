@@ -9,6 +9,8 @@ import java.time.LocalTime;
 @Component
 public class Track {
     private Integer id;
+    private String fullTitle;
+    private String singer;
     private String title;
     private Double size;
     private String length;
@@ -17,15 +19,11 @@ public class Track {
     private LocalDate date;
     private LocalTime time;
 
-    public Track(Integer id,
-                 String title,
-                 Double size,
-                 String length,
-                 String pathToFolder,
-                 LocalDateTime dateTime,
-                 LocalDate date,
-                 LocalTime time) {
+    public Track(Integer id, String fullTitle, String singer, String title, Double size, String length,
+                 String pathToFolder, LocalDateTime dateTime, LocalDate date, LocalTime time) {
         this.id = id;
+        this.fullTitle = fullTitle;
+        this.singer = singer;
         this.title = title;
         this.size = size;
         this.length = length;
@@ -44,6 +42,22 @@ public class Track {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getFullTitle() {
+        return fullTitle;
+    }
+
+    public void setFullTitle(String fullTitle) {
+        this.fullTitle = fullTitle;
+    }
+
+    public String getSinger() {
+        return singer;
+    }
+
+    public void setSinger(String singer) {
+        this.singer = singer;
     }
 
     public String getTitle() {

@@ -4,33 +4,47 @@ var durationSelector = $("#duration");
 var currentTimeSelector = $("#currentTime");
 var download = $("#download");
 var hrefTitleForDownload;
-
-// $("#searchTrack").keyup(function () {
-//     var trackTitle = $(this).val();
-//     $("#listOfTrack").load("/search?trackTitle=" + trackTitle);
-//     url = "/search?trackTitle=" + trackTitle;
-// });
+var barAllPlayed = $("#barAllPlayed");
+var barPlay = $("#barPlay");
 
 titleOfTrackInTable.on('click', function () {
     playButton.hide();
     pauseButton.show();
     titleOfTrackInTable.css({
         "background": "none",
-        "color": "black"
+        "color": "white"
     });
     var nameOfTrack = $(this).text();
-    $("#titleOfTab").html(nameOfTrack);
+
+    for (var i = 0; i <= String(nameOfTrack).length; i++) {
+        if (nameOfTrack.includes('[')) {
+            nameOfTrack = nameOfTrack.replace('[', '%5B').replace(']', '%5D');
+        }
+    }
+
     var currentTrack = $('#titleOfTrackInPlayer');
     currentTrack.empty();
     audio.attr("src", "play/" + nameOfTrack);
-    console.log("Manual select: " + nameOfTrack);
+
+    for (var j = 0; j <= String(nameOfTrack).length; j++) {
+        if (nameOfTrack.includes('%5B')) {
+            nameOfTrack = nameOfTrack.replace('%5B', '[').replace('%5D', ']');
+        }
+    }
+
+    $("#titleOfTab").html(nameOfTrack);
+
     titleOfTrackInTable.filter(function () {
         return $(this).text() === nameOfTrack;
     }).css({
-        "background": "-webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff))",
+        "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(6,151,244,1) 0%, rgba(64,26,186,1) 49%, rgba(172,22,224,1) 86%)",
         "color": "white"
     });
+
     hrefTitleForDownload = nameOfTrack;
+    nameOfTrack = nameOfTrack.replace(".mp3", "");
+
+    console.log("Manual select: " + nameOfTrack);
     currentTrack.append(nameOfTrack);
     audio.get(0).onloadedmetadata = function () {
         var duration = audio.get(0).duration;
@@ -39,38 +53,16 @@ titleOfTrackInTable.on('click', function () {
     setInterval(function () {
         var currentTime = audio.get(0).currentTime;
         getTime(currentTime, currentTimeSelector);
-        $("#barPlay").width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
+        barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
     }, 10);
 });
 
-$("#barAllPlayed").on('click', function (e) {
-    var allWidth = $("#barAllPlayed").width();
-    var currentXByDiv = e.pageX - $("#barAllPlayed").offset().left;
+barAllPlayed.on('click', function (e) {
+    var allWidth = barAllPlayed.width();
+    var currentXByDiv = e.pageX - barAllPlayed.offset().left;
     audio.get(0).currentTime = (currentXByDiv * audio.get(0).duration) / allWidth;
-    $("#barPlay").width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
+    barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
 });
-
-// var isDragging = false;
-//
-// $("#barAllPlayed").on('touchmove mousemove', function (e) {
-//     if (isDragging) {
-//         var allWidth = $("#barAllPlayed").width();
-//         var currentXByDiv = e.pageX - $("#barAllPlayed").offset().left;
-//         console.log(allWidth);
-//         console.log(currentXByDiv);
-//         var vid = document.getElementById("myVideo");
-//         audio.get(0).currentTime = currentXByDiv * audio.get(0).duration / allWidth;
-//         // audio.get(0).currentTime = currentXByDiv * audio.get(0).duration / allWidth;
-//         $("#barPlay").width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
-//     }
-// });
-//
-// $('#barAllPlayed').on('touchstart mousedown', function () {
-//     isDragging = true;
-// });
-// $('#barAllPlayed').on('touchend mouseup', function () {
-//     isDragging = false;
-// });
 
 function getTime(time, selector) {
     var hr = Math.floor(time / 3600).toString();

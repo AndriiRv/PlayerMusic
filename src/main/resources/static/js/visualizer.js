@@ -49,8 +49,8 @@ window.onload = function () {
 
                 var image = new Image();
                 image.src = "../images/player.jpg";
-                ctx.fillStyle = ctx.createPattern(image, "repeat");
-
+                ctx.fillStyle = ctx.createPattern(image, "no-repeat");
+                ctx.rect(0, 0, WIDTH, HEIGHT);
                 ctx.fillRect(0, 0, WIDTH, HEIGHT);
                 for (var i = 0; i < bufferLength; i++) {
                     barHeight = dataArray[i];
@@ -61,7 +61,7 @@ window.onload = function () {
 
                     ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
                     ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-
+                    ctx.rect(1200, 100, 1200, 100);
                     x += barWidth + 1;
                 }
             }

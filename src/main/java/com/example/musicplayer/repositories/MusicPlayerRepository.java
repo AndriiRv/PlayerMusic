@@ -1,6 +1,5 @@
 package com.example.musicplayer.repositories;
 
-import com.example.musicplayer.object.Folder;
 import com.example.musicplayer.object.Track;
 import javazoom.jl.decoder.BitstreamException;
 import org.springframework.stereotype.Repository;
@@ -27,6 +26,7 @@ public class MusicPlayerRepository {
         List<Track> listOfTracks = new ArrayList<>();
         File[] tracks = file.listFiles();
         assert tracks != null;
+
         if (file.exists()) {
             for (int i = 0; i < tracks.length; i++) {
                 String trackWithExtension = String.valueOf(tracks[i]);
@@ -34,7 +34,7 @@ public class MusicPlayerRepository {
                         || trackWithExtension.endsWith("wav")
                         || trackWithExtension.endsWith("wma")) {
                     track.setId(id++);
-                    track.setTitle(tracks[i].getName());
+                    track.setFullTitle(tracks[i].getName());
                     track.setPathToFolder(pathToFolder);
                     int convertFromByteToMb = 1048576;
                     size = tracks[i].length();
@@ -53,12 +53,14 @@ public class MusicPlayerRepository {
                     track.setDateTime(zonedDateTime.toLocalDateTime());
                     track.setDate(zonedDateTime.toLocalDate());
                     track.setTime(LocalTime.of(
-                            zonedDateTime.getHour() + 3,
+                            zonedDateTime.getHour(),
                             zonedDateTime.getMinute(),
                             zonedDateTime.getSecond()));
                     listOfTracks.add(new Track(
                             track.getId(),
+                            track.getFullTitle(),
                             track.getTitle(),
+                            track.getSinger(),
                             track.getSize(),
                             track.getLength(),
                             track.getPathToFolder(),
@@ -68,32 +70,6 @@ public class MusicPlayerRepository {
                 }
             }
             return listOfTracks;
-        } else {
-            return null;
-        }
-    }
-
-    public List<Folder> getFolders(Folder folder, String pathName) {
-        File file = new File(pathName);
-        File[] folders = file.listFiles();
-        List<Folder> listOfFolders = new ArrayList<>();
-        int id = 1;
-        if (file.exists()) {
-            assert folders != null;
-            for (int i = 0; i < folders.length; i++) {
-                if (folders[i].isDirectory()) {
-                    getFolders(folder, folders[i].getAbsolutePath());
-                    folder.setId(id++);
-                    String fromReverseToCommonSlash = folders[i].getAbsolutePath();
-                    if (fromReverseToCommonSlash.contains("\\")) {
-                        fromReverseToCommonSlash = folders[i]
-                                .getAbsolutePath().replaceAll("\\\\", "/");
-                    }
-                    folder.setPath(fromReverseToCommonSlash);
-                    listOfFolders.add(new Folder(folder.getId(), folder.getPath()));
-                }
-            }
-            return listOfFolders;
         } else {
             return null;
         }

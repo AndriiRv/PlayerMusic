@@ -2,9 +2,6 @@
     display: none;
     height: 100%;
     color: white;
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)), url('../images/player.jpg');
-    background-size: cover;
-    overflow: hidden;
     z-index: 100;
 }
 
@@ -23,24 +20,18 @@
     z-index: 1;
 }
 
-@media handheld and (max-width: 600px) {
-    #additionalTable {
-        display: none;
-    }
-}
-
-@media screen and (min-width: 1024px) {
-    #titleOfTrackInPlayer:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
-}
-
 #main {
     flex-grow: 2;
     display: flex;
     flex-direction: column;
+    width: 20%;
     z-index: 2;
+}
+
+@media screen and (max-width: 600px) {
+    #main {
+        width: 100%;
+    }
 }
 
 #left {
@@ -60,10 +51,6 @@
     width: 60px;
     opacity: 0.5;
     z-index: 2;
-}
-
-#soundWaveColorSlider {
-    display: none;
 }
 
 #right {

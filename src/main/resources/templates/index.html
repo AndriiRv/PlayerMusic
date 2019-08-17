@@ -17,6 +17,7 @@
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
+<div id="notification"></div>
 <div id="preloader">
     <div class="mainPreloader">
         <span class="animation"></span>
@@ -28,8 +29,6 @@
     <canvas id="canvas"></canvas>
     <div id="left">
         <button id="soundWaveButton"></button>
-        <label for="soundWaveColorSlider"></label>
-        <input id="soundWaveColorSlider" type="range" min="0" max="255" step="10" value="100" style="width: auto;"/>
     </div>
     <div id="main">
         <div id="controller">
@@ -61,28 +60,7 @@
             <button id="backToListButton"></button>
         </div>
     </div>
-    <div id="right">
-        <div id="additionalTable">
-            <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title of music</th>
-                    <th>Length (hh:mm:ss)</th>
-                </tr>
-                </thead>
-                <tbody th:if="${not #lists.isEmpty(trackList)}">
-                <tr th:each="track: ${trackList}" class="table-success">
-                    <td th:text="${track.id}" style="text-align: center">
-                    <td>
-                        <span class="titleOfTrackInTable" th:text="${track.title}"></span>
-                    </td>
-                    <td th:text="${track.length}" style="text-align: center"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <div id="right"></div>
 </div>
 <div id="listOfTrack">
     <div class="container">
@@ -90,19 +68,59 @@
             <div class="mb-3">
                 Current path:
                 <a href="/" th:text="${currentPath}"></a>
-                <form method="post" id="submitFormPath" action="/welcome">
-                    <label for="idSelectPath">Select new path:</label>
-                    <select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">
-                        <option th:each="folder: ${folderList}"
-                                th:value="${folder.path}"
-                                th:text="${folder.id} + '. ' +  ${folder.path}">
-                        </option>
-                    </select>
-                    <button type="submit" id="submitPathToFolderButton">Accept</button>
+                <!--<form method="post" id="submitFormPath" action="/welcome">-->
+                <!--<label for="idSelectPath">Select new path:</label>-->
+                <!--<select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">-->
+                <!--<option th:each="folder: ${folderList}"-->
+                <!--th:value="${folder.path}"-->
+                <!--th:text="${folder.id} + '. ' +  ${folder.path}">-->
+                <!--</option>-->
+                <!--</select>-->
+                <!--<button type="submit" id="submitPathToFolderButton">Accept</button>-->
+                <!--</form>-->
+                <form method="post" action="/welcome">
+                    <div class="mb-3">
+                        <label></label>
+                        <input type="text" name="pathToFolder" id="idPath" class="form-control"
+                               value="" placeholder="Example: 'D:/'" maxlength="120" required>
+                    </div>
                 </form>
             </div>
         </div>
-        <table id="mainTable" class="table table-bordered table-hover" th:if="${not #lists.isEmpty(trackList)}">
+        <button id="favouriteTracksButton" th:if="${#lists.isEmpty(favouriteTrackList)}"
+                onclick="location.href='/favourite'">Favourite tracks
+        </button>
+        <button id="fromFavouriteToMainListButton" th:if="${#lists.isEmpty(trackList)}" onclick="location.href='/'">Back
+            to list
+        </button>
+        <div id="favouriteTracksDiv">
+            <table id="favouriteTracksTable" class="table table-bordered table-hover"
+                   th:if="${not #lists.isEmpty(favouriteTrackList)}">
+                <thead>
+                <tr>
+                    <th colspan="3">Your favourite tracks</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr style="color: white;">
+                    <td>ID</td>
+                    <td>Title</td>
+                    <td>Dislike</td>
+                </tr>
+                <tr th:each="track: ${favouriteTrackList}">
+                    <td th:text="${track.id}" style="text-align: center">
+                    <td>
+                        <span class="titleOfTrackInTable" th:text="${track.fullTitle}"></span>
+                        <p th:text="${track.date} + ' | ' + ${track.size} + 'MB | ' + ${track.length}"></p>
+                    </td>
+                    <td>
+                        <a th:href="@{'/deleteFavourite/' + ${track.title}}">Dislike</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <table id="mainTable" th:if="${not #lists.isEmpty(trackList)}" class="table table-bordered table-hover">
             <thead>
             <tr>
                 <th style="text-align: center">ID</th>
@@ -142,16 +160,24 @@
                 </td>
             </tr>
             </thead>
-            <tbody>
-            <tr>
+            <tbody th:if="${not #lists.isEmpty(trackList)}">
+            <tr style="color: white;">
                 <td colspan="1" style="text-align: center">#</td>
                 <td colspan="2"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
             </tr>
-            <tr th:each="track: ${trackList}" class="table-success">
-                <td th:text="${track.id}" style="text-align: center">
+            <tr th:each="track: ${trackList}">
+                <td class="setFavouriteTdClass" style="text-align: center">
+                    <span th:text="${track.id}"></span>
+                    <form method="post" action="/favourite">
+                        <input id="setFavouriteButton" name="trackTitle" type="submit" th:value="${track.fullTitle}"/>
+                    </form>
+                    <!--<span id="setFavouriteResult" th:text="${resultAddedToFavourite}"></span>-->
+                </td>
                 <td colspan="3">
-                    <span class="titleOfTrackInTable" th:text="${track.title}"></span>
-                    <h5 th:text="${track.date} + ' | ' + ${track.size} + 'MB | ' + ${track.length}"></h5>
+                    <span class="titleOfTrackInTable" th:text="${track.fullTitle}"></span>
+                    <p style="margin-bottom: 0; float:right" th:text="${track.length}"></p>
+                    <p style="margin-bottom: 0;"
+                       th:text="${track.date} + ' ' + ${track.time} + ' | ' + ${track.size} + 'MB'"></p>
                 </td>
             </tr>
             </tbody>
@@ -166,8 +192,7 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script th:src="@{/js/preloader.js}"></script>
-<script th:src="@{/js/pathToFolder.js}"></script>
-<script th:src="@{/js/goToPlayer.js}"></script>
+<script th:src="@{/js/manipulationWithDivs.js}"></script>
 <script th:src="@{/js/audio/volume.js}"></script>
 <script th:src="@{/js/audio/playAudio.js}"></script>
 <script th:src="@{/js/audio/controllerAudio.js}"></script>
