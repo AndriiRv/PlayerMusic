@@ -9,5 +9,5 @@ $("#uploadSendButton").on("click", function () {
     notification.html("Upload!");
     setTimeout(function () {
         $("#notification").hide();
-    }, 2000);
+    }, 4000);
 });

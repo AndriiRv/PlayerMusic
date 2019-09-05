@@ -32,8 +32,6 @@ titleOfTrackInTable.on('click', function () {
         }
     }
 
-    $("#titleOfTab").html(nameOfTrack);
-
     titleOfTrackInTable.filter(function () {
         return $(this).text() === nameOfTrack;
     }).css({
@@ -43,6 +41,8 @@ titleOfTrackInTable.on('click', function () {
 
     hrefTitleForDownload = nameOfTrack;
     nameOfTrack = nameOfTrack.replace(".mp3", "");
+
+    $("#titleOfTab").html(nameOfTrack);
 
     console.log("Manual select: " + nameOfTrack);
     currentTrack.append(nameOfTrack);

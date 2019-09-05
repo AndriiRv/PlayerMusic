@@ -5,6 +5,20 @@ html, body {
     background-attachment: fixed;
 }
 
+#acceptCookie {
+    display: none;
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    bottom: 0;
+    position: fixed;
+    z-index: 5;
+}
+
+#buttonsAcceptCookie {
+    display: block;
+}
+
 a, a:hover {
     color: orange;
 }
@@ -50,10 +64,6 @@ a, a:hover {
     display: none;
 }
 
-/*#favouriteTracksDiv {*/
-/*display: none;*/
-/*}*/
-
 #uploadSendButton {
     display: none;
 }
@@ -86,8 +96,13 @@ footer {
     bottom: 0;
     border-radius: 25px;
     text-align: center;
-    width: 150px;
-    height: 50px;
-    background-color: green;
-    color: white;
+    width: 300px;
+    height: 150px;
+    background-color: yellow;
+    color: black;
+    font-size: 45px;
+}
+
+#submitPathToFolderButton, #clearWrotePath, #idPath {
+    display: none;
 }

@@ -2,7 +2,7 @@
     display: none;
     height: 100%;
     color: white;
-    z-index: 100;
+    z-index: 4;
 }
 
 #canvas {
@@ -88,12 +88,44 @@
     z-index: 2;
 }
 
+#searchTrackInSystem {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 30%;
+    z-index: 2;
+}
+
+#findInGoogle {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/google.svg');
+    background-size: 60px 60px;
+    height: 60px;
+    width: 60px;
+    margin-right: 10px;
+    z-index: 2;
+}
+
+#findInYouTube {
+    background-color: transparent;
+    border: none;
+    background-image: url('../images/youtube.svg');
+    background-size: 60px 60px;
+    height: 60px;
+    width: 60px;
+    margin-left: 10px;
+    z-index: 2;
+}
+
 #volume {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    height: 40%;
+    margin-top: 15%;
+    height: 30%;
     z-index: 2;
 }
 

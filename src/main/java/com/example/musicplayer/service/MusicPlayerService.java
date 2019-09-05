@@ -1,12 +1,13 @@
 package com.example.musicplayer.service;
 
+import com.example.musicplayer.object.Folder;
 import com.example.musicplayer.object.Track;
 import com.example.musicplayer.repositories.MusicPlayerRepository;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Header;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +28,17 @@ import java.util.logging.Logger;
 public class MusicPlayerService {
     private final MusicPlayerRepository musicPlayerRepository;
     private final Track track;
+    private final Folder folder;
     private static Logger log = Logger.getLogger(MusicPlayerService.class.getName());
     private final Map<String, String> letters = new HashMap<>();
 
     @Autowired
     public MusicPlayerService(MusicPlayerRepository musicPlayerRepository,
-                              Track track) {
+                              Track track,
+                              Folder folder) {
         this.musicPlayerRepository = musicPlayerRepository;
         this.track = track;
+        this.folder = folder;
     }
 
     public List<Track> getMusic(String pathToFolder) throws IOException, BitstreamException {
@@ -45,7 +49,7 @@ public class MusicPlayerService {
         }
     }
 
-    private Map<String, String> putLetters() {
+    public Map<String, String> putLetters() {
         letters.put("а", "a");
         letters.put("б", "b");
         letters.put("в", "v");
@@ -83,7 +87,7 @@ public class MusicPlayerService {
         return letters;
     }
 
-    private String toTransliteration(String text) {
+    public String toTransliteration(String text) {
         StringBuilder stringBuilder = new StringBuilder(text.length());
         for (int i = 0; i < text.length(); i++) {
             String letter = text.substring(i, i + 1);
@@ -92,13 +96,66 @@ public class MusicPlayerService {
         return stringBuilder.toString();
     }
 
-    public void setPathToCookie(String pathToFolder, HttpServletResponse response){
-        Cookie cookie = new Cookie("pathToFolder", pathToFolder);
-        cookie.setMaxAge(31536000);
-        response.addCookie(cookie);
+    public void setPathToCookie(String pathToFolder, HttpServletResponse response) {
+        String changedPath = pathToFolder;
+        if (!pathToFolder.matches("\\W")) {
+            changedPath = changedPath.toLowerCase().replaceAll("\\W", "");
+        }
+        Cookie selectPathCookie = new Cookie("path" + changedPath, pathToFolder);
+        selectPathCookie.setMaxAge(31536000);
+        response.addCookie(selectPathCookie);
+        Cookie commonPathCookie = new Cookie("mainFolder", pathToFolder);
+        commonPathCookie.setMaxAge(31536000);
+        response.addCookie(commonPathCookie);
     }
 
-    public void setFavouriteTracksToCookie(String trackTitle, HttpServletResponse response){
+    public void getPathFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String cookieValue;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("mainFolder")) {
+                    cookieValue = cookie.getValue();
+                    track.setPathToFolder(cookieValue);
+                }
+            }
+        }
+    }
+
+    public List<Folder> getAllWroteManuallyPathFromCookie(HttpServletRequest request) {
+        List<Folder> folders = new ArrayList<>();
+        Cookie[] cookies = request.getCookies();
+        String cookieValue;
+        int id = 1;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().contains("path")) {
+                    folder.setId(id++);
+                    cookieValue = cookie.getValue();
+                    folder.setPath(cookieValue);
+                    folders.add(new Folder(folder.getId(), folder.getPath()));
+                }
+            }
+            return folders;
+        }
+        return null;
+    }
+
+    public void removeAllPathFromCookie(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().contains("path")) {
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+        }
+    }
+
+    public void setFavouriteTracksToCookie(String trackTitle, HttpServletResponse response) {
         String lowerCaseTitle = trackTitle;
         lowerCaseTitle = lowerCaseTitle.toLowerCase();
         lowerCaseTitle = toTransliteration(lowerCaseTitle);
@@ -113,29 +170,11 @@ public class MusicPlayerService {
         response.addCookie(cookie);
     }
 
-    public void setPathFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String cookieValue = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("pathToFolder")) {
-                    cookieValue = cookie.getValue();
-                    break;
-                }
-            }
-            track.setPathToFolder(cookieValue);
-        }
-    }
-
-//    public List<Folder> getFolders(HttpServletRequest request) {
-//
-//    }
-
     public List<Track> getFavouriteTracks(HttpServletRequest request) throws IOException, BitstreamException {
         Cookie[] cookies = request.getCookies();
         String cookieValue;
 
-        List<Track> allTracks = getMusic(track.getPathToFolder());
+        List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
         List<Track> favouriteTracks = new ArrayList<>();
 
         if (cookies != null && allTracks != null) {
@@ -200,7 +239,7 @@ public class MusicPlayerService {
     }
 
     public List<Track> getShuffleMusic() throws IOException, BitstreamException {
-        List<Track> shuffledMusic = getMusic(track.getPathToFolder());
+        List<Track> shuffledMusic = musicPlayerRepository.getMusic(track, track.getPathToFolder());
         Collections.shuffle(shuffledMusic);
         return shuffledMusic;
     }
@@ -219,36 +258,105 @@ public class MusicPlayerService {
     }
 
     public List<Track> sort(String sort, String directory) throws IOException, BitstreamException {
-        List<Track> allTracks = getMusic(track.getPathToFolder());
-        Comparator<Track> variable = null;
+        List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
+        String variable = null;
+
         switch (sort) {
             case "size":
-                variable = Comparator.comparing(Track::getSize);
+                variable = "size";
                 break;
             case "length":
-                variable = Comparator.comparing(Track::getLength);
+                variable = "length";
                 break;
             case "title":
-                variable = Comparator.comparing(Track::getFullTitle);
+                variable = "title";
                 break;
             case "date":
-                variable = Comparator.comparing(Track::getDateTime).thenComparing(Track::getFullTitle);
+                variable = "date";
                 break;
         }
+        Integer lengthList = allTracks.size();
+        Track[] tracks = allTracks.toArray(new Track[lengthList]);
         if (directory.equals("ASC")) {
-            allTracks.sort(variable);
+            allTracks = insertSort(tracks, '>', variable);
         } else if (directory.equals("DESC")) {
-            assert variable != null;
-            allTracks.sort(variable.reversed());
+            allTracks = insertSort(tracks, '<', variable);
         }
         log.info("Selected sort: " + sort.toUpperCase() + " with directory " + directory.toUpperCase()
                 + ", " + track.getPathToFolder());
         return allTracks;
     }
 
+    private List<Track> insertSort(Track[] tracks, char character, String variable) {
+        int in, out;
+
+        for (out = 1; out < tracks.length; out++) {
+            Track track = tracks[out];
+            in = out;
+
+            if (character == '>') {
+                switch (variable) {
+                    case "title":
+                        while (in > 0 && tracks[in - 1].getFullTitle().compareTo(track.getFullTitle()) > 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                    case "length":
+                        while (in > 0 && tracks[in - 1].getLength().compareTo(track.getLength()) > 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                    case "size":
+                        while (in > 0 && tracks[in - 1].getSize().compareTo(track.getSize()) > 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                    case "date":
+                        while (in > 0 && tracks[in - 1].getDateTime().compareTo(track.getDateTime()) > 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                }
+            } else {
+                switch (variable) {
+                    case "title":
+                        while (in > 0 && tracks[in - 1].getFullTitle().compareTo(track.getFullTitle()) < 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                    case "length":
+                        while (in > 0 && tracks[in - 1].getLength().compareTo(track.getLength()) < 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                    case "size":
+                        while (in > 0 && tracks[in - 1].getSize().compareTo(track.getSize()) < 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                    case "date":
+                        while (in > 0 && tracks[in - 1].getDateTime().compareTo(track.getDateTime()) < 0) {
+                            tracks[in] = tracks[in - 1];
+                            --in;
+                        }
+                        break;
+                }
+            }
+            tracks[in] = track;
+        }
+        return Arrays.asList(tracks);
+    }
+
     public List<Track> search(String trackTitle) throws IOException, BitstreamException {
         String lowerCaseTrackTitle = trackTitle.toLowerCase();
-        List<Track> allTracks = getMusic(track.getPathToFolder());
+        List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
         List<Track> searchedTracks = new ArrayList<>();
         for (Track track : allTracks) {
             if (lowerCaseTrackTitle.length() != 1) {
@@ -264,23 +372,24 @@ public class MusicPlayerService {
         return searchedTracks;
     }
 
-    public ResponseEntity<InputStreamResource> mediaResourceProcessing(String process) throws FileNotFoundException {
+    public ResponseEntity<ByteArrayResource> mediaResourceProcessing(String process) throws IOException {
         String pathName = track.getFullTitle();
         if (pathName.contains("%5B")) {
             pathName = pathName.replace("%5B", "[").replace("%5D", "]");
         }
         String file = track.getPathToFolder() + "/" + pathName;
         long length = new File(file).length();
-        InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
+        InputStream inputStream = new FileInputStream(file);
+        ByteArrayResource byteArrayResource = new ByteArrayResource(inputStream.readAllBytes());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentLength(length);
         httpHeaders.setCacheControl(CacheControl.noCache().getHeaderValue());
         log.info(currentDate() + " | " + currentTime() + " - " + process + ": " + track.getPathToFolder()
                 + "/" + pathName);
-        return new ResponseEntity<>(inputStreamResource, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(byteArrayResource, httpHeaders, HttpStatus.OK);
     }
 
-    private String currentTime() {
+    public String currentTime() {
         String hour = String.valueOf(LocalTime.now().getHour());
         String minutes = String.valueOf(LocalTime.now().getMinute());
         String second = String.valueOf(LocalTime.now().getSecond());
@@ -288,14 +397,14 @@ public class MusicPlayerService {
                 + formatNumberForDateAndTime(second);
     }
 
-    private String currentDate() {
+    public String currentDate() {
         String year = String.valueOf(LocalDate.now().getYear());
         String month = String.valueOf(LocalDate.now().getMonthValue());
         String day = String.valueOf(LocalDate.now().getDayOfMonth());
         return formatNumberForDateAndTime(day) + "." + formatNumberForDateAndTime(month) + "." + year;
     }
 
-    private String formatNumberForDateAndTime(String variable) {
+    public String formatNumberForDateAndTime(String variable) {
         if (variable.length() == 1) {
             variable = "0" + variable;
         }

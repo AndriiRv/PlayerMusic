@@ -1,12 +1,4 @@
 var counter = 0;
-var addR = 25;
-var addG = 250;
-var addB = 50;
-$("#soundWaveColorSlider").on('click', function () {
-    addR = Math.round(Math.random() * 144) + 1;
-    addG = Math.round(Math.random() * 250) + 1;
-    addB = Math.round(Math.random() * 64) + 1;
-});
 
 window.onload = function () {
     var soundWaveButton = document.getElementById("soundWaveButton");
@@ -52,12 +44,13 @@ window.onload = function () {
                 ctx.fillStyle = ctx.createPattern(image, "no-repeat");
                 ctx.rect(0, 0, WIDTH, HEIGHT);
                 ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
                 for (var i = 0; i < bufferLength; i++) {
                     barHeight = dataArray[i];
 
-                    var r = barHeight + (addR * (i / bufferLength));
-                    var g = addG * (i / bufferLength);
-                    var b = addB;
+                    var r = barHeight + (25 * (i / bufferLength));
+                    var g = 250 * (i / bufferLength);
+                    var b = 50;
 
                     ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
                     ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);

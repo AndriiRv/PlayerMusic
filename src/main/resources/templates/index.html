@@ -17,12 +17,20 @@
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
+<div id="acceptCookie">
+    We use cookies to enhance your experience on our site. By accepting our cookie policy you agreeing to our use of
+    cookies.
+    <div id="buttonsAcceptCookie">
+        <button id="acceptCookieButton">Accept</button>
+        <button id="declineCookieButton">Decline</button>
+    </div>
+</div>
 <div id="notification"></div>
 <div id="preloader">
     <div class="mainPreloader">
         <span class="animation"></span>
         <br>Please wait<br>
-        <small>Music player is loading...</small>
+        <small>Music Player is loading...</small>
     </div>
 </div>
 <div id="player">
@@ -48,6 +56,10 @@
                 <div id="currentTime"></div>
                 <div id="duration"></div>
             </div>
+            <div id="searchTrackInSystem">
+                <button id="findInGoogle"></button>
+                <button id="findInYouTube"></button>
+            </div>
         </div>
         <div id="volume">
             <button id="volumeMin"></button>
@@ -66,23 +78,27 @@
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="mb-3">
-                Current path:
                 <a href="/" th:text="${currentPath}"></a>
-                <!--<form method="post" id="submitFormPath" action="/welcome">-->
-                <!--<label for="idSelectPath">Select new path:</label>-->
-                <!--<select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">-->
-                <!--<option th:each="folder: ${folderList}"-->
-                <!--th:value="${folder.path}"-->
-                <!--th:text="${folder.id} + '. ' +  ${folder.path}">-->
-                <!--</option>-->
-                <!--</select>-->
-                <!--<button type="submit" id="submitPathToFolderButton">Accept</button>-->
-                <!--</form>-->
+                <form method="post" id="submitFormPath" action="/welcome"
+                      th:if="${not #lists.isEmpty(allWrotePath)}">
+                    <label for="idSelectPath">Select previously entered path:</label>
+                    <select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">
+                        <option th:each="folder: ${allWrotePath}"
+                                th:value="${folder.path}"
+                                th:text="${folder.id} + '. ' +  ${folder.path}">
+                        </option>
+                    </select>
+                    <button type="submit" id="submitPathToFolderButton">Accept</button>
+                </form>
+                <form method="get" action="/deletePath" th:if="${not #lists.isEmpty(allWrotePath)}">
+                    <button id="clearWrotePath" type="submit">Clear ready paths</button>
+                </form>
+                <p th:if="${#lists.isEmpty(allWrotePath)}">Input path manually</p>
                 <form method="post" action="/welcome">
                     <div class="mb-3">
                         <label></label>
                         <input type="text" name="pathToFolder" id="idPath" class="form-control"
-                               value="" placeholder="Example: 'D:/'" maxlength="120" required>
+                               value="" placeholder="Like: 'D:/'" maxlength="120" required>
                     </div>
                 </form>
             </div>
@@ -90,7 +106,8 @@
         <button id="favouriteTracksButton" th:if="${#lists.isEmpty(favouriteTrackList)}"
                 onclick="location.href='/favourite'">Favourite tracks
         </button>
-        <button id="fromFavouriteToMainListButton" th:if="${#lists.isEmpty(trackList)}" onclick="location.href='/'">Back
+        <button id="fromFavouriteToMainListButton" th:if="${not #lists.isEmpty(favouriteTrackList)}"
+                onclick="location.href='/'">Back
             to list
         </button>
         <div id="favouriteTracksDiv">
@@ -114,7 +131,7 @@
                         <p th:text="${track.date} + ' | ' + ${track.size} + 'MB | ' + ${track.length}"></p>
                     </td>
                     <td>
-                        <a th:href="@{'/deleteFavourite/' + ${track.title}}">Dislike</a>
+                        <a th:href="@{'/deleteFavourite/' + ${track.fullTitle}}">Dislike</a>
                     </td>
                 </tr>
                 </tbody>
@@ -152,15 +169,15 @@
             </tr>
             <tr>
                 <td colspan="3">
-                    <form method="get" action="/search">
-                        <label for="searchTrack" hidden>Find track</label>
-                        <input type="text" name="trackTitle" class="form-control" placeholder="Find track"
-                               id="searchTrack" maxlength="60" value="" required>
-                    </form>
+                    <!--<form method="get" action="/search">-->
+                    <label for="searchTrack" hidden>Find track</label>
+                    <input type="text" name="trackTitle" class="form-control" placeholder="Find track"
+                           id="searchTrack" maxlength="60" value="" required>
+                    <!--</form>-->
                 </td>
             </tr>
             </thead>
-            <tbody th:if="${not #lists.isEmpty(trackList)}">
+            <tbody th:if="${not #lists.isEmpty(trackList)}" id="mainTableTBody">
             <tr style="color: white;">
                 <td colspan="1" style="text-align: center">#</td>
                 <td colspan="2"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
@@ -168,16 +185,17 @@
             <tr th:each="track: ${trackList}">
                 <td class="setFavouriteTdClass" style="text-align: center">
                     <span th:text="${track.id}"></span>
-                    <form method="post" action="/favourite">
-                        <input id="setFavouriteButton" name="trackTitle" type="submit" th:value="${track.fullTitle}"/>
-                    </form>
-                    <!--<span id="setFavouriteResult" th:text="${resultAddedToFavourite}"></span>-->
+                    <div class="setFavourite">
+                        <form method="post" action="/favourite">
+                            <input id="setFavouriteButton" name="trackTitle" type="submit"
+                                   th:value="${track.fullTitle}"/>
+                        </form>
+                    </div>
                 </td>
                 <td colspan="3">
                     <span class="titleOfTrackInTable" th:text="${track.fullTitle}"></span>
-                    <p style="margin-bottom: 0; float:right" th:text="${track.length}"></p>
-                    <p style="margin-bottom: 0;"
-                       th:text="${track.date} + ' ' + ${track.time} + ' | ' + ${track.size} + 'MB'"></p>
+                    <p style="float:right" th:text="${track.length}"></p>
+                    <p th:text="${track.date} + ' || ' + ${track.time} + ' | ' + ${track.size} + 'MB'"></p>
                 </td>
             </tr>
             </tbody>
@@ -190,12 +208,17 @@
     </div>
     <a href="#" id="backToTop">&uarr;</a>
 </div>
+<h1 id="size"></h1>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script th:src="@{/js/preloader.js}"></script>
+<script th:src="@{/js/acceptCookie.js}"></script>
+<script th:src="@{/js/favouriteTracks.js}"></script>
 <script th:src="@{/js/manipulationWithDivs.js}"></script>
 <script th:src="@{/js/audio/volume.js}"></script>
 <script th:src="@{/js/audio/playAudio.js}"></script>
 <script th:src="@{/js/audio/controllerAudio.js}"></script>
+<script th:src="@{/js/searchingInSystems.js}"></script>
+<script th:src="@{/js/hotButtonsHandler.js}"></script>
 <script th:src="@{/js/visualizer.js}"></script>
 <script th:src="@{/js/uploadTrack.js}"></script>
 <script th:src="@{/js/backToTop.js}"></script>

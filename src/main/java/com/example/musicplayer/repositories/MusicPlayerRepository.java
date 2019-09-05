@@ -20,36 +20,35 @@ import static com.example.musicplayer.service.MusicPlayerService.getDuration;
 @Repository
 public class MusicPlayerRepository {
     public List<Track> getMusic(Track track, String pathToFolder) throws IOException, BitstreamException {
-        int id = 1;
+        int id = 0;
         double size;
         File file = new File(pathToFolder);
         List<Track> listOfTracks = new ArrayList<>();
         File[] tracks = file.listFiles();
         assert tracks != null;
-
         if (file.exists()) {
             for (int i = 0; i < tracks.length; i++) {
                 String trackWithExtension = String.valueOf(tracks[i]);
                 if (trackWithExtension.endsWith("mp3")
                         || trackWithExtension.endsWith("wav")
                         || trackWithExtension.endsWith("wma")) {
-                    track.setId(id++);
+                    id = id + 1;
+
+                    track.setId(id);
                     track.setFullTitle(tracks[i].getName());
                     track.setPathToFolder(pathToFolder);
+
                     int convertFromByteToMb = 1048576;
                     size = tracks[i].length();
+
                     track.setSize(Math.round((size / convertFromByteToMb) * 100.0) / 100.0);
                     track.setLength(getDuration(tracks[i]));
+
                     Path dateCreatedOfTrack = Paths.get(String.valueOf(tracks[i]));
-                    BasicFileAttributes attr = null;
-                    try {
-                        attr = Files.readAttributes(dateCreatedOfTrack, BasicFileAttributes.class);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    assert attr != null;
+                    BasicFileAttributes attr = Files.readAttributes(dateCreatedOfTrack, BasicFileAttributes.class);
                     String creationDateTime = String.valueOf(attr.creationTime());
                     ZonedDateTime zonedDateTime = ZonedDateTime.parse(creationDateTime);
+
                     track.setDateTime(zonedDateTime.toLocalDateTime());
                     track.setDate(zonedDateTime.toLocalDate());
                     track.setTime(LocalTime.of(

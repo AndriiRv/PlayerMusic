@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 
 @Component
 public class Track {
@@ -34,6 +35,10 @@ public class Track {
     }
 
     public Track() {
+    }
+
+    public Track(String fullTitle) {
+        this.fullTitle = fullTitle;
     }
 
     public Integer getId() {
@@ -114,5 +119,43 @@ public class Track {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Track track = (Track) o;
+        return Objects.equals(id, track.id) &&
+                Objects.equals(fullTitle, track.fullTitle) &&
+                Objects.equals(singer, track.singer) &&
+                Objects.equals(title, track.title) &&
+                Objects.equals(size, track.size) &&
+                Objects.equals(length, track.length) &&
+                Objects.equals(pathToFolder, track.pathToFolder) &&
+                Objects.equals(dateTime, track.dateTime) &&
+                Objects.equals(date, track.date) &&
+                Objects.equals(time, track.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fullTitle, singer, title, size, length, pathToFolder, dateTime, date, time);
+    }
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "id=" + id +
+                ", fullTitle='" + fullTitle + '\'' +
+                ", singer='" + singer + '\'' +
+                ", title='" + title + '\'' +
+                ", size=" + size +
+                ", length='" + length + '\'' +
+                ", pathToFolder='" + pathToFolder + '\'' +
+                ", dateTime=" + dateTime +
+                ", date=" + date +
+                ", time=" + time +
+                '}';
     }
 }

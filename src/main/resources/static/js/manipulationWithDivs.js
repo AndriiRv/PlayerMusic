@@ -1,9 +1,16 @@
+var scrollPositionOnTitle;
+
 $(document).ready(function () {
     var player = $("#player");
-    var scrollPositionOnTitle;
     var backToListCounter = 0;
     var counterToScrollToPlayer = 0;
-    var notification = $("#notification");
+
+    $("#searchTrack").on("keyup", function () {
+        var inputTitle = $(this).val().toLowerCase();
+        $("#mainTableTBody tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(inputTitle) > -1);
+        });
+    });
 
     $(".titleOfTrackInTable").on('click', function () {
         scrollPositionOnTitle = $(document).scrollTop();
@@ -30,25 +37,20 @@ $(document).ready(function () {
         }, 700);
     });
 
-    $(".setFavouriteTdClass").on('click', function () {
-        scrollPositionOnTitle = $(document).scrollTop();
-        sessionStorage.setItem("scrollPositionOnClickFavourite", scrollPositionOnTitle);
-        notification.fadeIn();
-        notification.show();
-        notification.html("Added to favourite!");
-        setTimeout(function () {
-            $("#notification").hide();
-        }, 2000);
-    });
-
-    window.scrollTo(0, parseInt(sessionStorage.getItem("scrollPositionOnClickFavourite")));
-    scrollPositionOnTitle = 0;
-    sessionStorage.setItem("scrollPositionOnClickFavourite", scrollPositionOnTitle);
-
     var cookie = document.cookie;
     if (cookie.includes("fav")) {
         $("#favouriteTracksButton").css({"display": "block"});
     } else {
         $("#favouriteTracksButton").css({"display": "none"});
     }
+
+    if (!cookie.includes("path")) {
+        $("#idPath").show();
+    }
+
+    $("#submitFormPath").on('click', function () {
+        $("#submitPathToFolderButton").show();
+        $("#clearWrotePath").show();
+        $("#idPath").show();
+    });
 });

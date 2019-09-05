@@ -67,9 +67,9 @@ function showCurrentTrackAndPlayInPlayer() {
     }
 
     audio.attr("src", "play/" + currentTitle.text());
-    $("#titleOfTab").html(currentTitle.text());
     hrefTitleForDownload = currentTitle.text();
     currentTrack.append(currentTitle.text().replace(".mp3", ""));
+    $("#titleOfTab").html(currentTitle.text().replace(".mp3", ""));
 }
 
 function nextPrevTrackButtons() {
@@ -104,7 +104,7 @@ nextTrackButton.on("click", function () {
         prevTrackButton.prop('disabled', false);
     }
 
-    nextPrevTrackButtons(indexIteration);
+    nextPrevTrackButtons();
     console.log("Next: " + currentTitle.text());
     indexIteration++;
 });
@@ -121,7 +121,7 @@ prevTrackButton.on("click", function () {
     }
 
     indexIteration = indexIteration - 2;
-    nextPrevTrackButtons(indexIteration);
+    nextPrevTrackButtons();
     console.log("Previous: " + currentTitle.text());
     indexIteration++;
 });

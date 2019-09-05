@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Controller
@@ -28,14 +27,18 @@ public class MusicPlayerController {
     }
 
     @PostMapping("/welcome")
-    public String setPathToFolder(@RequestParam String pathToFolder, HttpServletResponse response) {
-        track.setPathToFolder(pathToFolder);
+    public String setPathToFolder(@RequestParam String pathToFolder, HttpServletRequest request,
+                                  HttpServletResponse response) {
         musicPlayerService.setPathToCookie(pathToFolder, response);
+        musicPlayerService.getPathFromCookie(request);
+        track.setPathToFolder(pathToFolder);
         return "redirect:/";
     }
 
     @PostMapping("/favourite")
-    public String setFavourite(Model model, @RequestParam String trackTitle, HttpServletResponse response) throws IOException, BitstreamException, InterruptedException {
+    public String setFavourite(Model model, @RequestParam String trackTitle,
+                               HttpServletRequest request, HttpServletResponse response)
+            throws IOException, BitstreamException, InterruptedException {
         musicPlayerService.setPathToCookie(track.getPathToFolder(), response);
         musicPlayerService.setFavouriteTracksToCookie(trackTitle, response);
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
@@ -45,14 +48,22 @@ public class MusicPlayerController {
     }
 
     @GetMapping("/deleteFavourite/{trackTitle}")
-    public String deleteFromFavourite(@PathVariable String trackTitle, HttpServletRequest request, HttpServletResponse response) {
+    public String deleteFromFavourite(@PathVariable String trackTitle, HttpServletRequest request,
+                                      HttpServletResponse response) {
         musicPlayerService.removeTrackFromFavourite(trackTitle, request, response);
         return "redirect:/favourite";
     }
 
+    @GetMapping("/deletePath")
+    public String deletePathFromCookie(HttpServletRequest request, HttpServletResponse response) {
+        musicPlayerService.removeAllPathFromCookie(request, response);
+        return "redirect:/";
+    }
+
     @GetMapping("/")
     public String common(Model model, HttpServletRequest request) throws IOException, BitstreamException {
-        musicPlayerService.setPathFromCookie(request);
+        musicPlayerService.getPathFromCookie(request);
+        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
         model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
@@ -60,7 +71,8 @@ public class MusicPlayerController {
 
     @GetMapping("/favourite")
     public String favourite(Model model, HttpServletRequest request) throws IOException, BitstreamException {
-        musicPlayerService.setPathFromCookie(request);
+        musicPlayerService.getPathFromCookie(request);
+        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         model.addAttribute("favouriteTrackList", musicPlayerService.getFavouriteTracks(request));
         model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
@@ -74,7 +86,8 @@ public class MusicPlayerController {
 
     @GetMapping("/shuffle")
     public String shuffle(Model model, HttpServletRequest request) throws IOException, BitstreamException {
-        musicPlayerService.setPathFromCookie(request);
+        musicPlayerService.getPathFromCookie(request);
+        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         model.addAttribute("trackList",
                 musicPlayerService.getShuffleMusic());
         model.addAttribute("currentPath", track.getPathToFolder());
@@ -83,8 +96,8 @@ public class MusicPlayerController {
 
     @GetMapping(value = "/play/{pathName}")
     public ResponseEntity play(@PathVariable String pathName,
-                               HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
-        musicPlayerService.setPathFromCookie(request);
+                               HttpServletRequest request, HttpServletResponse response) throws IOException {
+        musicPlayerService.getPathFromCookie(request);
         System.out.println("Selected: " + track.getPathToFolder());
         response.setHeader("Accept-Ranges", "bytes");
         track.setFullTitle(pathName);
@@ -94,8 +107,8 @@ public class MusicPlayerController {
 
     @GetMapping(value = "/download/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity download(@PathVariable String pathName, HttpServletRequest request)
-            throws FileNotFoundException {
-        musicPlayerService.setPathFromCookie(request);
+            throws IOException {
+        musicPlayerService.getPathFromCookie(request);
         System.out.println("Selected: " + track.getPathToFolder());
         track.setFullTitle(pathName);
         String process = "Download";
@@ -105,31 +118,24 @@ public class MusicPlayerController {
     @GetMapping("/{sortName}={directory}")
     public String sort(Model model, @PathVariable String sortName, @PathVariable String directory,
                        HttpServletRequest request) throws IOException, BitstreamException {
-        musicPlayerService.setPathFromCookie(request);
+        musicPlayerService.getPathFromCookie(request);
         model.addAttribute("trackList",
                 musicPlayerService.sort(sortName, directory));
         model.addAttribute("currentPath", track.getPathToFolder());
-        return "index.html";
-    }
-
-    @GetMapping("/search")
-    public String search(Model model, @RequestParam String trackTitle, HttpServletRequest request)
-            throws IOException, BitstreamException {
-        musicPlayerService.setPathFromCookie(request);
-        model.addAttribute("trackList", musicPlayerService.search(trackTitle));
-        model.addAttribute("currentPath", track.getPathToFolder());
+        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         return "index.html";
     }
 
     @PostMapping("/upload")
     public String upload(Model model, @RequestParam MultipartFile uploadTrack, HttpServletRequest request)
             throws IOException, BitstreamException, InterruptedException {
-        musicPlayerService.setPathFromCookie(request);
+        musicPlayerService.getPathFromCookie(request);
         model.addAttribute("resultUpload",
                 musicPlayerService.uploadTrack(track.getPathToFolder(), uploadTrack));
         model.addAttribute("currentPath", track.getPathToFolder());
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
         Thread.sleep(1000);
+        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         return "redirect:/";
     }
 }
