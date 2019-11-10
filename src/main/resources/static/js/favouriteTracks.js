@@ -2,6 +2,7 @@ var scrollPositionOnTitle;
 var notification = $("#notification");
 
 $(".setFavourite").on('click', function () {
+    $(".setFavouriteClass").val(titleOfTrackInPlayer.text() + ".mp3");
     scrollPositionOnTitle = $(document).scrollTop();
     sessionStorage.setItem("scrollPositionOnClickFavourite", scrollPositionOnTitle);
     notification.fadeIn();

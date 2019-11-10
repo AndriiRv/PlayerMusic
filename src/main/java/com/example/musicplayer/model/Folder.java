@@ -1,4 +1,4 @@
-package com.example.musicplayer.object;
+package com.example.musicplayer.model;
 
 import org.springframework.stereotype.Component;
 

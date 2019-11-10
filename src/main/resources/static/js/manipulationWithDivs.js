@@ -1,11 +1,27 @@
 var scrollPositionOnTitle;
+var inputSearchTrack = $("#searchTrack");
 
 $(document).ready(function () {
-    var player = $("#player");
+    var desktopPlayer = $("#player");
     var backToListCounter = 0;
     var counterToScrollToPlayer = 0;
 
-    $("#searchTrack").on("keyup", function () {
+    var smallPlayer = $('#smallPlayer');
+    $(window).scroll(function () {
+        if ($(document).scrollTop() >= 20) {
+            $("#audioId").prop('hidden', false);
+            smallPlayer.css({
+                "display": "block"
+            });
+        } else {
+            $("#audioId").prop('hidden', true);
+            smallPlayer.css({
+                "display": "none"
+            });
+        }
+    });
+
+    inputSearchTrack.on("keyup", function () {
         var inputTitle = $(this).val().toLowerCase();
         $("#mainTableTBody tr").filter(function () {
             $(this).toggle($(this).text().toLowerCase().indexOf(inputTitle) > -1);
@@ -14,8 +30,8 @@ $(document).ready(function () {
 
     $(".titleOfTrackInTable").on('click', function () {
         scrollPositionOnTitle = $(document).scrollTop();
-        player.css({"display": "flex"});
-        player.show();
+        desktopPlayer.css({"display": "flex"});
+        desktopPlayer.show();
         counterToScrollToPlayer++;
         if (counterToScrollToPlayer === 1) {
             $('html, body').animate({

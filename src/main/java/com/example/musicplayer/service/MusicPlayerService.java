@@ -1,7 +1,7 @@
 package com.example.musicplayer.service;
 
-import com.example.musicplayer.object.Folder;
-import com.example.musicplayer.object.Track;
+import com.example.musicplayer.model.Folder;
+import com.example.musicplayer.model.Track;
 import com.example.musicplayer.repositories.MusicPlayerRepository;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
@@ -41,7 +41,7 @@ public class MusicPlayerService {
         this.folder = folder;
     }
 
-    public List<Track> getMusic(String pathToFolder) throws IOException, BitstreamException {
+    public List<Track> getMusic(String pathToFolder) {
         if (pathToFolder == null) {
             return null;
         } else {
@@ -49,7 +49,7 @@ public class MusicPlayerService {
         }
     }
 
-    public Map<String, String> putLetters() {
+    private Map<String, String> putLetters() {
         letters.put("а", "a");
         letters.put("б", "b");
         letters.put("в", "v");
@@ -87,7 +87,7 @@ public class MusicPlayerService {
         return letters;
     }
 
-    public String toTransliteration(String text) {
+    private String toTransliteration(String text) {
         StringBuilder stringBuilder = new StringBuilder(text.length());
         for (int i = 0; i < text.length(); i++) {
             String letter = text.substring(i, i + 1);
@@ -170,7 +170,7 @@ public class MusicPlayerService {
         response.addCookie(cookie);
     }
 
-    public List<Track> getFavouriteTracks(HttpServletRequest request) throws IOException, BitstreamException {
+    public List<Track> getFavouriteTracks(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String cookieValue;
 
@@ -199,6 +199,10 @@ public class MusicPlayerService {
     public void removeTrackFromFavourite(String trackTitle, HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String cookieValue;
+
+        if (trackTitle.contains("#")) {
+            trackTitle = trackTitle.toLowerCase().replaceAll("\\W", "");
+        }
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -238,7 +242,7 @@ public class MusicPlayerService {
         return "Error - track hasn't mp3 extension";
     }
 
-    public List<Track> getShuffleMusic() throws IOException, BitstreamException {
+    public List<Track> getShuffleMusic() {
         List<Track> shuffledMusic = musicPlayerRepository.getMusic(track, track.getPathToFolder());
         Collections.shuffle(shuffledMusic);
         return shuffledMusic;
@@ -257,7 +261,7 @@ public class MusicPlayerService {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
-    public List<Track> sort(String sort, String directory) throws IOException, BitstreamException {
+    public List<Track> sort(String sort, String directory) {
         List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
         String variable = null;
 
@@ -275,7 +279,7 @@ public class MusicPlayerService {
                 variable = "date";
                 break;
         }
-        Integer lengthList = allTracks.size();
+        int lengthList = allTracks.size();
         Track[] tracks = allTracks.toArray(new Track[lengthList]);
         if (directory.equals("ASC")) {
             allTracks = insertSort(tracks, '>', variable);
@@ -354,7 +358,7 @@ public class MusicPlayerService {
         return Arrays.asList(tracks);
     }
 
-    public List<Track> search(String trackTitle) throws IOException, BitstreamException {
+    public List<Track> search(String trackTitle) {
         String lowerCaseTrackTitle = trackTitle.toLowerCase();
         List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
         List<Track> searchedTracks = new ArrayList<>();
@@ -372,7 +376,7 @@ public class MusicPlayerService {
         return searchedTracks;
     }
 
-    public ResponseEntity<ByteArrayResource> mediaResourceProcessing(String process) throws IOException {
+    public ResponseEntity<ByteArrayResource> mediaResourceProcessing(String process, HttpServletRequest request) throws IOException {
         String pathName = track.getFullTitle();
         if (pathName.contains("%5B")) {
             pathName = pathName.replace("%5B", "[").replace("%5D", "]");
@@ -389,7 +393,7 @@ public class MusicPlayerService {
         return new ResponseEntity<>(byteArrayResource, httpHeaders, HttpStatus.OK);
     }
 
-    public String currentTime() {
+    private String currentTime() {
         String hour = String.valueOf(LocalTime.now().getHour());
         String minutes = String.valueOf(LocalTime.now().getMinute());
         String second = String.valueOf(LocalTime.now().getSecond());
@@ -404,7 +408,7 @@ public class MusicPlayerService {
         return formatNumberForDateAndTime(day) + "." + formatNumberForDateAndTime(month) + "." + year;
     }
 
-    public String formatNumberForDateAndTime(String variable) {
+    private String formatNumberForDateAndTime(String variable) {
         if (variable.length() == 1) {
             variable = "0" + variable;
         }

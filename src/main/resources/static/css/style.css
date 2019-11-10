@@ -5,7 +5,7 @@ html, body {
     background-attachment: fixed;
 }
 
-#acceptCookie {
+#acceptCookieDiv {
     display: none;
     background-color: white;
     text-align: center;
@@ -29,8 +29,8 @@ a, a:hover {
 
 @media screen and (min-width: 1024px) {
     .table {
-        width: 70%;
-        margin-left: 15%
+        width: 50%;
+        margin-left: 25%
     }
 }
 
@@ -50,14 +50,22 @@ a, a:hover {
     height: 50px;
 }
 
-#setFavouriteButton {
+.setFavouriteClass {
     background-color: transparent;
     border: none;
     background-image: url('../images/favourite.svg');
-    background-size: 40px 40px;
-    height: 40px;
-    width: 40px;
+    background-size: 20px 20px;
+    height: 20px;
+    width: 20px;
     color: transparent;
+}
+
+@media screen and (max-width: 600px) {
+    #setFavouriteButton {
+        background-size: 40px 40px;
+        height: 40px;
+        width: 40px;
+    }
 }
 
 #favouriteTracksButton {
@@ -78,6 +86,11 @@ footer {
     text-decoration: underline;
     cursor: pointer;
     color: white;
+}
+
+.titleOfTrackInTable {
+    width: 50%;
+    float: left;
 }
 
 #shuffle {

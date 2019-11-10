@@ -2,9 +2,9 @@
     display: none;
     background-color: transparent;
     border: none;
-    background-size: 100px 100px;
-    height: 100px;
-    width: 100px;
+    background-size: 80px 80px;
+    height: 80px;
+    width: 80px;
 }
 
 #playButton {
@@ -18,9 +18,9 @@
 #prevTrackButton, #nextTrackButton {
     background-color: transparent;
     border: none;
-    background-size: 100px 100px;
-    height: 100px;
-    width: 100px;
+    background-size: 80px 80px;
+    height: 80px;
+    width: 80px;
 }
 
 #prevTrackButton {

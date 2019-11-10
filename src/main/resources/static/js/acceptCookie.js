@@ -1,11 +1,11 @@
 if (!getCookie("acceptedCookie")) {
-    $("#acceptCookie").show();
+    $("#acceptCookieDiv").show();
 } else {
-    $("#acceptCookie").hide();
+    $("#acceptCookieDiv").hide();
 }
 
 $("#acceptCookieButton").on('click', function () {
-    $("#acceptCookie").hide();
+    $("#acceptCookieDiv").hide();
     var getDateForCookie = new Date(Date.now() + 31536000e3);
     getDateForCookie = getDateForCookie.toUTCString();
     document.cookie = "acceptedCookie=true; expires=" + getDateForCookie;
@@ -17,7 +17,7 @@ $("#declineCookieButton").on('click', function () {
         var splitCookies = cookies[i].split("=");
         document.cookie = splitCookies[0] + "=;expires=Thu, 21 Sep 1979 00:00:01 UTC;";
     }
-    $("#acceptCookie").hide();
+    $("#acceptCookieDiv").hide();
 });
 
 function getCookie(name) {

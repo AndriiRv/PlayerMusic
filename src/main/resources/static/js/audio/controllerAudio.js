@@ -1,13 +1,20 @@
 var currentTitle;
+
 var playButton = $("#playButton");
 var pauseButton = $("#pauseButton");
+
 var nextTrackButton = $("#nextTrackButton");
 var prevTrackButton = $("#prevTrackButton");
+
 var loopButton = $("#loopButton");
 var tableTr = $('table tbody tr');
 var rowCount = tableTr.length - 1;
 var indexIteration = 0;
 var counterForLoop = 0;
+var counterForTrackIsPlay = 0;
+
+var intervalTransparentColorCurrentTime = null;
+var intervalCommonColorCurrentTime = null;
 
 nextTrackButton.prop('disabled', false);
 prevTrackButton.prop('disabled', false);
@@ -17,16 +24,36 @@ playButton.on('click', function () {
     $("#icon").attr("href", "/images/iconPlay.ico");
     playButton.hide();
     pauseButton.show();
+    showCurrentTimeTrack();
 });
 
+function showCurrentTimeTrack(){
+    clearInterval(intervalTransparentColorCurrentTime);
+    clearInterval(intervalCommonColorCurrentTime);
+    currentTimeSelector.css({"color": "white"});
+}
+
+function hideCurrentTimeTrack(){
+    intervalTransparentColorCurrentTime = setInterval(function () {
+        currentTimeSelector.css({"color": "transparent"});
+    }, 500);
+    intervalCommonColorCurrentTime = setInterval(function () {
+        currentTimeSelector.css({"color": "white"});
+    }, 1000);
+}
+
 pauseButton.on('click', function () {
+    counterForTrackIsPlay++;
     audio.get(0).pause();
     $("#icon").attr("href", "/images/iconPause.ico");
     pauseButton.hide();
     playButton.show();
+    hideCurrentTimeTrack();
 });
 
 tableTr.on('click', function () {
+    clearInterval(intervalTransparentColorCurrentTime);
+    clearInterval(intervalCommonColorCurrentTime);
     indexIteration = $(this).index();
     currentTitle = null;
     nextTrackButton.show();
@@ -58,8 +85,8 @@ $(".audioClass").bind("ended", function () {
 });
 
 function showCurrentTrackAndPlayInPlayer() {
-    var currentTrack = $('#titleOfTrackInPlayer');
-    currentTrack.empty();
+    // var titleOfTrackInPlayer = $('#titleOfTrackInPlayer');
+    titleOfTrackInPlayer.empty();
     currentTitle = titleOfTrackInTable.eq(indexIteration);
 
     if (indexIteration >= rowCount) {
@@ -68,11 +95,14 @@ function showCurrentTrackAndPlayInPlayer() {
 
     audio.attr("src", "play/" + currentTitle.text());
     hrefTitleForDownload = currentTitle.text();
-    currentTrack.append(currentTitle.text().replace(".mp3", ""));
+    titleOfTrackInPlayer.append(currentTitle.text().replace(".mp3", ""));
     $("#titleOfTab").html(currentTitle.text().replace(".mp3", ""));
 }
 
 function nextPrevTrackButtons() {
+    volumeBoost();
+    clearInterval(intervalTransparentColorCurrentTime);
+    clearInterval(intervalCommonColorCurrentTime);
     titleOfTrackInTable.css({
         "background": "none",
         "color": "white"

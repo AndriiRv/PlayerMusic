@@ -1,4 +1,5 @@
 var titleOfTrackInTable = $(".titleOfTrackInTable");
+var titleOfTrackInPlayer = $('#titleOfTrackInPlayer');
 var audio = $("#audioId");
 var durationSelector = $("#duration");
 var currentTimeSelector = $("#currentTime");
@@ -6,8 +7,28 @@ var download = $("#download");
 var hrefTitleForDownload;
 var barAllPlayed = $("#barAllPlayed");
 var barPlay = $("#barPlay");
+var intervalVolumeBoost = null;
+
+function volumeBoost() {
+    clearInterval(intervalVolumeBoost);
+    var volumeBoost = 0;
+
+    intervalVolumeBoost = setInterval(function () {
+        if (audio.get(0).currentTime <= 1.5) {
+            audio.get(0).volume = 0;
+        }
+        volumeBoost += 0.01;
+        audio.get(0).volume = volumeBoost;
+
+        if (audio.get(0).volume >= 0.3) {
+            clearInterval(intervalVolumeBoost);
+        }
+    }, 100);
+}
 
 titleOfTrackInTable.on('click', function () {
+    volumeBoost();
+
     playButton.hide();
     pauseButton.show();
     titleOfTrackInTable.css({
@@ -20,15 +41,21 @@ titleOfTrackInTable.on('click', function () {
         if (nameOfTrack.includes('[')) {
             nameOfTrack = nameOfTrack.replace('[', '%5B').replace(']', '%5D');
         }
+        if (nameOfTrack.includes('#')) {
+            nameOfTrack = nameOfTrack.replace('#', '%23');
+        }
     }
 
-    var currentTrack = $('#titleOfTrackInPlayer');
-    currentTrack.empty();
+    // var currentTrack = $('#titleOfTrackInPlayer');
+    titleOfTrackInPlayer.empty();
     audio.attr("src", "play/" + nameOfTrack);
 
     for (var j = 0; j <= String(nameOfTrack).length; j++) {
         if (nameOfTrack.includes('%5B')) {
             nameOfTrack = nameOfTrack.replace('%5B', '[').replace('%5D', ']');
+        }
+        if (nameOfTrack.includes('%23')) {
+            nameOfTrack = nameOfTrack.replace('%23', '#');
         }
     }
 
@@ -45,7 +72,7 @@ titleOfTrackInTable.on('click', function () {
     $("#titleOfTab").html(nameOfTrack);
 
     console.log("Manual select: " + nameOfTrack);
-    currentTrack.append(nameOfTrack);
+    titleOfTrackInPlayer.append(nameOfTrack);
     audio.get(0).onloadedmetadata = function () {
         var duration = audio.get(0).duration;
         getTime(duration, durationSelector);

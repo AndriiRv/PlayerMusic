@@ -9,6 +9,7 @@ volumeSliderRange.on('click', function () {
 });
 
 volumeSliderRange.on('change', function () {
+    clearInterval(intervalVolumeBoost);
     audio.get(0).muted = false;
     audio.get(0).volume = $(this).val();
     currentValueVolume = audio.get(0).volume;

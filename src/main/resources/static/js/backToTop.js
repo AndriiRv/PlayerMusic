@@ -1,5 +1,5 @@
 var backToTop = $('#backToTop');
-if (backToTop.length) {
+// if (backToTop.length) {
     var scrollTrigger = 100,
         doBackToTop = function () {
             var scrollTop = $(window).scrollTop();
@@ -21,4 +21,4 @@ if (backToTop.length) {
             scrollTop: 0
         }, 700);
     });
-}
+// }
