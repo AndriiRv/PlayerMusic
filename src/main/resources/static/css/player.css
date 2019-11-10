@@ -19,13 +19,6 @@
     z-index: 1;
 }
 
-#additionalTable {
-    display: none;
-    height: 700px;
-    overflow: auto;
-    z-index: 1;
-}
-
 #themeLogo {
     background-image: url('../images/themeLogo.png');
     background-size: 580px 144px;
