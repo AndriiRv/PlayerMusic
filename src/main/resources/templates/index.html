@@ -95,6 +95,7 @@
         <div class="row d-flex justify-content-center">
             <div class="mb-3">
                 <a href="/" th:text="${currentPath}"></a>
+
                 <form method="post" id="submitFormPath" action="/welcome"
                       th:if="${not #lists.isEmpty(allWrotePath)}">
                     <label for="idSelectPath">Select previously entered path:</label>
@@ -106,9 +107,11 @@
                     </select>
                     <button type="submit" id="submitPathToFolderButton">Accept</button>
                 </form>
+
                 <form method="post" action="/deletePath" th:if="${not #lists.isEmpty(allWrotePath)}">
                     <button id="clearWrotePath" type="submit">Clear ready paths</button>
                 </form>
+
                 <p th:if="${#lists.isEmpty(allWrotePath)}">Input path manually</p>
                 <form method="post" action="/welcome">
                     <div class="mb-3">

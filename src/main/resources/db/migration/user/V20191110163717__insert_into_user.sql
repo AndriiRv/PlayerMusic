@@ -1,0 +1,6 @@
+-- TRUNCATE "user" CASCADE;
+--
+-- INSERT INTO "user" (credential_id, surname, name, role_id)
+-- VALUES (1, 'Reva', 'Andrii', 1),
+--        (2, 'Shevchenko', 'Katya', 1),
+--        (3, 'SurnameAdmin', 'NameAdmin', 2);

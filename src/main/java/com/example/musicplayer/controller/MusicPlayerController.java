@@ -26,11 +26,12 @@ public class MusicPlayerController {
     }
 
     @PostMapping("/welcome")
-    public String setPathToFolder(@RequestParam String pathToFolder, HttpServletRequest request,
-                                  HttpServletResponse response) {
-        musicPlayerService.setPathToCookie(pathToFolder, response);
-        musicPlayerService.getPathFromCookie(request);
-        track.setPathToFolder(pathToFolder);
+    public String setPathToFolder(@RequestParam String pathToFolder) {
+        musicPlayerService.setPathToFolder(1, pathToFolder);
+        musicPlayerService.getPathToFolder(1);
+//        musicPlayerService.setPathToCookie(pathToFolder, response);
+//        musicPlayerService.getPathFromCookie(request);
+//        track.setPathToFolder(pathToFolder);
         return "redirect:/";
     }
 

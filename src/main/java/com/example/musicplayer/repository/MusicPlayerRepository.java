@@ -1,7 +1,11 @@
-package com.example.musicplayer.repositories;
+package com.example.musicplayer.repository;
 
 import com.example.musicplayer.model.Track;
 import javazoom.jl.decoder.BitstreamException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
@@ -20,6 +24,26 @@ import static com.example.musicplayer.service.MusicPlayerService.getDuration;
 
 @Repository
 public class MusicPlayerRepository {
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public MusicPlayerRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public void setPathToFolder(int userId, String pathToFolder) {
+        String sql = "INSERT INTO path_to_folder (user_id, path) VALUES(:user_id, :path)";
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("path", pathToFolder);
+        jdbcTemplate.update(sql, parameterSource);
+    }
+
+    public String getPathToFolder(int userId) {
+        String sql = "SELECT path FROM path_to_folder WHERE user_id = :user_id";
+        SqlParameterSource parameterSource = new MapSqlParameterSource("user_id", userId);
+        return jdbcTemplate.queryForObject(sql, parameterSource, String.class);
+    }
 
     public List<Track> getMusic(Track track, String pathToFolder) {
         int id = 0;

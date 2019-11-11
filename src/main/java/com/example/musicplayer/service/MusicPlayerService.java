@@ -2,7 +2,7 @@ package com.example.musicplayer.service;
 
 import com.example.musicplayer.model.Folder;
 import com.example.musicplayer.model.Track;
-import com.example.musicplayer.repositories.MusicPlayerRepository;
+import com.example.musicplayer.repository.MusicPlayerRepository;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Header;
@@ -39,6 +39,14 @@ public class MusicPlayerService {
         this.musicPlayerRepository = musicPlayerRepository;
         this.track = track;
         this.folder = folder;
+    }
+
+    public void setPathToFolder(int userId, String pathToFolder) {
+        musicPlayerRepository.setPathToFolder(userId, pathToFolder);
+    }
+
+    public String getPathToFolder(int userId) {
+        return musicPlayerRepository.getPathToFolder(userId);
     }
 
     public List<Track> getMusic(String pathToFolder) {

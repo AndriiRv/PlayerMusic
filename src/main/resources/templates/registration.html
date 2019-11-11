@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+</head>
+<body>
+
+<span th:if="${userRegistrationResult}">
+    <ul th:each="error: ${userRegistrationResult.errors}">
+        <li th:text="${error}"></li>
+    </ul>
+</span>
+
+<form method="post" action="/registration">
+    <label text="Your name">
+        <input type="text" name="name" placeholder="your name" th:value="${userRegistration.name}" required/>
+    </label>
+    <label text="Your surname">
+        <input type="text" name="surname" placeholder="your surname" th:value="${userRegistration.surname}" required/>
+    </label>
+    <label text="Your username">
+        <input type="text" name="username" placeholder="your username" th:value="${userRegistration.username}" required/>
+    </label>
+    <label text="Your password">
+        <input type="password" name="password" placeholder="your password" th:value="${userRegistration.password}" required/>
+    </label>
+    <label text="Confirmation your password">
+        <input type="password" name="passwordConfirmation" placeholder="confirmation your password" th:value="${userRegistration.passwordConfirmation}"
+               required/>
+    </label>
+    <label text="Your email">
+        <input type="email" name="email" placeholder="your email" th:value="${userRegistration.email}" required/>
+    </label>
+
+    <button type="submit">Create account</button>
+</form>
+
+</body>
+</html>
