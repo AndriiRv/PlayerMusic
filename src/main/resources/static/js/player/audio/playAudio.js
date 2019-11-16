@@ -3,7 +3,6 @@ var titleOfTrackInPlayer = $('#titleOfTrackInPlayer');
 var audio = $("#audioId");
 var durationSelector = $("#duration");
 var currentTimeSelector = $("#currentTime");
-var download = $("#download");
 var hrefTitleForDownload;
 var barAllPlayed = $("#barAllPlayed");
 var barPlay = $("#barPlay");
@@ -106,8 +105,3 @@ function getTime(time, selector) {
     }
     selector.html(hr + ":" + min + ':' + sec);
 }
-
-download.on('click', function () {
-    window.location.href = 'download/' + hrefTitleForDownload;
-    console.log("Download: " + hrefTitleForDownload);
-});

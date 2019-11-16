@@ -17,7 +17,7 @@
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-
+<h2 th:text="'Hello ' + ${name} + '!'" style="color: white"></h2>
 <div id="acceptCookieDiv">
     We use cookies to enhance your experience on our site. By accepting our cookie policy you agreeing to our use of
     cookies.
@@ -75,13 +75,13 @@
             <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.5"/>
             <button id="volumeMax" disabled></button>
         </div>
-        <div id="backToList">
-            <button id="backToListButton"></button>
-        </div>
+        <!--        <div id="backToList">-->
+        <!--            <button id="backToListButton"></button>-->
+        <!--        </div>-->
     </div>
     <div id="right">
         <div id="searchTrackInSystem">
-            <button id="download"></button>
+            <button class="downloadButton"></button>
             <button id="findInGoogle"></button>
             <button id="findInYouTube"></button>
         </div>
@@ -102,7 +102,7 @@
                     <select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">
                         <option th:each="folder: ${allWrotePath}"
                                 th:value="${folder.path}"
-                                th:text="${folder.id} + '. ' +  ${folder.path}">
+                                th:text="${folder.path}">
                         </option>
                     </select>
                     <button type="submit" id="submitPathToFolderButton">Accept</button>
@@ -112,14 +112,15 @@
                     <button id="clearWrotePath" type="submit">Clear ready paths</button>
                 </form>
 
-                <p th:if="${#lists.isEmpty(allWrotePath)}">Input path manually</p>
-                <form method="post" action="/welcome">
-                    <div class="mb-3">
-                        <label></label>
-                        <input type="text" name="pathToFolder" id="idPath" class="form-control"
-                               value="" placeholder="Like: 'D:/'" maxlength="120" required>
-                    </div>
-                </form>
+                <div id="manuallyInputPathId">
+                    <form method="post" action="/welcome">
+                        <div class="mb-3">
+                            <label for="manuallyInputPathInputId" style="margin-top: 25px;">Manually input path</label>
+                            <input id="manuallyInputPathInputId" type="text" name="pathToFolder" class="form-control"
+                                   value="" placeholder="ex.: D:/'" maxlength="120" required>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="mb-3">
@@ -174,27 +175,27 @@
                             class="custom-select"
                             required onchange="location = this.value;">
                         <option value="/"></option>
-                        <option value="/date=DESC">By default</option>
-                        <option value="/title=ASC">By ascending</option>
-                        <option value="/title=DESC">By descending</option>
-                        <option value="/size=ASC">By smaller</option>
-                        <option value="/size=DESC">By bigger</option>
-                        <option value="/date=ASC">Reverse order</option>
-                        <option value="/length=ASC">By shorter</option>
-                        <option value="/length=DESC">By longer</option>
+                        <option value="/date=DESC">Last added</option>
+                        <option value="/title=ASC">Alphabetically</option>
+                        <option value="/title=DESC">Reverse alphabetically</option>
+                        <option value="/size=ASC">Smaller size</option>
+                        <option value="/size=DESC">Bigger size</option>
+                        <option value="/date=ASC">First added</option>
+                        <option value="/length=ASC">Shorter length</option>
+                        <option value="/length=DESC">Longer length</option>
                     </select>
                 </th>
             </tr>
             <tr>
-                <td colspan="3">
+                <th colspan="2">
                     <label for="searchTrack" hidden>Find track</label>
                     <input type="text" name="trackTitle" class="form-control" placeholder="Find track"
                            id="searchTrack" maxlength="60" value="" required>
-                </td>
+                </th>
             </tr>
-            <tr></tr>
             </thead>
             <tbody th:if="${not #lists.isEmpty(trackList)}" id="mainTableTBody">
+
             <tr style="color: white;">
                 <td colspan="3"><a th:href="@{'/shuffle'}">Shuffle!</a></td>
             </tr>
@@ -205,6 +206,7 @@
                     <div th:text="${track.length}"></div>
                     <div th:text="${track.date} + ' ' + ${track.time}"></div>
                     <div th:text="${track.size} + ' MB'"></div>
+                    <!--                    <button class="downloadButton"></button>-->
                     <div class="setFavourite">
                         <form method="post" action="/favourite">
                             <input class="setFavouriteClass" name="trackTitle" type="submit"
@@ -226,6 +228,7 @@
 <script th:src="@{/js/table/acceptCookie.js}"></script>
 <script th:src="@{/js/table/favouriteTracks.js}"></script>
 <script th:src="@{/js/table/manipulationWithDivs.js}"></script>
+<script th:src="@{/js/table/downloadTrack.js}"></script>
 <script th:src="@{/js/player/audio/volume.js}"></script>
 <script th:src="@{/js/player/audio/playAudio.js}"></script>
 <script th:src="@{/js/player/audio/controllerAudio.js}"></script>

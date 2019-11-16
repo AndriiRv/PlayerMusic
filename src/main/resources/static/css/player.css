@@ -193,7 +193,7 @@
     z-index: 3;
 }
 
-#download {
+.downloadButton {
     background-color: transparent;
     border: none;
     background-image: url('../images/download.svg');

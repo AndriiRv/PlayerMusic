@@ -116,6 +116,6 @@ footer {
     font-size: 45px;
 }
 
-#submitPathToFolderButton, #clearWrotePath, #idPath {
+#submitPathToFolderButton, #clearWrotePath {
     display: none;
 }

@@ -53,20 +53,19 @@ $(document).ready(function () {
         }, 700);
     });
 
-    var cookie = document.cookie;
-    if (cookie.includes("fav")) {
-        $("#favouriteTracksButton").css({"display": "block"});
-    } else {
-        $("#favouriteTracksButton").css({"display": "none"});
-    }
-
-    if (!cookie.includes("path")) {
-        $("#idPath").show();
-    }
+    // var cookie = document.cookie;
+    // if (cookie.includes("fav")) {
+    //     $("#favouriteTracksButton").css({"display": "block"});
+    // } else {
+    //     $("#favouriteTracksButton").css({"display": "none"});
+    // }
+    //
+    // if (!cookie.includes("path")) {
+    //     $("#idPath").show();
+    // }
 
     $("#submitFormPath").on('click', function () {
         $("#submitPathToFolderButton").show();
         $("#clearWrotePath").show();
-        $("#idPath").show();
     });
 });
