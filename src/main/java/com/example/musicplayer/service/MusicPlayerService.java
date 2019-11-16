@@ -22,31 +22,53 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.logging.Logger;
 
 @Service
 public class MusicPlayerService {
     private final MusicPlayerRepository musicPlayerRepository;
     private final Track track;
-    private final Folder folder;
-    private static Logger log = Logger.getLogger(MusicPlayerService.class.getName());
     private final Map<String, String> letters = new HashMap<>();
 
     @Autowired
     public MusicPlayerService(MusicPlayerRepository musicPlayerRepository,
-                              Track track,
-                              Folder folder) {
+                              Track track) {
         this.musicPlayerRepository = musicPlayerRepository;
         this.track = track;
-        this.folder = folder;
     }
 
     public void setPathToFolder(int userId, String pathToFolder) {
-        musicPlayerRepository.setPathToFolder(userId, pathToFolder);
+        if (musicPlayerRepository.isPathSetForUser(userId, pathToFolder) <= 0) {
+            musicPlayerRepository.setPathToFolder(userId, pathToFolder);
+        }
     }
 
-    public String getPathToFolder(int userId) {
-        return musicPlayerRepository.getPathToFolder(userId);
+    public List<Folder> getPathsToFolder(int userId) {
+        return musicPlayerRepository.getPathsToFolder(userId);
+    }
+
+    public String getPathToFolder(int userId, String pathToFolder) {
+        List<Folder> pathsToFolder = getPathsToFolder(userId);
+        String selectedPath = null;
+
+        for (Folder folder : pathsToFolder) {
+            if (folder.getPath().equals(pathToFolder)) {
+                selectedPath = folder.getPath();
+            }
+        }
+        System.out.println(selectedPath);
+        return selectedPath;
+    }
+
+    public String getLastSelectedPathToFolder(int userId) {
+        List<Folder> pathsToFolder = getPathsToFolder(userId);
+        String lastSelectedPath = null;
+
+        for (Folder folder : pathsToFolder) {
+            folder = pathsToFolder.get(pathsToFolder.size() - 1);
+            lastSelectedPath = folder.getPath();
+        }
+        System.out.println(lastSelectedPath);
+        return lastSelectedPath;
     }
 
     public List<Track> getMusic(String pathToFolder) {
@@ -104,79 +126,24 @@ public class MusicPlayerService {
         return stringBuilder.toString();
     }
 
-    public void setPathToCookie(String pathToFolder, HttpServletResponse response) {
-        String changedPath = pathToFolder;
-        if (!pathToFolder.matches("\\W")) {
-            changedPath = changedPath.toLowerCase().replaceAll("\\W", "");
-        }
-        Cookie selectPathCookie = new Cookie("path" + changedPath, pathToFolder);
-        selectPathCookie.setMaxAge(31536000);
-        response.addCookie(selectPathCookie);
-        Cookie commonPathCookie = new Cookie("mainFolder", pathToFolder);
-        commonPathCookie.setMaxAge(31536000);
-        response.addCookie(commonPathCookie);
+    public void removeAllPathsByUserId(int userId) {
+        musicPlayerRepository.removeAllPathsByUserId(userId);
     }
 
-    public void getPathFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String cookieValue;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("mainFolder")) {
-                    cookieValue = cookie.getValue();
-                    track.setPathToFolder(cookieValue);
-                }
-            }
-        }
-    }
-
-    public List<Folder> getAllWroteManuallyPathFromCookie(HttpServletRequest request) {
-        List<Folder> folders = new ArrayList<>();
-        Cookie[] cookies = request.getCookies();
-        String cookieValue;
-        int id = 1;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().contains("path")) {
-                    folder.setId(id++);
-                    cookieValue = cookie.getValue();
-                    folder.setPath(cookieValue);
-                    folders.add(new Folder(folder.getId(), folder.getPath()));
-                }
-            }
-            return folders;
-        }
-        return null;
-    }
-
-    public void removeAllPathFromCookie(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().contains("path")) {
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                }
-            }
-        }
-    }
-
-    public void setFavouriteTracksToCookie(String trackTitle, HttpServletResponse response) {
-        String lowerCaseTitle = trackTitle;
-        lowerCaseTitle = lowerCaseTitle.toLowerCase();
-        lowerCaseTitle = toTransliteration(lowerCaseTitle);
-        if (!trackTitle.matches("\\W")) {
-            lowerCaseTitle = lowerCaseTitle.toLowerCase().replaceAll("\\W", "");
-        }
-        Base64.Encoder enc = Base64.getEncoder();
-        String encoded = enc.encodeToString(trackTitle.getBytes());
-        Cookie cookie = new Cookie("fav" + lowerCaseTitle, encoded);
-        cookie.setMaxAge(31536000);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
+//    public void setFavouriteTracksToCookie(String trackTitle, HttpServletResponse response) {
+//        String lowerCaseTitle = trackTitle;
+//        lowerCaseTitle = lowerCaseTitle.toLowerCase();
+//        lowerCaseTitle = toTransliteration(lowerCaseTitle);
+//        if (!trackTitle.matches("\\W")) {
+//            lowerCaseTitle = lowerCaseTitle.toLowerCase().replaceAll("\\W", "");
+//        }
+//        Base64.Encoder enc = Base64.getEncoder();
+//        String encoded = enc.encodeToString(trackTitle.getBytes());
+//        Cookie cookie = new Cookie("fav" + lowerCaseTitle, encoded);
+//        cookie.setMaxAge(31536000);
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
+//    }
 
     public List<Track> getFavouriteTracks(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -294,7 +261,7 @@ public class MusicPlayerService {
         } else if (directory.equals("DESC")) {
             allTracks = insertSort(tracks, '<', variable);
         }
-        log.info("Selected sort: " + sort.toUpperCase() + " with directory " + directory.toUpperCase()
+        MusicPlayerRepository.log.info("Selected sort: " + sort.toUpperCase() + " with directory " + directory.toUpperCase()
                 + ", " + track.getPathToFolder());
         return allTracks;
     }
@@ -396,7 +363,7 @@ public class MusicPlayerService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentLength(length);
         httpHeaders.setCacheControl(CacheControl.noCache().getHeaderValue());
-        log.info(currentDate() + " | " + currentTime() + " - " + process + ": " + track.getPathToFolder()
+        MusicPlayerRepository.log.info(currentDate() + " | " + currentTime() + " - " + process + ": " + track.getPathToFolder()
                 + "/" + pathName);
         return new ResponseEntity<>(byteArrayResource, httpHeaders, HttpStatus.OK);
     }
@@ -409,7 +376,7 @@ public class MusicPlayerService {
                 + formatNumberForDateAndTime(second);
     }
 
-    public String currentDate() {
+    private String currentDate() {
         String year = String.valueOf(LocalDate.now().getYear());
         String month = String.valueOf(LocalDate.now().getMonthValue());
         String day = String.valueOf(LocalDate.now().getDayOfMonth());

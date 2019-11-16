@@ -1,6 +1,8 @@
 package com.example.musicplayer.repository;
 
+import com.example.musicplayer.model.Folder;
 import com.example.musicplayer.model.Track;
+import com.example.musicplayer.service.MusicPlayerService;
 import javazoom.jl.decoder.BitstreamException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -19,12 +21,15 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import static com.example.musicplayer.service.MusicPlayerService.getDuration;
 
 @Repository
 public class MusicPlayerRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    public static java.util.logging.Logger log = Logger.getLogger(MusicPlayerService.class.getName());
+    private final FolderRowMapper folderRowMapper = new FolderRowMapper();
 
     @Autowired
     public MusicPlayerRepository(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -39,10 +44,23 @@ public class MusicPlayerRepository {
         jdbcTemplate.update(sql, parameterSource);
     }
 
-    public String getPathToFolder(int userId) {
-        String sql = "SELECT path FROM path_to_folder WHERE user_id = :user_id";
+    public List<Folder> getPathsToFolder(int userId) {
+        String sql = "SELECT id, path FROM path_to_folder WHERE user_id = :user_id";
         SqlParameterSource parameterSource = new MapSqlParameterSource("user_id", userId);
-        return jdbcTemplate.queryForObject(sql, parameterSource, String.class);
+        return jdbcTemplate.query(sql, parameterSource, folderRowMapper);
+    }
+
+    public Integer isPathSetForUser(int userId, String pathToFolder) {
+        String sql = "SELECT COUNT(*) FROM path_to_folder WHERE user_id = :user_id AND path = :path";
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("user_id", userId)
+                .addValue("path", pathToFolder);
+        return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
+    }
+
+    public void removeAllPathsByUserId(int userId) {
+        String sql = "DELETE FROM path_to_folder WHERE user_id = :user_id";
+        jdbcTemplate.update(sql, new MapSqlParameterSource("user_id", userId));
     }
 
     public List<Track> getMusic(Track track, String pathToFolder) {
@@ -114,6 +132,7 @@ public class MusicPlayerRepository {
                             track.getDateTime(),
                             track.getDate(),
                             track.getTime()));
+                    log.info("Loaded: " + trackElement.getName());
                 }
             }
             return listOfTracks;
