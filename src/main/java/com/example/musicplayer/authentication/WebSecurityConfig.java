@@ -37,17 +37,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID");
     }
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userService::getUserByUsername).passwordEncoder(new BCryptPasswordEncoder());
-//    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService::getUserByUsername).passwordEncoder(new BCryptPasswordEncoder())
-                .and()
-                .inMemoryAuthentication()
-                .withUser("admin").password("admin").roles("ADMIN");
+        auth.userDetailsService(userService::getUserByUsername).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean
