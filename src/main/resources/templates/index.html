@@ -30,8 +30,8 @@
             </div>
         </div>
 <!--        <a th:if="${role}==ADMIN" class="nav-link active" href="/admin">Check all order [ADMIN]</a>-->
-        <a class="nav-link active" href="/friends">My friends</a>
-        <a class="nav-link active" href="/messages">Messages</a>
+        <a class="nav-link active" href="/friendship">People and Friends</a>
+        <a class="nav-link active" href="/chat">Messages</a>
         <a class="nav-link active" href="/playlists">Playlists</a>
 <!--        <a th:if="${role}==ADMIN" class="nav-link active" href="/report">Report [ADMIN]</a>-->
     </nav>
@@ -114,37 +114,37 @@
 <!--            onclick="location.href='/favourite'">Favourite tracks-->
 <!--    </button>-->
     <div class="container">
-        <div class="row d-flex justify-content-center">
-            <div class="mb-3">
-<!--                <a href="/" th:text="${currentPath}"></a>-->
+<!--        <div class="row d-flex justify-content-center">-->
+<!--            <div class="mb-3">-->
+<!--&lt;!&ndash;                <a href="/" th:text="${currentPath}"></a>&ndash;&gt;-->
 
-                <form method="post" id="submitFormPath" action="/welcome"
-                      th:if="${not #lists.isEmpty(allWrotePath)}">
-                    <label for="idSelectPath">Select previously entered path:</label>
-                    <select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">
-                        <option th:each="folder: ${allWrotePath}"
-                                th:value="${folder.path}"
-                                th:text="${folder.path}">
-                        </option>
-                    </select>
-                    <button type="submit" id="submitPathToFolderButton">Accept</button>
-                </form>
+<!--                <form method="post" id="submitFormPath" action="/welcome"-->
+<!--                      th:if="${not #lists.isEmpty(allWrotePath)}">-->
+<!--                    <label for="idSelectPath">Select previously entered path:</label>-->
+<!--                    <select size="1" id="idSelectPath" name="pathToFolder" class="custom-select">-->
+<!--                        <option th:each="folder: ${allWrotePath}"-->
+<!--                                th:value="${folder.path}"-->
+<!--                                th:text="${folder.path}">-->
+<!--                        </option>-->
+<!--                    </select>-->
+<!--                    <button type="submit" id="submitPathToFolderButton">Accept</button>-->
+<!--                </form>-->
 
-                <form method="post" action="/deletePath" th:if="${not #lists.isEmpty(allWrotePath)}">
-                    <button id="clearWrotePath" type="submit">Clear ready paths</button>
-                </form>
+<!--                <form method="post" action="/deletePath" th:if="${not #lists.isEmpty(allWrotePath)}">-->
+<!--                    <button id="clearWrotePath" type="submit">Clear ready paths</button>-->
+<!--                </form>-->
 
-                <div id="manuallyInputPathId">
-                    <form method="post" action="/welcome">
-                        <div class="mb-3">
-                            <label for="manuallyInputPathInputId" style="margin-top: 25px;">Manually input path</label>
-                            <input id="manuallyInputPathInputId" type="text" name="pathToFolder" class="form-control"
-                                   value="" placeholder="ex.: D:/'" maxlength="120" required>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<!--                <div id="manuallyInputPathId">-->
+<!--                    <form method="post" action="/welcome">-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="manuallyInputPathInputId" style="margin-top: 25px;">Manually input path</label>-->
+<!--                            <input id="manuallyInputPathInputId" type="text" name="pathToFolder" class="form-control"-->
+<!--                                   value="" placeholder="ex.: D:/'" maxlength="120" required>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="mb-3">
             <button id="fromFavouriteToMainListButton" th:if="${not #lists.isEmpty(favouriteTrackList)}"
                     onclick="location.href='/'">Back to list

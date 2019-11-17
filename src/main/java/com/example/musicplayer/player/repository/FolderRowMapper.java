@@ -1,6 +1,6 @@
-package com.example.musicplayer.repository;
+package com.example.musicplayer.player.repository;
 
-import com.example.musicplayer.model.Folder;
+import com.example.musicplayer.player.model.Folder;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

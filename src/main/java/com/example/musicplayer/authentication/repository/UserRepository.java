@@ -81,4 +81,16 @@ public class UserRepository {
             return null;
         }
     }
+
+    public User getUserByUserId(int userId) {
+        try {
+            String sql = "SELECT u.id, c.username, c.password, u.name, u.surname, r.title AS role, u.email AS email " +
+                    "FROM credential AS c INNER JOIN \"user\" u on c.id = u.credential_id " +
+                    "INNER JOIN role r on u.role_id = r.id WHERE c.id = :id";
+            return jdbcTemplate.queryForObject(sql,
+                    new MapSqlParameterSource("id", userId), userRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
 }

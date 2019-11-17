@@ -29,7 +29,10 @@ public class UserService {
     }
 
     public User getUserByUsername(String username) {
-
         return userRepository.getUserByUsername(username);
+    }
+
+    public User getUserByUserId(int userId) {
+        return userRepository.getUserByUserId(userId);
     }
 }

@@ -1,8 +1,7 @@
-package com.example.musicplayer.service;
+package com.example.musicplayer.player.service;
 
-import com.example.musicplayer.model.Folder;
-import com.example.musicplayer.model.Track;
-import com.example.musicplayer.repository.MusicPlayerRepository;
+import com.example.musicplayer.player.model.Track;
+import com.example.musicplayer.player.repository.MusicPlayerRepository;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Header;
@@ -32,40 +31,40 @@ public class MusicPlayerService {
         this.track = track;
     }
 
-    public void setPathToFolder(int userId, String pathToFolder) {
-        if (musicPlayerRepository.countOfPathsSetForUser(userId, pathToFolder) <= 0) {
-            musicPlayerRepository.setPathToFolder(userId, pathToFolder);
-        }
-    }
+//    public void setPathToFolder(int userId, String pathToFolder) {
+//        if (musicPlayerRepository.countOfPathsSetForUser(userId, pathToFolder) <= 0) {
+//            musicPlayerRepository.setPathToFolder(userId, pathToFolder);
+//        }
+//    }
 
-    public List<Folder> getPathsToFolder(int userId) {
-        return musicPlayerRepository.getPathsToFolder(userId);
-    }
+//    public List<Folder> getPathsToFolder(int userId) {
+//        return musicPlayerRepository.getPathsToFolder(userId);
+//    }
 
-    public String getPathToFolder(int userId, String pathToFolder) {
-        List<Folder> pathsToFolder = getPathsToFolder(userId);
-        String selectedPath = null;
+//    public String getPathToFolder(int userId, String pathToFolder) {
+//        List<Folder> pathsToFolder = getPathsToFolder(userId);
+//        String selectedPath = null;
+//
+//        for (Folder folder : pathsToFolder) {
+//            if (folder.getPath().equals(pathToFolder)) {
+//                selectedPath = folder.getPath();
+//            }
+//        }
+//        MusicPlayerRepository.log.info("Selected path: " + selectedPath);
+//        return selectedPath;
+//    }
 
-        for (Folder folder : pathsToFolder) {
-            if (folder.getPath().equals(pathToFolder)) {
-                selectedPath = folder.getPath();
-            }
-        }
-        MusicPlayerRepository.log.info("Selected path: " + selectedPath);
-        return selectedPath;
-    }
-
-    public String getLastSelectedPathToFolder(int userId) {
-        List<Folder> pathsToFolder = getPathsToFolder(userId);
-        String lastSelectedPath = null;
-
-        for (Folder folder : pathsToFolder) {
-            folder = pathsToFolder.get(pathsToFolder.size() - 1);
-            lastSelectedPath = folder.getPath();
-        }
-        MusicPlayerRepository.log.info("Last selected path: " + lastSelectedPath);
-        return lastSelectedPath;
-    }
+//    public String getLastSelectedPathToFolder(int userId) {
+//        List<Folder> pathsToFolder = getPathsToFolder(userId);
+//        String lastSelectedPath = null;
+//
+//        for (Folder folder : pathsToFolder) {
+//            folder = pathsToFolder.get(pathsToFolder.size() - 1);
+//            lastSelectedPath = folder.getPath();
+//        }
+//        MusicPlayerRepository.log.info("Last selected path: " + lastSelectedPath);
+//        return lastSelectedPath;
+//    }
 
     public List<Track> getMusic(String pathToFolder) {
         if (pathToFolder == null) {
@@ -94,9 +93,9 @@ public class MusicPlayerService {
         musicPlayerRepository.deleteTrackFromFavourite(userId, track.getId());
     }
 
-    public void removeAllPathsByUserId(int userId) {
-        musicPlayerRepository.removeAllPathsByUserId(userId);
-    }
+//    public void removeAllPathsByUserId(int userId) {
+//        musicPlayerRepository.removeAllPathsByUserId(userId);
+//    }
 
     public boolean deleteTrack(String pathToFolder, String title) {
         return musicPlayerRepository.deleteTrack(pathToFolder, title);

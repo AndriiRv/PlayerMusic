@@ -1,8 +1,8 @@
-package com.example.musicplayer.controller;
+package com.example.musicplayer.player.controller;
 
 import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.model.Track;
-import com.example.musicplayer.service.MusicPlayerService;
+import com.example.musicplayer.player.model.Track;
+import com.example.musicplayer.player.service.MusicPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,22 +25,23 @@ public class MusicPlayerController {
                                  Track track) {
         this.musicPlayerService = musicPlayerService;
         this.track = track;
+        track.setPathToFolder("D:/Music/musicvk");
     }
 
-    @PostMapping("/welcome")
-    public String setPathToFolder(@AuthenticationPrincipal User user, @RequestParam String pathToFolder) {
-        musicPlayerService.setPathToFolder(user.getId(), pathToFolder);
-        track.setPathToFolder(musicPlayerService.getPathToFolder(user.getId(), pathToFolder));
-        return "redirect:/";
-    }
+//    @PostMapping("/welcome")
+//    public String setPathToFolder(@AuthenticationPrincipal User user, @RequestParam String pathToFolder) {
+////        musicPlayerService.setPathToFolder(user.getId(), pathToFolder);
+////        track.setPathToFolder(musicPlayerService.getPathToFolder(user.getId(), pathToFolder));
+//        return "redirect:/";
+//    }
 
     @PostMapping("/favourite")
     public String setFavourite(Model model, @RequestParam String trackTitle, @AuthenticationPrincipal User user)
             throws InterruptedException {
         model.addAttribute("name", user.getName());
-        if (track.getPathToFolder() == null) {
-            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
-        }
+//        if (track.getPathToFolder() == null) {
+////            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
+//        }
 
         musicPlayerService.setMusicToFavourite(user.getId(), trackTitle);
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
@@ -55,21 +56,21 @@ public class MusicPlayerController {
         return "redirect:/favourite";
     }
 
-    @PostMapping("/deletePath")
-    public String deletePathFromCookie(@AuthenticationPrincipal User user) {
-        musicPlayerService.removeAllPathsByUserId(user.getId());
-        return "redirect:/";
-    }
+//    @PostMapping("/deletePath")
+//    public String deletePathFromCookie(@AuthenticationPrincipal User user) {
+//        musicPlayerService.removeAllPathsByUserId(user.getId());
+//        return "redirect:/";
+//    }
 
     @GetMapping("/")
     public String common(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("name", user.getName());
 
-        if (track.getPathToFolder() == null) {
-            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
-        }
+//        if (track.getPathToFolder() == null) {
+//            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
+//        }
 
-        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
+//        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
 
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
         model.addAttribute("currentPath", track.getPathToFolder());
@@ -80,7 +81,7 @@ public class MusicPlayerController {
     public String favourite(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("name", user.getName());
         model.addAttribute("favouriteTrackList", musicPlayerService.getFavouriteTracks(user.getId()));
-        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
+//        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
         model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }
@@ -116,10 +117,10 @@ public class MusicPlayerController {
                        @AuthenticationPrincipal User user) {
         model.addAttribute("name", user.getName());
 
-        if (track.getPathToFolder() == null) {
-            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
-        }
-        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
+//        if (track.getPathToFolder() == null) {
+//            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
+//        }
+//        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
 
         model.addAttribute("trackList",
                 musicPlayerService.sort(sortName, directory));

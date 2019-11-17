@@ -1,8 +1,7 @@
-package com.example.musicplayer.repository;
+package com.example.musicplayer.player.repository;
 
-import com.example.musicplayer.model.Folder;
-import com.example.musicplayer.model.Track;
-import com.example.musicplayer.service.MusicPlayerService;
+import com.example.musicplayer.player.model.Track;
+import com.example.musicplayer.player.service.MusicPlayerService;
 import javazoom.jl.decoder.BitstreamException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import static com.example.musicplayer.service.MusicPlayerService.getDuration;
+import static com.example.musicplayer.player.service.MusicPlayerService.getDuration;
 
 @Repository
 public class MusicPlayerRepository {
@@ -38,32 +37,32 @@ public class MusicPlayerRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void setPathToFolder(int userId, String pathToFolder) {
-        String sql = "INSERT INTO path_to_folder (user_id, path) VALUES(:user_id, :path)";
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("user_id", userId)
-                .addValue("path", pathToFolder);
-        jdbcTemplate.update(sql, parameterSource);
-    }
+//    public void setPathToFolder(int userId, String pathToFolder) {
+//        String sql = "INSERT INTO path_to_folder (user_id, path) VALUES(:user_id, :path)";
+//        SqlParameterSource parameterSource = new MapSqlParameterSource()
+//                .addValue("user_id", userId)
+//                .addValue("path", pathToFolder);
+//        jdbcTemplate.update(sql, parameterSource);
+//    }
 
-    public List<Folder> getPathsToFolder(int userId) {
-        String sql = "SELECT id, path FROM path_to_folder WHERE user_id = :user_id";
-        SqlParameterSource parameterSource = new MapSqlParameterSource("user_id", userId);
-        return jdbcTemplate.query(sql, parameterSource, folderRowMapper);
-    }
+//    public List<Folder> getPathsToFolder(int userId) {
+//        String sql = "SELECT id, path FROM path_to_folder WHERE user_id = :user_id";
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("user_id", userId);
+//        return jdbcTemplate.query(sql, parameterSource, folderRowMapper);
+//    }
 
-    public Integer countOfPathsSetForUser(int userId, String pathToFolder) {
-        String sql = "SELECT COUNT(*) FROM path_to_folder WHERE user_id = :user_id AND path = :path";
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("user_id", userId)
-                .addValue("path", pathToFolder);
-        return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
-    }
+//    public Integer countOfPathsSetForUser(int userId, String pathToFolder) {
+//        String sql = "SELECT COUNT(*) FROM path_to_folder WHERE user_id = :user_id AND path = :path";
+//        SqlParameterSource parameterSource = new MapSqlParameterSource()
+//                .addValue("user_id", userId)
+//                .addValue("path", pathToFolder);
+//        return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
+//    }
 
-    public void removeAllPathsByUserId(int userId) {
-        String sql = "DELETE FROM path_to_folder WHERE user_id = :user_id";
-        jdbcTemplate.update(sql, new MapSqlParameterSource("user_id", userId));
-    }
+//    public void removeAllPathsByUserId(int userId) {
+//        String sql = "DELETE FROM path_to_folder WHERE user_id = :user_id";
+//        jdbcTemplate.update(sql, new MapSqlParameterSource("user_id", userId));
+//    }
 
     public Track getTrackFromFullTitle(String fullTitle) {
         try {
@@ -114,20 +113,20 @@ public class MusicPlayerRepository {
         return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
     }
 
-    public List<Track> getMusicFromTable() {
-        String sql = "SELECT id, full_title, size, title, singer FROM music";
-        return jdbcTemplate.query(sql, new MapSqlParameterSource(), trackRowMapper);
-    }
-
-    public int countOfTrackInFolder(String pathToFolder) {
-        System.out.println(Objects.requireNonNull(new File(pathToFolder).list()).length);
-        return Objects.requireNonNull(new File(pathToFolder).list()).length;
-    }
-
-    public Integer countOfTrackInTable() {
-        String sql = "SELECT COUNT(*) FROM music";
-        return jdbcTemplate.queryForObject(sql, new MapSqlParameterSource(), Integer.class);
-    }
+//    public List<Track> getMusicFromTable() {
+//        String sql = "SELECT id, full_title, size, title, singer FROM music";
+//        return jdbcTemplate.query(sql, new MapSqlParameterSource(), trackRowMapper);
+//    }
+//
+//    public int countOfTrackInFolder(String pathToFolder) {
+//        System.out.println(Objects.requireNonNull(new File(pathToFolder).list()).length);
+//        return Objects.requireNonNull(new File(pathToFolder).list()).length;
+//    }
+//
+//    public Integer countOfTrackInTable() {
+//        String sql = "SELECT COUNT(*) FROM music";
+//        return jdbcTemplate.queryForObject(sql, new MapSqlParameterSource(), Integer.class);
+//    }
 
     public List<Track> getMusic(Track track, String pathToFolder) {
         int id = 0;
