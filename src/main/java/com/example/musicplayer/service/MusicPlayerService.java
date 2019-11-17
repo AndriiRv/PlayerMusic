@@ -12,9 +12,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +24,6 @@ import java.util.*;
 public class MusicPlayerService {
     private final MusicPlayerRepository musicPlayerRepository;
     private final Track track;
-    private final Map<String, String> letters = new HashMap<>();
 
     @Autowired
     public MusicPlayerService(MusicPlayerRepository musicPlayerRepository,
@@ -37,7 +33,7 @@ public class MusicPlayerService {
     }
 
     public void setPathToFolder(int userId, String pathToFolder) {
-        if (musicPlayerRepository.isPathSetForUser(userId, pathToFolder) <= 0) {
+        if (musicPlayerRepository.countOfPathsSetForUser(userId, pathToFolder) <= 0) {
             musicPlayerRepository.setPathToFolder(userId, pathToFolder);
         }
     }
@@ -55,7 +51,7 @@ public class MusicPlayerService {
                 selectedPath = folder.getPath();
             }
         }
-        System.out.println(selectedPath);
+        MusicPlayerRepository.log.info("Selected path: " + selectedPath);
         return selectedPath;
     }
 
@@ -67,133 +63,39 @@ public class MusicPlayerService {
             folder = pathsToFolder.get(pathsToFolder.size() - 1);
             lastSelectedPath = folder.getPath();
         }
-        System.out.println(lastSelectedPath);
+        MusicPlayerRepository.log.info("Last selected path: " + lastSelectedPath);
         return lastSelectedPath;
     }
 
     public List<Track> getMusic(String pathToFolder) {
         if (pathToFolder == null) {
             return null;
+//        } else if (musicPlayerRepository.countOfTrackInFolder(pathToFolder)
+//                != musicPlayerRepository.countOfTrackInTable()) {
+//            return musicPlayerRepository.getMusic(track, pathToFolder);
         } else {
             return musicPlayerRepository.getMusic(track, pathToFolder);
         }
     }
 
-    private Map<String, String> putLetters() {
-        letters.put("а", "a");
-        letters.put("б", "b");
-        letters.put("в", "v");
-        letters.put("г", "h");
-        letters.put("д", "d");
-        letters.put("е", "e");
-        letters.put("ё", "e");
-        letters.put("ж", "zh");
-        letters.put("з", "z");
-        letters.put("і", "i");
-        letters.put("и", "y");
-        letters.put("й", "i");
-        letters.put("к", "k");
-        letters.put("л", "l");
-        letters.put("м", "m");
-        letters.put("н", "n");
-        letters.put("о", "o");
-        letters.put("п", "p");
-        letters.put("р", "r");
-        letters.put("с", "s");
-        letters.put("т", "t");
-        letters.put("у", "u");
-        letters.put("ф", "f");
-        letters.put("х", "kh");
-        letters.put("ц", "ts");
-        letters.put("ч", "ch");
-        letters.put("ш", "sh");
-        letters.put("щ", "sch");
-        letters.put("ь", "");
-        letters.put("ъ", "'");
-        letters.put("ы", "y");
-        letters.put("э", "e");
-        letters.put("ю", "yu");
-        letters.put("я", "ya");
-        return letters;
+    public void setMusicToFavourite(int userId, String fullTitle) {
+        Track track = musicPlayerRepository.getTrackFromFullTitle(fullTitle);
+        if (musicPlayerRepository.isTrackAlreadyInFavourite(userId, track.getId()) != 1) {
+            musicPlayerRepository.setMusicToFavourite(userId, track.getId());
+        }
     }
 
-    private String toTransliteration(String text) {
-        StringBuilder stringBuilder = new StringBuilder(text.length());
-        for (int i = 0; i < text.length(); i++) {
-            String letter = text.substring(i, i + 1);
-            stringBuilder.append(putLetters().getOrDefault(letter, letter));
-        }
-        return stringBuilder.toString();
+    public List<Track> getFavouriteTracks(int userId) {
+        return musicPlayerRepository.getFavouriteTracks(userId);
+    }
+
+    public void deleteTrackFromFavourite(int userId, String fullTitle) {
+        Track track = musicPlayerRepository.getTrackFromFullTitle(fullTitle);
+        musicPlayerRepository.deleteTrackFromFavourite(userId, track.getId());
     }
 
     public void removeAllPathsByUserId(int userId) {
         musicPlayerRepository.removeAllPathsByUserId(userId);
-    }
-
-//    public void setFavouriteTracksToCookie(String trackTitle, HttpServletResponse response) {
-//        String lowerCaseTitle = trackTitle;
-//        lowerCaseTitle = lowerCaseTitle.toLowerCase();
-//        lowerCaseTitle = toTransliteration(lowerCaseTitle);
-//        if (!trackTitle.matches("\\W")) {
-//            lowerCaseTitle = lowerCaseTitle.toLowerCase().replaceAll("\\W", "");
-//        }
-//        Base64.Encoder enc = Base64.getEncoder();
-//        String encoded = enc.encodeToString(trackTitle.getBytes());
-//        Cookie cookie = new Cookie("fav" + lowerCaseTitle, encoded);
-//        cookie.setMaxAge(31536000);
-//        cookie.setPath("/");
-//        response.addCookie(cookie);
-//    }
-
-    public List<Track> getFavouriteTracks(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String cookieValue;
-
-        List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
-        List<Track> favouriteTracks = new ArrayList<>();
-
-        if (cookies != null && allTracks != null) {
-            for (Cookie cookie : cookies) {
-                for (Track track : allTracks) {
-                    if (cookie.getName().contains("fav")) {
-                        cookieValue = cookie.getValue();
-                        Base64.Decoder dec = Base64.getDecoder();
-                        String decoded = new String(dec.decode(cookieValue));
-                        if (track.getFullTitle().equals(decoded)) {
-                            favouriteTracks.add(track);
-                        }
-                    }
-                }
-            }
-            return favouriteTracks;
-        } else {
-            return null;
-        }
-    }
-
-    public void removeTrackFromFavourite(String trackTitle, HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        String cookieValue;
-
-        if (trackTitle.contains("#")) {
-            trackTitle = trackTitle.toLowerCase().replaceAll("\\W", "");
-        }
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().contains("fav")) {
-                    cookieValue = cookie.getValue();
-                    Base64.Decoder dec = Base64.getDecoder();
-                    String decoded = new String(dec.decode(cookieValue));
-                    if (decoded.equals(trackTitle)) {
-                        cookie.setValue("");
-                        cookie.setPath("/");
-                        cookie.setMaxAge(0);
-                        response.addCookie(cookie);
-                    }
-                }
-            }
-        }
     }
 
     public boolean deleteTrack(String pathToFolder, String title) {
@@ -351,7 +253,7 @@ public class MusicPlayerService {
         return searchedTracks;
     }
 
-    public ResponseEntity<ByteArrayResource> mediaResourceProcessing(String process, HttpServletRequest request) throws IOException {
+    public ResponseEntity<ByteArrayResource> mediaResourceProcessing(String process) throws IOException {
         String pathName = track.getFullTitle();
         if (pathName.contains("%5B")) {
             pathName = pathName.replace("%5B", "[").replace("%5D", "]");

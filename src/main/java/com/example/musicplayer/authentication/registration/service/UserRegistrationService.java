@@ -38,7 +38,7 @@ public class UserRegistrationService {
         }
     }
 
-    private User registerUser(UserRegistration userRegistration) {
+    public User registerUser(UserRegistration userRegistration) {
         User user = new User();
         user.setUsername(userRegistration.getUsername());
         user.setName(userRegistration.getName());

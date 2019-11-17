@@ -35,11 +35,14 @@ public class MusicPlayerController {
     }
 
     @PostMapping("/favourite")
-    public String setFavourite(Model model, @RequestParam String trackTitle,
-                               HttpServletRequest request, HttpServletResponse response)
+    public String setFavourite(Model model, @RequestParam String trackTitle, @AuthenticationPrincipal User user)
             throws InterruptedException {
-//        musicPlayerService.setPathToCookie(track.getPathToFolder(), response);
-//        musicPlayerService.setFavouriteTracksToCookie(trackTitle, response);
+        model.addAttribute("name", user.getName());
+        if (track.getPathToFolder() == null) {
+            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
+        }
+
+        musicPlayerService.setMusicToFavourite(user.getId(), trackTitle);
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
         model.addAttribute("currentPath", track.getPathToFolder());
         Thread.sleep(1000);
@@ -47,9 +50,8 @@ public class MusicPlayerController {
     }
 
     @PostMapping("/deleteFavourite")
-    public String deleteFromFavourite(@RequestParam String trackTitle, HttpServletRequest request,
-                                      HttpServletResponse response) {
-        musicPlayerService.removeTrackFromFavourite(trackTitle, request, response);
+    public String deleteFromFavourite(@AuthenticationPrincipal User user, @RequestParam String trackTitle) {
+        musicPlayerService.deleteTrackFromFavourite(user.getId(), trackTitle);
         return "redirect:/favourite";
     }
 
@@ -62,9 +64,11 @@ public class MusicPlayerController {
     @GetMapping("/")
     public String common(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("name", user.getName());
+
         if (track.getPathToFolder() == null) {
             track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
         }
+
         model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
 
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
@@ -73,18 +77,16 @@ public class MusicPlayerController {
     }
 
     @GetMapping("/favourite")
-    public String favourite(Model model, HttpServletRequest request) {
-//        musicPlayerService.getPathFromCookie(request);
-//        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
-        model.addAttribute("favouriteTrackList", musicPlayerService.getFavouriteTracks(request));
+    public String favourite(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("name", user.getName());
+        model.addAttribute("favouriteTrackList", musicPlayerService.getFavouriteTracks(user.getId()));
+        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
         model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }
 
     @GetMapping("/shuffle")
     public String shuffle(Model model, HttpServletRequest request) {
-//        musicPlayerService.getPathFromCookie(request);
-//        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         model.addAttribute("trackList",
                 musicPlayerService.getShuffleMusic());
         model.addAttribute("currentPath", track.getPathToFolder());
@@ -92,47 +94,48 @@ public class MusicPlayerController {
     }
 
     @GetMapping(value = "/play/{pathName}")
-    public ResponseEntity play(@PathVariable String pathName,
-                               HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        musicPlayerService.getPathFromCookie(request);
+    public ResponseEntity play(@PathVariable String pathName, HttpServletResponse response) throws IOException {
         System.out.println("Selected: " + track.getPathToFolder());
         response.setHeader("Accept-Ranges", "bytes");
         track.setFullTitle(pathName);
         String process = "Play";
-        return musicPlayerService.mediaResourceProcessing(process, request);
+        return musicPlayerService.mediaResourceProcessing(process);
     }
 
     @GetMapping(value = "/download/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity download(@PathVariable String pathName, HttpServletRequest request)
+    public ResponseEntity download(@PathVariable String pathName)
             throws IOException {
-//        musicPlayerService.getPathFromCookie(request);
         System.out.println("Selected: " + track.getPathToFolder());
         track.setFullTitle(pathName);
         String process = "Download";
-        return musicPlayerService.mediaResourceProcessing(process, request);
+        return musicPlayerService.mediaResourceProcessing(process);
     }
 
     @GetMapping("/{sortName}={directory}")
     public String sort(Model model, @PathVariable String sortName, @PathVariable String directory,
-                       HttpServletRequest request) {
-//        musicPlayerService.getPathFromCookie(request);
+                       @AuthenticationPrincipal User user) {
+        model.addAttribute("name", user.getName());
+
+        if (track.getPathToFolder() == null) {
+            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));
+        }
+        model.addAttribute("allWrotePath", musicPlayerService.getPathsToFolder(user.getId()));
+
         model.addAttribute("trackList",
                 musicPlayerService.sort(sortName, directory));
         model.addAttribute("currentPath", track.getPathToFolder());
-//        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
+
         return "index.html";
     }
 
     @PostMapping("/upload")
     public String upload(Model model, @RequestParam MultipartFile uploadTrack, HttpServletRequest request)
             throws InterruptedException {
-//        musicPlayerService.getPathFromCookie(request);
         model.addAttribute("resultUpload",
                 musicPlayerService.uploadTrack(track.getPathToFolder(), uploadTrack));
         model.addAttribute("currentPath", track.getPathToFolder());
         model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
         Thread.sleep(1000);
-//        model.addAttribute("allWrotePath", musicPlayerService.getAllWroteManuallyPathFromCookie(request));
         return "redirect:/";
     }
 }

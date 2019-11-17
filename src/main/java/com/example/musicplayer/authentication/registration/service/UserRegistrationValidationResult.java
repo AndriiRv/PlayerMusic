@@ -3,7 +3,7 @@ package com.example.musicplayer.authentication.registration.service;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRegistrationValidationResult {
+class UserRegistrationValidationResult {
     private final List<String> errors = new ArrayList<>();
 
     void addError(String error) {

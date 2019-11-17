@@ -6,6 +6,8 @@ import com.example.musicplayer.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class UserRegistrationValidator {
     private final UserService userService;
@@ -19,6 +21,7 @@ public class UserRegistrationValidator {
         UserRegistrationValidationResult userRegistrationFormValidationResult = new UserRegistrationValidationResult();
         validatePassword(userRegistration, userRegistrationFormValidationResult);
         validateUsername(userRegistration, userRegistrationFormValidationResult);
+        validateEmail(userRegistration, userRegistrationFormValidationResult);
         return userRegistrationFormValidationResult;
     }
 
@@ -32,9 +35,18 @@ public class UserRegistrationValidator {
 
     private void validateUsername(UserRegistration userRegistration, UserRegistrationValidationResult userRegistrationValidationResult) {
         String username = userRegistration.getUsername();
-        User getUsernameFromDatabase = userService.getUserByUsername(username);
-        if (getUsernameFromDatabase != null) {
+        User user = userService.getUserByUsername(username);
+        if (user != null) {
             userRegistrationValidationResult.addError("Username is already in use");
+        }
+    }
+
+    private void validateEmail(UserRegistration userRegistration, UserRegistrationValidationResult userRegistrationValidationResult) {
+        List<User> allUsers = userService.getAllUsers();
+        for (User user : allUsers) {
+            if (user.getEmail().equals(userRegistration.getEmail())) {
+                userRegistrationValidationResult.addError("Email is already in use");
+            }
         }
     }
 }

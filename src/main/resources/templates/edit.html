@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit your data</title>
+</head>
+<body class="bg-light">
+<div class="container">
+    <div class="py-5 text-center">
+        <a href="/">Back to main</a>
+        <h2>Edit account, with login: '<span th:text="${username}"></span>'</h2>
+        <p class="lead">Please do logout from account for apply changing</p>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-8 order-md-1">
+            <h4 class="mb-3">Changing data</h4>
+            <form method="post" action="/edit">
+                <div class="mb-3">
+                    <label for="idUsername">Username</label>
+                    <input class="form-control" type="text" name="username" id="idUsername"
+                           placeholder="Input new username"
+                           th:value="${username}" oninvalid="setCustomValidity('Input new username')" oninput="setCustomValidity('')" required/>
+                </div>
+                <div class="mb-3">
+                    <label for="idPassword">Password</label>
+                    <input class="form-control" type="password" name="password" id="idPassword"
+                           placeholder="Input new password"
+                           oninvalid="setCustomValidity('Input password')" oninput="setCustomValidity('')" required/>
+                </div>
+                <div class="mb-3">
+                    <label for="idFirstName">First name</label>
+                    <input class="form-control" type="text" name="name" id="idFirstName" placeholder="First name"
+                           th:value="${name}" required/>
+                </div>
+                <div class="mb-3">
+                    <label for="idLastName">Last name</label>
+                    <input class="form-control" type="text" name="surname" id="idLastName" placeholder="Last name"
+                           th:value="${surname}"
+                           required/>
+                </div>
+                <div class="mb-3">
+                    <label for="idEmail">E-mail</label>
+                    <input class="form-control" type="email" name="email" id="idEmail" placeholder="Email"
+                           th:value="${email}" required/>
+                </div>
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Change data</button>
+            </form>
+            <br/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

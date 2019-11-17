@@ -8,31 +8,46 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class UserRegistrationController {
+public class UserSignController {
     private final UserRegistrationService userRegistrationService;
 
     @Autowired
-    public UserRegistrationController(UserRegistrationService userRegistrationService) {
+    public UserSignController(UserRegistrationService userRegistrationService) {
         this.userRegistrationService = userRegistrationService;
     }
 
-    @GetMapping("/registration")
-    public String registration(Model model){
+    @GetMapping("/sign")
+    public String registration(Model model) {
         model.addAttribute("userRegistration", new UserRegistration());
-        return "/registration";
+        return "/registrationAndLogin";
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/sign")
     public String register(UserRegistration userRegistration, Model model) {
         UserRegistrationResult userRegistrationResult = userRegistrationService.register(userRegistration);
         if (userRegistrationResult.hasErrors()) {
             model.addAttribute("userRegistration", userRegistration);
             model.addAttribute("userRegistrationResult", userRegistrationResult);
-            return "/registration.html";
+            return "/registrationAndLogin";
         } else {
-            return "redirect:/login";
+            return "redirect:/";
         }
+    }
+
+    @GetMapping("/login")
+    public String getLoginPage(Model model, @RequestParam(value = "error", required = false) String error) {
+        model.addAttribute("userRegistration", new UserRegistration());
+        if (error != null) {
+            model.addAttribute("error", "Invalid username and/or password.");
+        }
+        return "registrationAndLogin.html";
+    }
+
+    @PostMapping("/login")
+    public String login() {
+        return "/";
     }
 }

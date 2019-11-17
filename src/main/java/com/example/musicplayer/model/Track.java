@@ -34,6 +34,23 @@ public class Track {
         this.time = time;
     }
 
+    public Track(Integer id, String singer, String title, Double size, String length, String pathToFolder, LocalDateTime dateTime, LocalDate date, LocalTime time) {
+        this.id = id;
+        this.singer = singer;
+        this.title = title;
+        this.size = size;
+        this.length = length;
+        this.pathToFolder = pathToFolder;
+        this.dateTime = dateTime;
+        this.date = date;
+        this.time = time;
+    }
+
+    public Track(String singer, String title) {
+        this.singer = singer;
+        this.title = title;
+    }
+
     public Track() {
     }
 

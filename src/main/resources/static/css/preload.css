@@ -4,7 +4,12 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background: #17181c;
+    background: #007fd1;
+    background: -webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff));
+    background: -webkit-linear-gradient(left, #007fd1, #c600ff);
+    background: -moz-linear-gradient(left, #007fd1, #c600ff);
+    background: -o-linear-gradient(left, #007fd1, #c600ff);
+    background: linear-gradient(left, #007fd1, #c600ff);
     z-index: 30;
     overflow: hidden
 }

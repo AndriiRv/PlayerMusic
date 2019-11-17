@@ -9,6 +9,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
     <link th:href="@{css/preload.css}" rel="stylesheet">
+    <link th:href="@{css/menu.css}" rel="stylesheet">
     <link th:href="@{css/style.css}" rel="stylesheet">
     <link th:href="@{css/player.css}" rel="stylesheet">
     <link th:href="@{css/audio/controllerAudio.css}" rel="stylesheet">
@@ -17,7 +18,24 @@
     <link th:href="@{css/backToTop.css}" rel="stylesheet">
 </head>
 <body class="bg-light">
-<h2 th:text="'Hello ' + ${name} + '!'" style="color: white"></h2>
+<header class="masthead mb-auto">
+    <nav class="nav nav-masthead justify-content-center">
+        <div class="dropdown nav-link active">
+            <p style="color: orange;" th:text="${name}"></p>
+            <div class="dropdown-content">
+                <a class="nav-link active" href="/">Home</a>
+                <a class="nav-link active" href="/edit">Edit</a>
+                <a class="nav-link active" href="/favourite">My favourite</a>
+                <a class="nav-link active" href="/logout">Logout</a>
+            </div>
+        </div>
+<!--        <a th:if="${role}==ADMIN" class="nav-link active" href="/admin">Check all order [ADMIN]</a>-->
+        <a class="nav-link active" href="/friends">My friends</a>
+        <a class="nav-link active" href="/messages">Messages</a>
+        <a class="nav-link active" href="/playlists">Playlists</a>
+<!--        <a th:if="${role}==ADMIN" class="nav-link active" href="/report">Report [ADMIN]</a>-->
+    </nav>
+</header>
 <div id="acceptCookieDiv">
     We use cookies to enhance your experience on our site. By accepting our cookie policy you agreeing to our use of
     cookies.
@@ -43,7 +61,7 @@
     </div>
     <canvas id="canvas"></canvas>
     <div id="left">
-        <button id="soundWaveButton" onclick="visualize()"></button>
+        <button id="soundWaveButton"></button>
     </div>
     <div id="main">
         <div id="themeLogo"></div>
@@ -56,19 +74,23 @@
         <div id="common">
             <button id="loopButton"></button>
             <h3 id="titleOfTrackInPlayer" class="titleOfTrackClass"></h3>
+
             <div class="setFavourite">
                 <form method="post" action="/favourite">
                     <input class="setFavouriteClass" name="trackTitle" type="submit" value=""/>
                 </form>
             </div>
+
             <div id="barAllPlayed">
                 <div id="barPlay"></div>
             </div>
+
             <div id="time">
                 <div id="currentTime"></div>
                 <div id="duration"></div>
             </div>
         </div>
+
         <div id="volume">
             <button id="volumeMin"></button>
             <label for="volumeSlider"></label>
@@ -88,13 +110,13 @@
     </div>
 </div>
 <div id="listOfTrack">
-    <button id="favouriteTracksButton" th:if="${#lists.isEmpty(favouriteTrackList)}"
-            onclick="location.href='/favourite'">Favourite tracks
-    </button>
+<!--    <button id="favouriteTracksButton" th:if="${#lists.isEmpty(favouriteTrackList)}"-->
+<!--            onclick="location.href='/favourite'">Favourite tracks-->
+<!--    </button>-->
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="mb-3">
-                <a href="/" th:text="${currentPath}"></a>
+<!--                <a href="/" th:text="${currentPath}"></a>-->
 
                 <form method="post" id="submitFormPath" action="/welcome"
                       th:if="${not #lists.isEmpty(allWrotePath)}">
@@ -207,12 +229,6 @@
                     <div th:text="${track.date} + ' ' + ${track.time}"></div>
                     <div th:text="${track.size} + ' MB'"></div>
                     <!--                    <button class="downloadButton"></button>-->
-                    <div class="setFavourite">
-                        <form method="post" action="/favourite">
-                            <input class="setFavouriteClass" name="trackTitle" type="submit"
-                                   th:value="${track.fullTitle}"/>
-                        </form>
-                    </div>
                 </td>
             </tr>
             </tbody>
@@ -234,7 +250,7 @@
 <script th:src="@{/js/player/audio/controllerAudio.js}"></script>
 <script th:src="@{/js/table/searchingInSystems.js}"></script>
 <script th:src="@{/js/player/common/hotButtonsHandler.js}"></script>
-<script th:src="@{/js/player/common/visualizer.js}"></script>
+<script th:src="@{/js/visualizer/visualizer.js}"></script>
 <script th:src="@{/js/player/common/uploadTrack.js}"></script>
 <script th:src="@{/js/table/backToTop.js}"></script>
 </body>

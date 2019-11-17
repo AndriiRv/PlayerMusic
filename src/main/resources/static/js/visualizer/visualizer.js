@@ -1,11 +1,12 @@
 var counter = 0;
-var addR = 25;
-var addG = 250;
-var addB = 50;
+var addR = 107;
+var addG = 1;
+var addB = 125;
+
 $("#soundWaveColorSlider").on('click', function () {
-    addR = Math.round(Math.random() * 144) + 1;
-    addG = Math.round(Math.random() * 250) + 1;
-    addB = Math.round(Math.random() * 64) + 1;
+    addR = Math.round(Math.random() * addR) + 1;
+    addG = Math.round(Math.random()) + addG;
+    addB = Math.round(Math.random() * addB) + 1;
 });
 
 window.onload = function () {
@@ -57,10 +58,9 @@ window.onload = function () {
 
                     var r = barHeight + (addR * (i / bufferLength));
                     var g = addG * (i / bufferLength);
-                    var b = addB;
 
-                    ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-                    ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+                    ctx.fillStyle = "rgb(" + r + "," + g + "," + addB + ")";
+                    ctx.fillRect(x, HEIGHT - barHeight * 2, barWidth, barHeight * 5);
 
                     x += barWidth + 1;
                 }
