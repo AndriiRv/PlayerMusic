@@ -64,7 +64,11 @@ public class MusicPlayerController {
 
     @GetMapping("/")
     public String common(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("name", user.getName());
+        if (user != null) {
+            model.addAttribute("name", user.getName());
+        } else {
+            model.addAttribute("name", "guest");
+        }
 
 //        if (track.getPathToFolder() == null) {
 //            track.setPathToFolder(musicPlayerService.getLastSelectedPathToFolder(user.getId()));

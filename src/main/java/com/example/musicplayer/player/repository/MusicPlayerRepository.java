@@ -197,6 +197,8 @@ public class MusicPlayerRepository {
                             track.getDate(),
                             track.getTime()));
 
+                    log.info("Load: " + trackElement.getName());
+
                     if (checkIfTrackHasInTable(track.getTitle(), track.getSinger()) != 1) {
                         String sqlInsertIntoMusic = "INSERT INTO music (title, singer, length, size, date, full_title) " +
                                 "VALUES(:title, :singer, :length, :size, :date, :full_title)";
