@@ -13,3 +13,7 @@ Gradle - Dependency Management
 
 ## Usage
 Just run application, it will start on 80 port
+
+branch [master] - local version, who give access to change path to directory with music tracks
+
+branch [global] - global version music player with authentication, friends, messages
