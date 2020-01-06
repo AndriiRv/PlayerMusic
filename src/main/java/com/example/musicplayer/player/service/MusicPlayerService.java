@@ -31,47 +31,9 @@ public class MusicPlayerService {
         this.track = track;
     }
 
-//    public void setPathToFolder(int userId, String pathToFolder) {
-//        if (musicPlayerRepository.countOfPathsSetForUser(userId, pathToFolder) <= 0) {
-//            musicPlayerRepository.setPathToFolder(userId, pathToFolder);
-//        }
-//    }
-
-//    public List<Folder> getPathsToFolder(int userId) {
-//        return musicPlayerRepository.getPathsToFolder(userId);
-//    }
-
-//    public String getPathToFolder(int userId, String pathToFolder) {
-//        List<Folder> pathsToFolder = getPathsToFolder(userId);
-//        String selectedPath = null;
-//
-//        for (Folder folder : pathsToFolder) {
-//            if (folder.getPath().equals(pathToFolder)) {
-//                selectedPath = folder.getPath();
-//            }
-//        }
-//        MusicPlayerRepository.log.info("Selected path: " + selectedPath);
-//        return selectedPath;
-//    }
-
-//    public String getLastSelectedPathToFolder(int userId) {
-//        List<Folder> pathsToFolder = getPathsToFolder(userId);
-//        String lastSelectedPath = null;
-//
-//        for (Folder folder : pathsToFolder) {
-//            folder = pathsToFolder.get(pathsToFolder.size() - 1);
-//            lastSelectedPath = folder.getPath();
-//        }
-//        MusicPlayerRepository.log.info("Last selected path: " + lastSelectedPath);
-//        return lastSelectedPath;
-//    }
-
     public List<Track> getMusic(String pathToFolder) {
         if (pathToFolder == null) {
-            return null;
-//        } else if (musicPlayerRepository.countOfTrackInFolder(pathToFolder)
-//                != musicPlayerRepository.countOfTrackInTable()) {
-//            return musicPlayerRepository.getMusic(track, pathToFolder);
+            return new ArrayList<>();
         } else {
             return musicPlayerRepository.getMusic(track, pathToFolder);
         }
@@ -93,14 +55,6 @@ public class MusicPlayerService {
         musicPlayerRepository.deleteTrackFromFavourite(userId, track.getId());
     }
 
-//    public void removeAllPathsByUserId(int userId) {
-//        musicPlayerRepository.removeAllPathsByUserId(userId);
-//    }
-
-    public boolean deleteTrack(String pathToFolder, String title) {
-        return musicPlayerRepository.deleteTrack(pathToFolder, title);
-    }
-
     public String uploadTrack(String pathToFolder, MultipartFile file) {
         String titleOfTrack = file.getOriginalFilename();
         assert titleOfTrack != null;
@@ -119,7 +73,7 @@ public class MusicPlayerService {
     }
 
     public List<Track> getShuffleMusic() {
-        List<Track> shuffledMusic = musicPlayerRepository.getMusic(track, track.getPathToFolder());
+        List<Track> shuffledMusic = getMusic(track.getPathToFolder());
         Collections.shuffle(shuffledMusic);
         return shuffledMusic;
     }
@@ -138,7 +92,7 @@ public class MusicPlayerService {
     }
 
     public List<Track> sort(String sort, String directory) {
-        List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
+        List<Track> allTracks = getMusic(track.getPathToFolder());
         String variable = null;
 
         switch (sort) {
@@ -232,24 +186,6 @@ public class MusicPlayerService {
             tracks[in] = track;
         }
         return Arrays.asList(tracks);
-    }
-
-    public List<Track> search(String trackTitle) {
-        String lowerCaseTrackTitle = trackTitle.toLowerCase();
-        List<Track> allTracks = musicPlayerRepository.getMusic(track, track.getPathToFolder());
-        List<Track> searchedTracks = new ArrayList<>();
-        for (Track track : allTracks) {
-            if (lowerCaseTrackTitle.length() != 1) {
-                if (track.getFullTitle().toLowerCase().contains(lowerCaseTrackTitle)) {
-                    searchedTracks.add(track);
-                }
-            } else {
-                if (track.getFullTitle().toLowerCase().startsWith(lowerCaseTrackTitle)) {
-                    searchedTracks.add(track);
-                }
-            }
-        }
-        return searchedTracks;
     }
 
     public ResponseEntity<ByteArrayResource> mediaResourceProcessing(String process) throws IOException {

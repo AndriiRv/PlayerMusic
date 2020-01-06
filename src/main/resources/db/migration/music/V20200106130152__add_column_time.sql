@@ -1,0 +1,2 @@
+ALTER TABLE music
+    ADD COLUMN time TEXT
