@@ -1,32 +1,254 @@
-#playButton, #pauseButton {
+#bottomController {
+    display: flex;
+    background-color: #f2f2f2;
+    height: 49px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    z-index: 2;
+}
+
+#picInBottomController {
+    display: flex;
+    width: 100%;
+}
+
+.controllerAssistDiv {
+    display: inline-flex;
+}
+
+.exitFromDiv {
+    background-image: url('../../images/redCross.png');
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+}
+
+#historyTrackDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 10%;
+}
+
+#historyTable, #favouriteTable {
+    display: none;
+    text-align: justify;
+    position: fixed;
+    bottom: 10%;
+    left: 4%;
+    width: 20%;
+    overflow-y: auto;
+    height: 50%;
+    z-index: 2;
+}
+
+#playlistTable {
+    display: none;
+    text-align: justify;
+    position: fixed;
+    bottom: 10%;
+    right: 7%;
+    width: 20%;
+    overflow-y: auto;
+    height: 50%;
+    z-index: 2;
+}
+
+.controllerDiv {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: transparent;
+    color: white;
+    border-color: green;
+    border-style: dashed;
+}
+
+.closeDiv {
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    background-image: url('../../images/redCross.png');
+}
+
+#titleAndRemoveButton {
+    color: white;
+    /*border-style: double;*/
+}
+
+#titleAndRemoveButton > .titleOfTrackInTable {
+    width: 100%;
+    /*border-style: double;*/
+}
+
+#playController {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-basis: 30%;
+}
+
+#playBackTimeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 40%;
+}
+
+#volumeNTitleOfTrack {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 10px;
+    flex-basis: 50%;
+}
+
+#soundWaveButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/soundWave.svg');
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    opacity: 0.5;
+}
+
+#volumeNTitleOfTrack > .downloadButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/download.svg');
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    margin-right: 0;
+}
+
+.lyricButton {
+    background-color: transparent;
+    border: none;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    background-image: url('../../images/lyric.png');
+}
+
+.shuffleButton {
+    cursor: pointer;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    background-image: url('../../images/shuffle.png');
+}
+
+.playButton, .pauseButton {
     display: none;
     background-color: transparent;
     border: none;
-    background-size: 80px 80px;
-    height: 80px;
-    width: 80px;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
 }
 
-#playButton {
+.playButton {
     background-image: url('../../images/play.svg');
 }
 
-#pauseButton {
+.pauseButton {
     background-image: url('../../images/pause.svg');
 }
 
-#prevTrackButton, #nextTrackButton {
+.prevTrackButton, .nextTrackButton {
     background-color: transparent;
     border: none;
-    background-size: 80px 80px;
-    height: 80px;
-    width: 80px;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
 }
 
-#prevTrackButton {
+.prevTrackButton {
     background-image: url('../../images/prev.svg');
 }
 
-#nextTrackButton {
+.nextTrackButton {
     background-image: url('../../images/next.svg');
+}
+
+.loopButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/loop.svg');
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    opacity: 0.5;
+    z-index: 3;
+}
+
+.currentTime {
+    padding-left: 10px;
+    z-index: 3;
+}
+
+.duration {
+    padding-left: 10px;
+    padding-right: 10px;
+    z-index: 3;
+}
+
+#barAllPlayed {
+    flex-grow: 2;
+    border-style: solid;
+    border-color: black;
+    height: 25px;
+    cursor: pointer;
+    z-index: 3;
+}
+
+#barPlay {
+    height: 100%;
+    background: #007fd1;
+    background: -webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff));
+    background: -webkit-linear-gradient(left, #007fd1, #c600ff);
+    background: -moz-linear-gradient(left, #007fd1, #c600ff);
+    background: -o-linear-gradient(left, #007fd1, #c600ff);
+    background: linear-gradient(left, #007fd1, #c600ff);
+    z-index: 3;
+}
+
+#showInfoAboutTrack {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.addToFavouriteButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/favourite.svg');
+    background-size: 20px 20px;
+    height: 20px;
+    width: 20px;
+    color: transparent;
+}
+
+.downloadButton {
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/download.svg');
+    background-size: 60px 60px;
+    height: 60px;
+    width: 60px;
+    margin-right: 10px;
+    z-index: 3;
+}
+
+.removeFromHistory {
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/redCross.png');
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+    z-index: 3;
 }

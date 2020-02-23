@@ -5,17 +5,12 @@
     z-index: 4;
 }
 
-#smallPlayer {
+#canvas {
     display: none;
     position: fixed;
     bottom: 0;
-}
-
-#canvas {
-    display: none;
-    position: absolute;
     width: 100%;
-    height: 100%;
+    height: 50%;
     z-index: 1;
 }
 
@@ -59,19 +54,6 @@
     z-index: 2;
 }
 
-#soundWaveButton {
-    background-color: transparent;
-    border: none;
-    background-image: url('../images/soundWave.svg');
-    background-size: 60px 60px;
-    height: 60px;
-    width: 60px;
-    opacity: 0.5;
-    margin-left: 2%;
-    margin-top: 2%;
-    z-index: 2;
-}
-
 #right {
     flex-grow: 1;
     position: relative;
@@ -110,106 +92,4 @@
     width: 60px;
     margin-left: 10px;
     z-index: 2;
-}
-
-#controller {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin-top: 10%;
-    z-index: 2;
-}
-
-#common {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    z-index: 2;
-}
-
-#time {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-}
-
-#volume {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15%;
-    height: 25%;
-    z-index: 2;
-}
-
-#backToList {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-}
-
-#loopButton {
-    background-color: transparent;
-    border: none;
-    background-image: url('../images/loop.svg');
-    background-size: 60px 60px;
-    height: 60px;
-    width: 60px;
-    opacity: 0.5;
-    z-index: 3;
-}
-
-#currentTime {
-    margin-right: 10px;
-    z-index: 3;
-}
-
-#duration {
-    margin-left: 10px;
-    z-index: 3;
-}
-
-#barAllPlayed {
-    border-style: solid;
-    border-color: black;
-    height: 25px;
-    cursor: pointer;
-    z-index: 3;
-}
-
-#barPlay {
-    height: 100%;
-    background: #007fd1;
-    background: -webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff));
-    background: -webkit-linear-gradient(left, #007fd1, #c600ff);
-    background: -moz-linear-gradient(left, #007fd1, #c600ff);
-    background: -o-linear-gradient(left, #007fd1, #c600ff);
-    background: linear-gradient(left, #007fd1, #c600ff);
-    z-index: 3;
-}
-
-.downloadButton {
-    background-color: transparent;
-    border: none;
-    background-image: url('../images/download.svg');
-    background-size: 60px 60px;
-    height: 60px;
-    width: 60px;
-    margin-right: 10px;
-    z-index: 3;
-}
-
-#backToListButton {
-    background-color: transparent;
-    border: none;
-    background-image: url('../images/backToList.svg');
-    background-size: 30px 30px;
-    height: 30px;
-    width: 30px;
-    z-index: 3;
 }

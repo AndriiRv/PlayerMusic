@@ -34,21 +34,17 @@ public class Track {
         this.time = time;
     }
 
-    public Track(Integer id, String singer, String title, Double size, String length, String pathToFolder, LocalDateTime dateTime, LocalDate date, LocalTime time) {
+    public Track(Integer id, String fullTitle, String singer, String title, Double size, String length,
+                 LocalDateTime dateTime, LocalDate date, LocalTime time) {
         this.id = id;
+        this.fullTitle = fullTitle;
         this.singer = singer;
         this.title = title;
         this.size = size;
         this.length = length;
-        this.pathToFolder = pathToFolder;
         this.dateTime = dateTime;
         this.date = date;
         this.time = time;
-    }
-
-    public Track(String singer, String title) {
-        this.singer = singer;
-        this.title = title;
     }
 
     public Track() {
@@ -143,36 +139,20 @@ public class Track {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Track track = (Track) o;
-        return Objects.equals(id, track.id) &&
-                Objects.equals(fullTitle, track.fullTitle) &&
-                Objects.equals(singer, track.singer) &&
-                Objects.equals(title, track.title) &&
-                Objects.equals(size, track.size) &&
-                Objects.equals(length, track.length) &&
-                Objects.equals(pathToFolder, track.pathToFolder) &&
-                Objects.equals(dateTime, track.dateTime) &&
-                Objects.equals(date, track.date) &&
-                Objects.equals(time, track.time);
+        return Objects.equals(getId(), track.getId()) &&
+                Objects.equals(getFullTitle(), track.getFullTitle()) &&
+                Objects.equals(getSinger(), track.getSinger()) &&
+                Objects.equals(getTitle(), track.getTitle()) &&
+                Objects.equals(getSize(), track.getSize()) &&
+                Objects.equals(getLength(), track.getLength()) &&
+                Objects.equals(getPathToFolder(), track.getPathToFolder()) &&
+                Objects.equals(getDateTime(), track.getDateTime()) &&
+                Objects.equals(getDate(), track.getDate()) &&
+                Objects.equals(getTime(), track.getTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullTitle, singer, title, size, length, pathToFolder, dateTime, date, time);
-    }
-
-    @Override
-    public String toString() {
-        return "Track{" +
-                "id=" + id +
-                ", fullTitle='" + fullTitle + '\'' +
-                ", singer='" + singer + '\'' +
-                ", title='" + title + '\'' +
-                ", size=" + size +
-                ", length='" + length + '\'' +
-                ", pathToFolder='" + pathToFolder + '\'' +
-                ", dateTime=" + dateTime +
-                ", date=" + date +
-                ", time=" + time +
-                '}';
+        return Objects.hash(getId(), getFullTitle(), getSinger(), getTitle(), getSize(), getLength(), getPathToFolder(), getDateTime(), getDate(), getTime());
     }
 }

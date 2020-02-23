@@ -1,6 +1,0 @@
-CREATE TABLE favourite
-(
-    id       SERIAL PRIMARY KEY,
-    user_id  INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
-    music_id INTEGER NOT NULL UNIQUE REFERENCES music (id) ON DELETE CASCADE
-);

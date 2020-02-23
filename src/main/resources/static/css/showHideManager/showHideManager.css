@@ -1,0 +1,61 @@
+#historyTable.showHistoryTable,
+#favouriteTable.showFavouriteTable {
+    animation-name: slideIn;
+}
+
+#playlistTable.showPlaylistTable {
+    animation-name: playlistSlideIn;
+}
+
+#historyTable.hideHistoryTable,
+#favouriteTable.hideFavouriteTable {
+    animation-name: slideOut;
+}
+
+#playlistTable.hidePlaylistTable {
+    animation-name: playlistSlideOut;
+}
+
+#historyTable, #favouriteTable, #playlistTable {
+    animation-duration: 0.5s;
+}
+
+@keyframes slideIn {
+    from {
+        margin-left: -100%;
+    }
+
+    to {
+        margin-left: 0;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        margin-left: 0;
+    }
+
+    to {
+        margin-left: -100%;
+    }
+}
+
+@keyframes playlistSlideIn {
+    from {
+        margin-left: 100%;
+    }
+
+    to {
+        margin-left: 0;
+    }
+}
+
+@keyframes playlistSlideOut {
+    from {
+        margin-left: 0;
+    }
+
+    to {
+        margin-left: 100%;
+    }
+}

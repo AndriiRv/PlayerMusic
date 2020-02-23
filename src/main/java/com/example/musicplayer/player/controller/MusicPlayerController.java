@@ -2,48 +2,27 @@ package com.example.musicplayer.player.controller;
 
 import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.model.Track;
-import com.example.musicplayer.player.service.MusicPlayerService;
+import com.example.musicplayer.player.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.List;
 
 @Controller
 public class MusicPlayerController {
-    private final MusicPlayerService musicPlayerService;
-    private final Track track;
+    private final MusicService musicService;
 
     @Autowired
-    public MusicPlayerController(MusicPlayerService musicPlayerService,
-                                 Track track) {
-        this.musicPlayerService = musicPlayerService;
-        this.track = track;
-        track.setPathToFolder("D:/Music/musicvk");
-    }
-
-    @PostMapping("/favourite")
-    public String setFavourite(Model model, @RequestParam String trackTitle, @AuthenticationPrincipal User user)
-            throws InterruptedException {
-        model.addAttribute("name", user.getName());
-
-        musicPlayerService.setMusicToFavourite(user.getId(), trackTitle);
-        model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
-        model.addAttribute("currentPath", track.getPathToFolder());
-        Thread.sleep(1000);
-        return "redirect:/";
-    }
-
-    @PostMapping("/deleteFavourite")
-    public String deleteFromFavourite(@AuthenticationPrincipal User user, @RequestParam String trackTitle) {
-        musicPlayerService.deleteTrackFromFavourite(user.getId(), trackTitle);
-        return "redirect:/favourite";
+    public MusicPlayerController(MusicService musicService) {
+        this.musicService = musicService;
     }
 
     @GetMapping("/")
@@ -53,66 +32,51 @@ public class MusicPlayerController {
         } else {
             model.addAttribute("name", "guest");
         }
-
-        model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
-        model.addAttribute("currentPath", track.getPathToFolder());
         return "index.html";
     }
 
-    @GetMapping("/favourite")
-    public String favourite(Model model, @AuthenticationPrincipal User user) {
-        model.addAttribute("name", user.getName());
-        model.addAttribute("favouriteTrackList", musicPlayerService.getFavouriteTracks(user.getId()));
-        model.addAttribute("currentPath", track.getPathToFolder());
-        return "index.html";
+    @PostMapping("/lyric")
+    @ResponseBody
+    public String getLyric(String url, String nameOfTrack, String artistOfTrack, String apiKey) {
+        return url + artistOfTrack + "/" + nameOfTrack + "?apikey=" + apiKey;
     }
 
     @GetMapping("/shuffle")
-    public String shuffle(Model model, HttpServletRequest request) {
-        model.addAttribute("trackList",
-                musicPlayerService.getShuffleMusic());
-        model.addAttribute("currentPath", track.getPathToFolder());
-        return "index.html";
+    @ResponseBody
+    public List<Track> shuffle() {
+        return musicService.getShuffleMusic();
     }
 
     @GetMapping(value = "/play/{pathName}")
-    public ResponseEntity play(@PathVariable String pathName, HttpServletResponse response) throws IOException {
-        System.out.println("Selected: " + track.getPathToFolder());
+    public ResponseEntity play(@PathVariable String pathName, HttpServletResponse response) {
         response.setHeader("Accept-Ranges", "bytes");
-        track.setFullTitle(pathName);
         String process = "Play";
-        return musicPlayerService.mediaResourceProcessing(process);
+
+        return musicService.mediaResourceProcessing(pathName, process);
     }
 
     @GetMapping(value = "/download/{pathName}", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity download(@PathVariable String pathName)
-            throws IOException {
-        System.out.println("Selected: " + track.getPathToFolder());
-        track.setFullTitle(pathName);
+    public ResponseEntity download(@PathVariable String pathName) {
         String process = "Download";
-        return musicPlayerService.mediaResourceProcessing(process);
+
+        return musicService.mediaResourceProcessing(pathName, process);
     }
 
-    @GetMapping("/{sortName}={directory}")
-    public String sort(Model model, @PathVariable String sortName, @PathVariable String directory,
-                       @AuthenticationPrincipal User user) {
-        model.addAttribute("name", user.getName());
-
-        model.addAttribute("trackList",
-                musicPlayerService.sort(sortName, directory));
-        model.addAttribute("currentPath", track.getPathToFolder());
-
-        return "index.html";
+    @GetMapping("/sort/{sortName}={directory}")
+    @ResponseBody
+    public List<Track> sort(Model model, @PathVariable String sortName, @PathVariable String directory, @AuthenticationPrincipal User user) {
+        return musicService.sort(sortName, directory);
     }
 
     @PostMapping("/upload")
-    public String upload(Model model, @RequestParam MultipartFile uploadTrack, HttpServletRequest request)
-            throws InterruptedException {
-        model.addAttribute("resultUpload",
-                musicPlayerService.uploadTrack(track.getPathToFolder(), uploadTrack));
-        model.addAttribute("currentPath", track.getPathToFolder());
-        model.addAttribute("trackList", musicPlayerService.getMusic(track.getPathToFolder()));
-        Thread.sleep(1000);
-        return "redirect:/";
+    public ResponseEntity upload(@RequestParam MultipartFile musicTrackAsFile) {
+        musicService.uploadTrack(musicTrackAsFile);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/searchPlaceholder")
+    @ResponseBody
+    public String getRandomTrackToPutInSearchPlaceholder() {
+        return musicService.getRandomTrackToPutInSearchPlaceholder();
     }
 }

@@ -1,66 +1,58 @@
-var counter = 0;
-var addR = 107;
-var addG = 1;
-var addB = 125;
-
-$("#soundWaveColorSlider").on('click', function () {
-    addR = Math.round(Math.random() * addR) + 1;
-    addG = Math.round(Math.random()) + addG;
-    addB = Math.round(Math.random() * addB) + 1;
-});
+let counter = 0;
+let addR = 107;
+let addG = 1;
+let addB = 125;
 
 window.onload = function () {
-    var soundWaveButton = document.getElementById("soundWaveButton");
-    var audio = document.getElementById("audioId");
+    let soundWaveButton = document.getElementById("soundWaveButton");
+    let audio = document.getElementById("audioId");
     soundWaveButton.onclick = function () {
         counter++;
         soundWaveButton.style.opacity = "1";
         if (counter % 2 !== 0) {
             $("#canvas").css('display', 'block');
             $("#soundWaveColorSlider").css('display', 'none');
-            var context = new AudioContext();
-            var src = context.createMediaElementSource(audio);
-            var analyser = context.createAnalyser();
+            $("#listOfTrack").css('position', 'absolute');
+            let context = new AudioContext();
+            let src = context.createMediaElementSource(audio);
+            let analyser = context.createAnalyser();
 
-            var canvas = document.getElementById("canvas");
+            let canvas = document.getElementById("canvas");
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            var ctx = canvas.getContext("2d");
+            let ctx = canvas.getContext("2d");
 
             src.connect(analyser);
             analyser.connect(context.destination);
 
             analyser.fftSize = 256;
 
-            var bufferLength = analyser.frequencyBinCount;
+            let bufferLength = analyser.frequencyBinCount;
 
-            var dataArray = new Uint8Array(bufferLength);
+            let dataArray = new Uint8Array(bufferLength);
 
-            var WIDTH = canvas.width;
-            var HEIGHT = canvas.height;
+            let WIDTH = canvas.width;
+            let HEIGHT = canvas.height;
 
-            var barWidth = (WIDTH / bufferLength) * 2.5;
-            var barHeight;
-            var x = 0;
+            let barWidth = (WIDTH / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
 
             function renderFrame() {
                 requestAnimationFrame(renderFrame);
                 x = 0;
                 analyser.getByteFrequencyData(dataArray);
 
-                var image = new Image();
-                image.src = "../images/player.jpg";
-                ctx.fillStyle = ctx.createPattern(image, "repeat");
+                ctx.clearRect(0,0,WIDTH,HEIGHT);
 
-                ctx.fillRect(0, 0, WIDTH, HEIGHT);
-                for (var i = 0; i < bufferLength; i++) {
+                for (let i = 0; i < bufferLength; i++) {
                     barHeight = dataArray[i];
 
-                    var r = barHeight + (addR * (i / bufferLength));
-                    var g = addG * (i / bufferLength);
+                    let r = barHeight + (addR * (i / bufferLength));
+                    let g = addG * (i / bufferLength);
 
                     ctx.fillStyle = "rgb(" + r + "," + g + "," + addB + ")";
-                    ctx.fillRect(x, HEIGHT - barHeight * 2, barWidth, barHeight * 5);
+                    ctx.fillRect(x, HEIGHT - barHeight * 3, barWidth, barHeight * 6);
 
                     x += barWidth + 1;
                 }
@@ -71,6 +63,7 @@ window.onload = function () {
             soundWaveButton.style.opacity = "0.5";
             $("#canvas").css('display', 'none');
             $("#soundWaveColorSlider").css('display', 'none');
+            $("#listOfTrack").css('position', 'none');
         }
     };
 };

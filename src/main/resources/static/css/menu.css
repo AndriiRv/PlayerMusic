@@ -1,3 +1,42 @@
+#menu {
+    display: flex;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 4;
+    background-color: #333333;
+    height: 46px;
+}
+
+#leftFromSearch {
+    display: flex;
+    justify-content: flex-end;
+    flex-basis: 35%;
+}
+
+#searchTrack {
+    flex-basis: 30%;
+}
+
+#inputSearchTrack {
+    display: flex;
+    width: 100%;
+}
+
+#rightFromSearch {
+    display: flex;
+    flex-basis: 35%;
+}
+
+a.nav-link.active {
+    border-color: white;
+    border-style: initial;
+}
+
+.dropdown.nav-link.active {
+    border-color: black;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -19,7 +58,11 @@
     display: block;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown .dropdown-content {
     background-color: gray;
-    display: block;
+    display: none;
+}
+
+#currentUserName {
+    cursor: pointer;
 }

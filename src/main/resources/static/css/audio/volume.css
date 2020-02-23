@@ -1,20 +1,20 @@
-#volumeSlider {
+.volumeSlider {
     margin-right: 10px;
 }
 
-#volumeMin, #volumeMax {
+.volumeMin, .volumeMax {
     background-color: transparent;
-    background-size: 30px 30px;
+    background-size: 24px 24px;
     border: none;
-    height: 30px;
-    width: 30px;
+    height: 24px;
+    width: 24px;
 }
 
-#volumeMax {
+.volumeMax {
     background-image: url('../../images/volumeMax.svg');
     opacity: 0.7;
 }
 
-#volumeMin {
+.volumeMin {
     background-image: url('../../images/volumeMin.svg');
 }

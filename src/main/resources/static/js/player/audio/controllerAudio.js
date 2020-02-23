@@ -1,20 +1,19 @@
-var currentTitle;
+let playButton = $(".playButton");
+let pauseButton = $(".pauseButton");
 
-var playButton = $("#playButton");
-var pauseButton = $("#pauseButton");
+let nextTrackButton = $(".nextTrackButton");
+let prevTrackButton = $(".prevTrackButton");
 
-var nextTrackButton = $("#nextTrackButton");
-var prevTrackButton = $("#prevTrackButton");
+let loopButton = $(".loopButton");
 
-var loopButton = $("#loopButton");
-var tableTr = $('table tbody tr');
-var rowCount = tableTr.length - 1;
-var indexIteration = 0;
-var counterForLoop = 0;
-var counterForTrackIsPlay = 0;
+let indexIteration = 0;
+let counterForLoop = 0;
+let counterForTrackIsPlay = 0;
 
-var intervalTransparentColorCurrentTime = null;
-var intervalCommonColorCurrentTime = null;
+let intervalTransparentColorCurrentTime = null;
+let intervalCommonColorCurrentTime = null;
+
+let countOfIterationByListOfTrack = 0;
 
 nextTrackButton.prop('disabled', false);
 prevTrackButton.prop('disabled', false);
@@ -24,23 +23,7 @@ playButton.on('click', function () {
     $("#icon").attr("href", "/images/iconPlay.ico");
     playButton.hide();
     pauseButton.show();
-    showCurrentTimeTrack();
 });
-
-function showCurrentTimeTrack(){
-    clearInterval(intervalTransparentColorCurrentTime);
-    clearInterval(intervalCommonColorCurrentTime);
-    currentTimeSelector.css({"color": "white"});
-}
-
-function hideCurrentTimeTrack(){
-    intervalTransparentColorCurrentTime = setInterval(function () {
-        currentTimeSelector.css({"color": "transparent"});
-    }, 500);
-    intervalCommonColorCurrentTime = setInterval(function () {
-        currentTimeSelector.css({"color": "white"});
-    }, 1000);
-}
 
 pauseButton.on('click', function () {
     counterForTrackIsPlay++;
@@ -48,95 +31,58 @@ pauseButton.on('click', function () {
     $("#icon").attr("href", "/images/iconPause.ico");
     pauseButton.hide();
     playButton.show();
-    hideCurrentTimeTrack();
+    // hideCurrentTimeTrack();
 });
 
-tableTr.on('click', function () {
-    clearInterval(intervalTransparentColorCurrentTime);
-    clearInterval(intervalCommonColorCurrentTime);
+$(document).on("click", 'table tbody tr', function () {
+    countOfIterationByListOfTrack = 0;
     indexIteration = $(this).index();
-    currentTitle = null;
-    nextTrackButton.show();
-    playButton.hide();
-    pauseButton.show();
+    countOfIterationByListOfTrack = countOfIterationByListOfTrack + indexIteration;
+
+    // disableEnableNextButton(countOfIterationByListOfTrack);
+    // disableEnablePrevButton(countOfIterationByListOfTrack);
 });
+
+function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, process) {
+    titleOfTrackInPlayer.empty();
+    let titleOfTrackInTable = $(".titleOfTrackInTable");
+
+    clearSelectTrack(titleOfTrackInTable);
+
+    let nextTrackTitle = null;
+
+    if (listOfTrack[countOfIterationByListOfTrack].fullTitle || listOfTrack[countOfIterationByListOfTrack].fullTitle !== undefined) {
+        nextTrackTitle = listOfTrack[countOfIterationByListOfTrack].fullTitle;
+    } else {
+        nextTrackTitle = listOfTrack[countOfIterationByListOfTrack];
+    }
+
+    showSelectTrack(titleOfTrackInTable, nextTrackTitle);
+    titleOfTrackInPlayer.append(nextTrackTitle.replace(".mp3", ""));
+
+    console.log(process + nextTrackTitle);
+
+    audio.attr("src", "play/" + nextTrackTitle);
+}
 
 $(".audioClass").bind("ended", function () {
-    titleOfTrackInTable.css({
-        "background": "none",
-        "color": "white"
-    });
+    countOfIterationByListOfTrack++;
 
-    showCurrentTrackAndPlayInPlayer();
-
-    titleOfTrackInTable.filter(function () {
-        return $(this).text() === currentTitle.text();
-    }).css({
-        "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(6,151,244,1) 0%, rgba(64,26,186,1) 49%, rgba(172,22,224,1) 86%)",
-        "color": "white"
-    });
-    console.log("After ended: " + currentTitle.text());
-    indexIteration++;
-
-    if (indexIteration >= rowCount) {
-        nextTrackButton.css("opacity", "0.5");
-        nextTrackButton.prop('disabled', true);
-    }
+    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "After ended: ");
+    // disableEnableNextButton(countOfIterationByListOfTrack);
 });
-
-function showCurrentTrackAndPlayInPlayer() {
-    // var titleOfTrackInPlayer = $('#titleOfTrackInPlayer');
-    titleOfTrackInPlayer.empty();
-    currentTitle = titleOfTrackInTable.eq(indexIteration);
-
-    if (indexIteration >= rowCount) {
-        currentTitle = null;
-    }
-
-    audio.attr("src", "play/" + currentTitle.text());
-    hrefTitleForDownload = currentTitle.text();
-    titleOfTrackInPlayer.append(currentTitle.text().replace(".mp3", ""));
-    $("#titleOfTab").html(currentTitle.text().replace(".mp3", ""));
-}
-
-function nextPrevTrackButtons() {
-    volumeBoost();
-    clearInterval(intervalTransparentColorCurrentTime);
-    clearInterval(intervalCommonColorCurrentTime);
-    titleOfTrackInTable.css({
-        "background": "none",
-        "color": "white"
-    });
-
-    showCurrentTrackAndPlayInPlayer();
-
-    if (indexIteration >= rowCount - 1) {
-        nextTrackButton.css("opacity", "0.5");
-        nextTrackButton.prop('disabled', true);
-        playButton.css("opacity", "0.5");
-        playButton.prop('disabled', true);
-    }
-
-    titleOfTrackInTable.filter(function () {
-        return $(this).text() === currentTitle.text();
-    }).css({
-        "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(6,151,244,1) 0%, rgba(64,26,186,1) 49%, rgba(172,22,224,1) 86%)",
-        "color": "white"
-    });
-}
 
 nextTrackButton.on("click", function () {
     playButton.hide();
     pauseButton.show();
+    prevTrackButton.css("opacity", "1");
+    prevTrackButton.prop('disabled', false);
 
-    if (indexIteration >= 0) {
-        prevTrackButton.css("opacity", "1");
-        prevTrackButton.prop('disabled', false);
-    }
+    countOfIterationByListOfTrack++;
 
-    nextPrevTrackButtons();
-    console.log("Next: " + currentTitle.text());
-    indexIteration++;
+    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "Next: ");
+
+    // disableEnableNextButton(countOfIterationByListOfTrack);
 });
 
 prevTrackButton.on("click", function () {
@@ -145,16 +91,36 @@ prevTrackButton.on("click", function () {
     nextTrackButton.css("opacity", "1");
     nextTrackButton.prop('disabled', false);
 
-    if (indexIteration <= 1) {
-        prevTrackButton.css("opacity", "0.5");
-        prevTrackButton.prop('disabled', true);
-    }
+    countOfIterationByListOfTrack = countOfIterationByListOfTrack - Number("1");
 
-    indexIteration = indexIteration - 2;
-    nextPrevTrackButtons();
-    console.log("Previous: " + currentTitle.text());
-    indexIteration++;
+    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "Prev: ");
+
+    // disableEnablePrevButton(countOfIterationByListOfTrack);
 });
+
+// function disableEnableNextButton(countOfIterationByListOfTrack) {
+//     if (countOfIterationByListOfTrack >= 1) {
+//         prevTrackButton.css("opacity", "1");
+//         prevTrackButton.prop('disabled', false);
+//     }
+//     if (countOfIterationByListOfTrack < (countOfTrack - 1)) {
+//         nextTrackButton.css("opacity", "1");
+//         nextTrackButton.prop('disabled', false);
+//     } else if (countOfIterationByListOfTrack >= (countOfTrack - 1)) {
+//         nextTrackButton.css("opacity", "0.5");
+//         nextTrackButton.prop('disabled', true);
+//     }
+// }
+//
+// function disableEnablePrevButton(countOfIterationByListOfTrack) {
+//     if (countOfIterationByListOfTrack <= 0) {
+//         prevTrackButton.css("opacity", "0.5");
+//         prevTrackButton.prop('disabled', true);
+//     } else if (countOfIterationByListOfTrack >= 1) {
+//         prevTrackButton.css("opacity", "1");
+//         prevTrackButton.prop('disabled', false);
+//     }
+// }
 
 loopButton.on("click", function () {
     counterForLoop++;

@@ -1,8 +1,8 @@
-var counterClickOnMuteButton = 0;
-var currentValueVolume = 0;
-var volumeSliderRange = $("#volumeSlider");
-var volumeMax = $("#volumeMax");
-var volumeMin = $("#volumeMin");
+let counterClickOnMuteButton = 0;
+let currentValueVolume = 0;
+let volumeSliderRange = $(".volumeSlider");
+let volumeMax = $(".volumeMax");
+let volumeMin = $(".volumeMin");
 
 volumeSliderRange.on('click', function () {
     console.log("Set volume: " + $(this).val());

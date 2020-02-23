@@ -1,8 +1,8 @@
 package com.example.musicplayer.authentication.edit;
 
 import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.authentication.registration.model.UserRegistration;
-import com.example.musicplayer.authentication.registration.service.UserRegistrationService;
+import com.example.musicplayer.registration.model.UserRegistration;
+import com.example.musicplayer.registration.service.UserRegistrationService;
 import com.example.musicplayer.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

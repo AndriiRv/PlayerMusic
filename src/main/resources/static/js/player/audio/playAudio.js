@@ -1,16 +1,24 @@
-var titleOfTrackInTable = $(".titleOfTrackInTable");
-var titleOfTrackInPlayer = $('#titleOfTrackInPlayer');
-var audio = $("#audioId");
-var durationSelector = $("#duration");
-var currentTimeSelector = $("#currentTime");
-var hrefTitleForDownload;
-var barAllPlayed = $("#barAllPlayed");
-var barPlay = $("#barPlay");
-var intervalVolumeBoost = null;
+var titleOfTrack = null;
+let titleOfTrackInPlayer = $('.titleOfTrackInPlayer');
+
+let audio = $("#audioId");
+
+let durationSelector = $(".duration");
+let currentTimeSelector = $(".currentTime");
+
+let hrefTitleForDownload;
+
+let barAllPlayed = $("#barAllPlayed");
+let barPlay = $("#barPlay");
+
+let intervalVolumeBoost = null;
+
+let artistTrack = null;
+let songTrack = null;
 
 function volumeBoost() {
     clearInterval(intervalVolumeBoost);
-    var volumeBoost = 0;
+    let volumeBoost = 0;
 
     intervalVolumeBoost = setInterval(function () {
         if (audio.get(0).currentTime <= 1.5) {
@@ -25,18 +33,60 @@ function volumeBoost() {
     }, 100);
 }
 
-titleOfTrackInTable.on('click', function () {
-    volumeBoost();
+function getSingerAndTitle(fullTitle) {
+    let indexDash = fullTitle.indexOf(" - ");
+    let indexAfterTitle = fullTitle.indexOf(".mp3");
 
-    playButton.hide();
-    pauseButton.show();
+    if (indexDash !== -1) {
+        artistTrack = fullTitle.substring(0, indexDash);
+        songTrack = fullTitle.substring(indexDash + 3, indexAfterTitle);
+    }
+}
+
+function showSelectTrack(titleOfTrackInTable, nameOfTrack) {
+    titleOfTrackInTable.filter(function () {
+        return $(this).text() === nameOfTrack;
+    }).css({
+        "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(6,151,244,1) 0%, rgba(64,26,186,1) 49%, rgba(172,22,224,1) 86%)",
+        "color": "white"
+    });
+}
+
+function clearSelectTrack(titleOfTrackInTable) {
     titleOfTrackInTable.css({
         "background": "none",
         "color": "white"
     });
-    var nameOfTrack = $(this).text();
+}
 
-    for (var i = 0; i <= String(nameOfTrack).length; i++) {
+$("body").on("click", ".titleOfTrackInTable", function () {
+
+    if ($(this).closest("tbody").attr('id') === "mainTableTBody") {
+        listOfTrack = defaultList;
+    } else if ($(this).closest("tbody").attr('id') === "historyTBody") {
+        listOfTrack = historyList;
+    } else if ($(this).closest("tbody").attr('id') === "favouriteTBody") {
+        listOfTrack = favouriteList;
+    }
+
+    let titleOfTrackInTable = $(".titleOfTrackInTable");
+
+    volumeBoost();
+
+    playButton.hide();
+    pauseButton.show();
+
+    clearSelectTrack(titleOfTrackInTable);
+
+    let nameOfTrack = $(this).text();
+    titleOfTrack = nameOfTrack;
+
+    let currentUserName = $("#currentUserName").text();
+    if (currentUserName) {
+        addTrackToHistory(nameOfTrack);
+    }
+
+    for (let i = 0; i <= String(nameOfTrack).length; i++) {
         if (nameOfTrack.includes('[')) {
             nameOfTrack = nameOfTrack.replace('[', '%5B').replace(']', '%5D');
         }
@@ -45,11 +95,12 @@ titleOfTrackInTable.on('click', function () {
         }
     }
 
-    // var currentTrack = $('#titleOfTrackInPlayer');
     titleOfTrackInPlayer.empty();
     audio.attr("src", "play/" + nameOfTrack);
 
-    for (var j = 0; j <= String(nameOfTrack).length; j++) {
+    getSingerAndTitle(nameOfTrack);
+
+    for (let j = 0; j <= String(nameOfTrack).length; j++) {
         if (nameOfTrack.includes('%5B')) {
             nameOfTrack = nameOfTrack.replace('%5B', '[').replace('%5D', ']');
         }
@@ -58,12 +109,7 @@ titleOfTrackInTable.on('click', function () {
         }
     }
 
-    titleOfTrackInTable.filter(function () {
-        return $(this).text() === nameOfTrack;
-    }).css({
-        "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(6,151,244,1) 0%, rgba(64,26,186,1) 49%, rgba(172,22,224,1) 86%)",
-        "color": "white"
-    });
+    showSelectTrack(titleOfTrackInTable, nameOfTrack);
 
     hrefTitleForDownload = nameOfTrack;
     nameOfTrack = nameOfTrack.replace(".mp3", "");
@@ -73,27 +119,40 @@ titleOfTrackInTable.on('click', function () {
     console.log("Manual select: " + nameOfTrack);
     titleOfTrackInPlayer.append(nameOfTrack);
     audio.get(0).onloadedmetadata = function () {
-        var duration = audio.get(0).duration;
+        let duration = audio.get(0).duration;
         getTime(duration, durationSelector);
     };
     setInterval(function () {
-        var currentTime = audio.get(0).currentTime;
+        let currentTime = audio.get(0).currentTime;
         getTime(currentTime, currentTimeSelector);
         barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
     }, 10);
 });
 
-barAllPlayed.on('click', function (e) {
-    var allWidth = barAllPlayed.width();
-    var currentXByDiv = e.pageX - barAllPlayed.offset().left;
-    audio.get(0).currentTime = (currentXByDiv * audio.get(0).duration) / allWidth;
-    barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
+let click = false;
+
+barAllPlayed.on('mousedown', function () {
+    click = true;
+
+    barAllPlayed.on('mousemove', function (e) {
+        if (click === true) {
+
+            let allWidth = barAllPlayed.width();
+            let currentXByDiv = e.pageX - barAllPlayed.offset().left;
+            audio.get(0).currentTime = (currentXByDiv * audio.get(0).duration) / allWidth;
+            barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
+        }
+    });
+});
+
+barAllPlayed.bind('mouseup', function () {
+    barAllPlayed.unbind('mousemove')
 });
 
 function getTime(time, selector) {
-    var hr = Math.floor(time / 3600).toString();
-    var min = Math.floor((time - (hr * 3600)) / 60).toString();
-    var sec = Math.floor(time - (hr * 3600) - (min * 60)).toString();
+    let hr = Math.floor(time / 3600).toString();
+    let min = Math.floor((time - (hr * 3600)) / 60).toString();
+    let sec = Math.floor(time - (hr * 3600) - (min * 60)).toString();
     if (min.length === 1) {
         min = "0" + min;
     }
