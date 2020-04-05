@@ -26,7 +26,6 @@ dependencies {
     implementation 'javazoom:jlayer:1.0.1'
     implementation 'com.mpatric:mp3agic:0.9.1'
 
-    implementation 'junit:junit:4.12'
     implementation 'org.testng:testng:7.0.0'
     implementation 'org.mockito:mockito-all:1.10.19'
 }
