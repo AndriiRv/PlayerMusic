@@ -1,8 +1,8 @@
 package com.example.musicplayer.registration.service;
 
 import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.registration.model.UserRegistration;
 import com.example.musicplayer.authentication.service.UserService;
+import com.example.musicplayer.registration.model.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +25,24 @@ public class UserRegistrationValidator {
         return userRegistrationFormValidationResult;
     }
 
+    public static boolean ifAnyHasUserDataIsBlank(UserRegistration userRegistration) {
+        return isRegistrationDataIsBlank(userRegistration.getName()) ||
+                isRegistrationDataIsBlank(userRegistration.getSurname()) ||
+                isRegistrationDataIsBlank(userRegistration.getEmail()) ||
+                isRegistrationDataIsBlank(userRegistration.getUsername()) ||
+                isRegistrationDataIsBlank(userRegistration.getPassword()) ||
+                isRegistrationDataIsBlank(userRegistration.getPasswordConfirmation());
+    }
+
+    private static boolean isRegistrationDataIsBlank(String registrationData) {
+        return registrationData == null || registrationData.isBlank();
+    }
+
     private void validatePassword(UserRegistration userRegistration, UserRegistrationValidationResult userRegistrationValidationResult) {
         String password = userRegistration.getPassword();
         assert password != null;
         if (!password.equals(userRegistration.getPasswordConfirmation())) {
-            userRegistrationValidationResult.addError("Password must match password confirmation");
+            userRegistrationValidationResult.addError("*Password must match\n password confirmation");
         }
     }
 
@@ -37,7 +50,7 @@ public class UserRegistrationValidator {
         String username = userRegistration.getUsername();
         User user = userService.getUserByUsername(username);
         if (user != null) {
-            userRegistrationValidationResult.addError("Username is already in use");
+            userRegistrationValidationResult.addError("*Username is already in use");
         }
     }
 
@@ -45,7 +58,7 @@ public class UserRegistrationValidator {
         List<User> allUsers = userService.getAllUsers();
         for (User user : allUsers) {
             if (user.getEmail().equals(userRegistration.getEmail())) {
-                userRegistrationValidationResult.addError("Email is already in use");
+                userRegistrationValidationResult.addError("*Email is already in use");
             }
         }
     }

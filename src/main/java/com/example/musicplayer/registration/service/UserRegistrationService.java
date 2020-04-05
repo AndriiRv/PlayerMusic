@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.musicplayer.registration.service.UserRegistrationValidator.ifAnyHasUserDataIsBlank;
+
 @Service
 public class UserRegistrationService {
     private final UserRegistrationValidator userRegistrationValidator;
@@ -29,17 +31,21 @@ public class UserRegistrationService {
     @Transactional
     public UserRegistrationResult register(UserRegistration userRegistration) {
         UserRegistrationValidationResult userRegistrationFormValidationResult = userRegistrationValidator.validate(userRegistration);
+
+        if (ifAnyHasUserDataIsBlank(userRegistration)) {
+            userRegistrationFormValidationResult.addError("*Please fill all of your data");
+        }
+
         if (!userRegistrationFormValidationResult.hasErrors()) {
             User user = userService.saveUser(registerUser(userRegistration));
             if (user != null) {
-                logRegisterUser(userRegistration, " - already registered!");
+                logRegisterUser(userRegistration, " - registered successfully");
                 return UserRegistrationResult.ok();
             } else {
-                logRegisterUser(userRegistration, " - got a mistake during registered!");
+                logRegisterUser(userRegistration, " - got a mistake during registered");
                 return UserRegistrationResult.fail(userRegistrationFormValidationResult.getErrors());
             }
         } else {
-            logRegisterUser(userRegistration, " - got a mistake during registered!");
             return UserRegistrationResult.fail(userRegistrationFormValidationResult.getErrors());
         }
     }

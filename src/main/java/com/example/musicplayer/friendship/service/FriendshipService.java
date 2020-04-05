@@ -25,9 +25,19 @@ public class FriendshipService {
         this.chatService = chatService;
     }
 
-    public void createFriendship(int currentUserId, String possibleFriendUsername) {
-        int secondUserId = userService.getUserByUsername(possibleFriendUsername).getId();
-        friendshipRepository.createFriendship(currentUserId, secondUserId);
+    public void createFriendship(int currentUserId, int possibleFriendId) {
+        friendshipRepository.createFriendship(currentUserId, possibleFriendId);
+    }
+
+    public List<User> getAllUsers(User currentUser) {
+        List<User> allUsersWithoutCurrentUser = new ArrayList<>();
+
+        for (User user : userService.getAllUsers()) {
+            if (!user.getUsername().equals(currentUser.getUsername())) {
+                allUsersWithoutCurrentUser.add(user);
+            }
+        }
+        return allUsersWithoutCurrentUser;
     }
 
     public List<User> getFriendsByUserIdForChat(int userId) {
