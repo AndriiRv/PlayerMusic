@@ -63,4 +63,10 @@ public class PlaylistController {
     public void deletePlaylist(@AuthenticationPrincipal User user, @RequestParam Integer playlistId) {
         playlistService.deletePlaylist(user.getId(), playlistId);
     }
+
+    @DeleteMapping("/music")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTrackPlaylist(@AuthenticationPrincipal User user, @RequestParam String playlistTitle, @RequestParam Integer trackId) {
+        playlistService.deleteTrackFromPlaylist(user.getId(), playlistTitle, trackId);
+    }
 }

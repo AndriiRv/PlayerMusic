@@ -2,6 +2,7 @@ package com.example.musicplayer.player.music.controller;
 
 import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicPlayerService;
 import com.example.musicplayer.player.music.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,37 +50,35 @@ public class MusicPlayerController {
     @PostMapping("/lyric")
     @ResponseBody
     public String getLyric(@AuthenticationPrincipal User user, String url, String nameOfTrack,
-                           String artistOfTrack, String apiKey) {
-        return musicPlayerService.getLyric(user, url, nameOfTrack, artistOfTrack, apiKey);
+                           String artistOfTrack) {
+        return musicPlayerService.getLyric(user, url, nameOfTrack, artistOfTrack);
     }
 
     @GetMapping("/shuffle/{isShuffle}")
     @ResponseBody
-    public List<Track> shuffle(@RequestParam int page, @PathVariable boolean isShuffle) {
+    public List<TrackDto> shuffle(@RequestParam int page, @PathVariable boolean isShuffle) {
         return musicPlayerService.getShuffleMusic(page, isShuffle);
     }
 
-    @GetMapping(value = "/play/{pathName}")
+    @GetMapping(value = "/play/{musicTitle}")
     public ResponseEntity<ByteArrayResource> play(@AuthenticationPrincipal User user,
-                                                  @PathVariable String pathName,
+                                                  @PathVariable String musicTitle,
                                                   HttpServletResponse response) {
         response.setHeader("Accept-Ranges", "bytes");
         String process = "play";
-        return musicPlayerService.mediaResourceProcessing(user, pathName, process);
+        return musicPlayerService.mediaResourceProcessing(user, musicTitle, process);
     }
 
-    @GetMapping(value = "/download/{pathName}",
+    @GetMapping(value = "/download/{musicTitle}",
             produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    public ResponseEntity<ByteArrayResource> download(@AuthenticationPrincipal User user,
-                                                      @PathVariable String pathName) {
+    public ResponseEntity<ByteArrayResource> download(@AuthenticationPrincipal User user, @PathVariable String musicTitle) {
         String process = "download";
-        return musicPlayerService.mediaResourceProcessing(user, pathName, process);
+        return musicPlayerService.mediaResourceProcessing(user, musicTitle, process);
     }
 
     @GetMapping("/sort/{sortName}={directory}")
     @ResponseBody
-    public List<Track> sort(@PathVariable String sortName, @PathVariable String directory,
-                            Integer page) {
+    public List<TrackDto> sort(@PathVariable String sortName, @PathVariable String directory, Integer page) {
         return musicPlayerService.sort(sortName, directory, page);
     }
 

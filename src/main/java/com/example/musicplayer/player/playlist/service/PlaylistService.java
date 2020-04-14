@@ -1,5 +1,6 @@
 package com.example.musicplayer.player.playlist.service;
 
+import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.playlist.model.Playlist;
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.playlist.repository.PlaylistRepository;
@@ -48,5 +49,10 @@ public class PlaylistService {
 
     public void deletePlaylist(int userId, Integer playlistId) {
         playlistRepository.deletePlaylist(userId, playlistId);
+    }
+
+    public void deleteTrackFromPlaylist(int userId, String playlistTitle, int trackId) {
+        Playlist playlist = playlistRepository.getPlaylistByUserIdTitle(userId, playlistTitle);
+        playlistRepository.deleteTrackFromPlaylist(playlist.getId(), trackId);
     }
 }

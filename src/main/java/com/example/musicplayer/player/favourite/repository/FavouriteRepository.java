@@ -32,6 +32,16 @@ public class FavouriteRepository {
         return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
     }
 
+    public Integer getCountOfFavouriteByMusicId(int musicId) {
+        String sql =
+                "SELECT COUNT(*) " +
+                        "FROM favourite " +
+                        "WHERE music_id = :musicId";
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("musicId", musicId);
+        return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
+    }
+
     public void renameTrackByUser(int userId, int musicId, String musicTitle) {
         String sql = ""
                 + "UPDATE favourite SET own_user_music_title = :musicTitle "

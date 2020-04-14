@@ -34,15 +34,15 @@ public class MusicService {
         return musicRepository.checkIfTrackExistInTable(fullTitle);
     }
 
-    public int insertMusicToDb(Track track) {
-        return musicRepository.insertMusicToDb(track);
+    public int insertMusicToDb(TrackDto trackDto) {
+        return musicRepository.insertMusicToDb(converterFromDto(trackDto));
     }
 
     public Integer isMusicTableEmpty() {
         return musicRepository.isMusicTableEmpty();
     }
 
-    public List<Track> getMusicFromTable() {
+    public List<TrackDto> getMusicFromTable() {
         return musicRepository.getMusicFromTable();
     }
 
@@ -59,5 +59,21 @@ public class MusicService {
             return musicRepository.getRandomTrackToPutInSearchPlaceholder();
         }
         return "";
+    }
+
+    private Track converterFromDto(TrackDto trackDto) {
+        Track track = new Track();
+        track.setFullTitle(trackDto.getFullTitle());
+        track.setSinger(trackDto.getSinger());
+        track.setTitle(trackDto.getTitle());
+        track.setSize(trackDto.getSize());
+        track.setLength(trackDto.getLength());
+        track.setDate(trackDto.getDate());
+        track.setTime(trackDto.getTime());
+        track.setDateTime(trackDto.getDateTime());
+        track.setGenre(trackDto.getGenre());
+        track.setYear(trackDto.getYear());
+        track.setAlbumTitle(trackDto.getAlbumTitle());
+        return track;
     }
 }

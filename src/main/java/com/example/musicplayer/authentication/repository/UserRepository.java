@@ -3,6 +3,7 @@ package com.example.musicplayer.authentication.repository;
 import com.example.musicplayer.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -10,13 +11,15 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Repository
 public class UserRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final UserRowMapper userRowMapper = new UserRowMapper();
 
     @Autowired
     public UserRepository(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -25,31 +28,34 @@ public class UserRepository {
 
     public List<User> getAllUsers() {
         String sql = "SELECT u.id, c.username, c.password, u.name, u.surname, r.title AS role, u.email AS email " +
-                "FROM \"user\" AS u INNER JOIN credential AS c on u.credential_id = c.id " +
-                "INNER JOIN role r on u.role_id = r.id";
-        return jdbcTemplate.query(sql, new MapSqlParameterSource(), userRowMapper);
+                "FROM \"user\" AS u INNER JOIN credential AS c ON u.credential_id = c.id " +
+                "INNER JOIN role r ON u.role_id = r.id";
+        return jdbcTemplate.query(sql, new MapSqlParameterSource(), new BeanPropertyRowMapper<>(User.class));
+    }
+
+    public List<String> getAllEmails() {
+        String sql = "SELECT email FROM \"user\"";
+        return jdbcTemplate.queryForList(sql, new MapSqlParameterSource(), String.class);
     }
 
     public User saveUser(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sqlInsertToCredential = "INSERT INTO credential (username, password) VALUES (:username, :password)";
 
-        SqlParameterSource parameterSourceCredential = new MapSqlParameterSource()
+        jdbcTemplate.update(sqlInsertToCredential, new MapSqlParameterSource()
                 .addValue("username", user.getUsername())
-                .addValue("password", user.getPassword());
-        jdbcTemplate.update(sqlInsertToCredential, parameterSourceCredential, keyHolder, new String[]{"id"});
+                .addValue("password", user.getPassword()), keyHolder, new String[] {"id"});
         int credentialId = (int) Objects.requireNonNull(keyHolder.getKey()).longValue();
 
         String sqlInsertToUser = "INSERT INTO \"user\" (credential_id, surname, name, role_id, email) " +
                 "VALUES (:credential_id, :surname, :name, :role_id, :email)";
 
-        SqlParameterSource parameterSourceUser = new MapSqlParameterSource()
+        jdbcTemplate.update(sqlInsertToUser, new MapSqlParameterSource()
                 .addValue("credential_id", credentialId)
                 .addValue("surname", user.getSurname())
                 .addValue("name", user.getName())
                 .addValue("role_id", 1)
-                .addValue("email", user.getEmail());
-        jdbcTemplate.update(sqlInsertToUser, parameterSourceUser);
+                .addValue("email", user.getEmail()));
         return user;
     }
 
@@ -70,13 +76,23 @@ public class UserRepository {
         jdbcTemplate.update(sqlUpdateUser, parameterSourceUser);
     }
 
+    public void updatePasswordByEmail(String email, String password) {
+        String getCredentialIdByEmailSql = "SELECT credential_id FROM \"user\" WHERE email = :email";
+        Integer credentialId = jdbcTemplate.queryForObject(getCredentialIdByEmailSql, new MapSqlParameterSource("email", email), Integer.class);
+
+        String updatePasswordByCredentialIdSql = "UPDATE credential SET password = :password WHERE id = :id";
+        jdbcTemplate.update(updatePasswordByCredentialIdSql, new MapSqlParameterSource()
+                .addValue("password", password)
+                .addValue("id", credentialId));
+    }
+
     public User getUserByUsername(String username) {
         try {
             String sql = "SELECT u.id, c.username, c.password, u.name, u.surname, r.title AS role, u.email AS email " +
-                    "FROM credential AS c INNER JOIN \"user\" u on c.id = u.credential_id " +
-                    "INNER JOIN role r on u.role_id = r.id WHERE c.username = :username";
+                    "FROM credential AS c INNER JOIN \"user\" u ON c.id = u.credential_id " +
+                    "INNER JOIN role r ON u.role_id = r.id WHERE c.username = :username";
             return jdbcTemplate.queryForObject(sql,
-                    new MapSqlParameterSource("username", username), userRowMapper);
+                    new MapSqlParameterSource("username", username), new BeanPropertyRowMapper<>(User.class));
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -85,10 +101,10 @@ public class UserRepository {
     public User getUserByUserId(int userId) {
         try {
             String sql = "SELECT u.id, c.username, c.password, u.name, u.surname, r.title AS role, u.email AS email " +
-                    "FROM credential AS c INNER JOIN \"user\" u on c.id = u.credential_id " +
-                    "INNER JOIN role r on u.role_id = r.id WHERE c.id = :id";
+                    "FROM credential AS c INNER JOIN \"user\" u ON c.id = u.credential_id " +
+                    "INNER JOIN role r ON u.role_id = r.id WHERE c.id = :id";
             return jdbcTemplate.queryForObject(sql,
-                    new MapSqlParameterSource("id", userId), userRowMapper);
+                    new MapSqlParameterSource("id", userId), new BeanPropertyRowMapper<>(User.class));
         } catch (EmptyResultDataAccessException e) {
             return null;
         }

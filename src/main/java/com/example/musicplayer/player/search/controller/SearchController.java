@@ -1,6 +1,7 @@
 package com.example.musicplayer.player.search.controller;
 
 import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.search.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public Set<Track> searchTracks(String searchString) {
+    public Set<TrackDto> searchTracks(String searchString) {
         return searchService.searchTracks(searchString);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.musicplayer.player.history.service;
 
+import com.example.musicplayer.player.countofplayed.service.PlayedService;
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.history.repository.HistoryRepository;
 import com.example.musicplayer.player.music.service.MusicService;

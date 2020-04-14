@@ -1,6 +1,7 @@
 package com.example.musicplayer.player.search.service;
 
 import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,25 @@ public class SearchService {
         this.musicPlayerService = musicPlayerService;
     }
 
-    public Set<Track> searchTracks(String searchString) {
-        Set<Track> searchableTracks = new HashSet<>();
+    public Set<TrackDto> searchTracks(String searchString) {
+        if (!searchString.isBlank()) {
+            Set<TrackDto> searchableTracks = new HashSet<>();
 
-        for (Track element : musicPlayerService.getListOfTracks()) {
-            if (element.getFullTitle().toLowerCase().contains(searchString)) {
-                searchableTracks.add(element);
+            for (TrackDto element : musicPlayerService.getListOfTracks()) {
+                if (element.getFullTitle().toLowerCase().contains(searchString)) {
+                    searchableTracks.add(element);
+                } else if (element.getSinger().toLowerCase().contains(searchString)) {
+                    searchableTracks.add(element);
+                } else if (element.getGenre() != null && element.getGenre().toLowerCase().contains(searchString)) {
+                    searchableTracks.add(element);
+                } else if (element.getYear() != null && element.getYear().contains(searchString)) {
+                    searchableTracks.add(element);
+                } else if (element.getSinger().contains(searchString)) {
+                    searchableTracks.add(element);
+                }
             }
+            return searchableTracks;
         }
-        return searchableTracks;
+        return new HashSet<>();
     }
 }

@@ -6,120 +6,130 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class TrackDto {
-    private List<String> titles;
-    private List<String> singers;
-    private List<String> fullTitles;
-    private List<String> lengths;
-    private List<Double> sizes;
-    private List<LocalDate> dates;
-    private List<LocalTime> times;
-    private List<LocalDateTime> datetimes;
-    private List<String> albums;
-    private List<String> years;
-    private List<String> genres;
+    private Integer id;
+    private String fullTitle;
+    private String singer;
+    private String title;
+    private Double size;
+    private String length;
+    private LocalDateTime dateTime;
+    private LocalDate date;
+    private LocalTime time;
+    private byte[] byteOfPicture;
+    private String albumTitle;
+    private String year;
+    private String genre;
+    private String countOfFavourite;
 
-    public TrackDto(List<String> titles, List<String> singers, List<String> fullTitles,
-                    List<String> lengths, List<Double> sizes, List<LocalDate> dates,
-                    List<LocalTime> times, List<LocalDateTime> datetimes, List<String> albums,
-                    List<String> years, List<String> genres) {
-        this.titles = titles;
-        this.singers = singers;
-        this.fullTitles = fullTitles;
-        this.lengths = lengths;
-        this.sizes = sizes;
-        this.dates = dates;
-        this.times = times;
-        this.datetimes = datetimes;
-        this.albums = albums;
-        this.years = years;
-        this.genres = genres;
+    public Integer getId() {
+        return id;
     }
 
-    public List<String> getTitles() {
-        return titles;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setTitles(List<String> titles) {
-        this.titles = titles;
+    public String getFullTitle() {
+        return fullTitle;
     }
 
-    public List<String> getSingers() {
-        return singers;
+    public void setFullTitle(String fullTitle) {
+        this.fullTitle = fullTitle;
     }
 
-    public void setSingers(List<String> singers) {
-        this.singers = singers;
+    public String getSinger() {
+        return singer;
     }
 
-    public List<String> getFullTitles() {
-        return fullTitles;
+    public void setSinger(String singer) {
+        this.singer = singer;
     }
 
-    public void setFullTitles(List<String> fullTitles) {
-        this.fullTitles = fullTitles;
+    public String getTitle() {
+        return title;
     }
 
-    public List<String> getLengths() {
-        return lengths;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setLengths(List<String> lengths) {
-        this.lengths = lengths;
+    public Double getSize() {
+        return size;
     }
 
-    public List<Double> getSizes() {
-        return sizes;
+    public void setSize(Double size) {
+        this.size = size;
     }
 
-    public void setSizes(List<Double> sizes) {
-        this.sizes = sizes;
+    public String getLength() {
+        return length;
     }
 
-    public List<LocalDate> getDates() {
-        return dates;
+    public void setLength(String length) {
+        this.length = length;
     }
 
-    public void setDates(List<LocalDate> dates) {
-        this.dates = dates;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public List<LocalTime> getTimes() {
-        return times;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public void setTimes(List<LocalTime> times) {
-        this.times = times;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public List<LocalDateTime> getDatetimes() {
-        return datetimes;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public void setDatetimes(List<LocalDateTime> datetimes) {
-        this.datetimes = datetimes;
+    public LocalTime getTime() {
+        return time;
     }
 
-    public List<String> getAlbums() {
-        return albums;
+    public void setTime(LocalTime time) {
+        this.time = time;
     }
 
-    public void setAlbums(List<String> albums) {
-        this.albums = albums;
+    public byte[] getByteOfPicture() {
+        return byteOfPicture;
     }
 
-    public List<String> getYears() {
-        return years;
+    public void setByteOfPicture(byte[] byteOfPicture) {
+        this.byteOfPicture = byteOfPicture;
     }
 
-    public void setYears(List<String> years) {
-        this.years = years;
+    public String getAlbumTitle() {
+        return albumTitle;
     }
 
-    public List<String> getGenres() {
-        return genres;
+    public void setAlbumTitle(String albumTitle) {
+        this.albumTitle = albumTitle;
     }
 
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public String getCountOfFavourite() {
+        return countOfFavourite;
+    }
+
+    public void setCountOfFavourite(String countOfFavourite) {
+        this.countOfFavourite = countOfFavourite;
     }
 }

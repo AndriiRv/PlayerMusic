@@ -1,12 +1,11 @@
-package com.example.musicplayer.chat.model;
+package com.example.musicplayer.conversation.message.model;
 
-public class Message {
+public class MessageDto {
     private int id;
     private String name;
     private String surname;
     private String message;
-    private String time;
-    private String date;
+    private String datetime;
 
     public int getId() {
         return id;
@@ -40,19 +39,11 @@ public class Message {
         this.message = message;
     }
 
-    public String getTime() {
-        return time;
+    public String getDatetime() {
+        return datetime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
     }
 }

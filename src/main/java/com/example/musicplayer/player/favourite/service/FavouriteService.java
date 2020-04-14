@@ -44,8 +44,16 @@ public class FavouriteService {
         return checkIfTrackAlreadyInFavourite;
     }
 
+    public Integer getCountOfFavouriteByMusicId(int musicId) {
+        return favouriteRepository.getCountOfFavouriteByMusicId(musicId);
+    }
+
     public void renameTrackByUser(User user, int trackId, String newTitleByUser) {
         favouriteRepository.renameTrackByUser(user.getId(), trackId, newTitleByUser);
+    }
+
+    public Integer isTrackAlreadyInFavouriteByUserId(User user, int musicId) {
+        return favouriteRepository.isTrackAlreadyInFavouriteByUserId(user.getId(), musicId);
     }
 
     public List<Track> getFavouriteTracksByUser(int userId) {

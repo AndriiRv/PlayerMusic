@@ -2,7 +2,7 @@ package com.example.musicplayer.friendship.service;
 
 import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.authentication.service.UserService;
-import com.example.musicplayer.chat.service.ChatService;
+import com.example.musicplayer.conversation.chat.service.ChatService;
 import com.example.musicplayer.friendship.repository.FriendshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,21 @@ public class FriendshipService {
         this.chatService = chatService;
     }
 
-    public void createFriendship(int currentUserId, int possibleFriendId) {
-        friendshipRepository.createFriendship(currentUserId, possibleFriendId);
+    public void createFriendship(User user, int possibleFriendId) {
+        String currentUserName = userService.getUserByUserId(user.getId()).getName();
+        String possibleFriendUserName = userService.getUserByUserId(possibleFriendId).getName();
+
+        friendshipRepository.createFriendship(user.getId(), possibleFriendId);
+        chatService.createPrivateChat(user, possibleFriendId, currentUserName + " - " + possibleFriendUserName);
+    }
+
+    public void deleteFriendship(int currentUserId, int secondUserId) {
+        friendshipRepository.deleteFriendship(currentUserId, secondUserId);
+        chatService.removeChatByRemovedFriendship(currentUserId, secondUserId);
+    }
+
+    public Integer isFriendHasByUserId(int friendId, int userId) {
+        return friendshipRepository.isFriendHasByUserId(friendId, userId);
     }
 
     public List<User> getAllUsers(User currentUser) {
@@ -38,20 +51,6 @@ public class FriendshipService {
             }
         }
         return allUsersWithoutCurrentUser;
-    }
-
-    public List<User> getFriendsByUserIdForChat(int userId) {
-        List<User> getFriends = new ArrayList<>();
-
-        List<Integer> friendsByUserId = friendshipRepository.getFriendsByUserId(userId);
-
-        for (Integer user : friendsByUserId) {
-            if (chatService.isFriendHasInChat(user) <= 0) {
-                getFriends.add(userService.getUserByUserId(user));
-            }
-        }
-
-        return getFriends;
     }
 
     public List<User> getFriendsByUserIdForFriend(int userId) {

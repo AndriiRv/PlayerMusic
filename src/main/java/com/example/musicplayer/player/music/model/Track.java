@@ -1,15 +1,10 @@
 package com.example.musicplayer.player.music.model;
 
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Objects;
 
-@Component
 public class Track {
     private Integer id;
     private String fullTitle;
@@ -150,11 +145,11 @@ public class Track {
         this.genre = genre;
     }
 
-    public static Comparator<Track> fullTitleTrackComparator = Comparator.comparing(Track::getFullTitle);
+    public static Comparator<TrackDto> fullTitleTrackComparator = Comparator.comparing(TrackDto::getFullTitle);
 
-    public static Comparator<Track> lengthTrackComparator = Comparator.comparing(Track::getLength);
+    public static Comparator<TrackDto> lengthTrackComparator = Comparator.comparing(TrackDto::getLength);
 
-    public static Comparator<Track> sizeTrackComparator = (track1, track2) -> (int) (track1.getSize() - track2.getSize());
+    public static Comparator<TrackDto> sizeTrackComparator = (track1, track2) -> (int) (track1.getSize() - track2.getSize());
 
-    public static Comparator<Track> dateTrackComparator = Comparator.comparing(Track::getDateTime);
+    public static Comparator<TrackDto> dateTrackComparator = Comparator.comparing(TrackDto::getDateTime);
 }

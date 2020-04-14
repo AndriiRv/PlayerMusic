@@ -1,19 +1,23 @@
 package com.example.musicplayer.player.history.controller;
 
 import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.history.service.HistoryService;
+import com.example.musicplayer.player.music.model.Track;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/history")
 public class HistoryController {
     private final HistoryService historyService;
@@ -32,7 +36,6 @@ public class HistoryController {
     }
 
     @GetMapping
-    @ResponseBody
     public List<Track> getHistoryTrackByUserId(@AuthenticationPrincipal User user) {
         List<Track> historyByUserId = historyService.getHistoryByUserId(user.getId());
         if (!historyByUserId.isEmpty()) {
@@ -42,7 +45,6 @@ public class HistoryController {
     }
 
     @DeleteMapping
-    @ResponseBody
     public String deleteTrackFromHistory(@AuthenticationPrincipal User user, int trackId) {
         return historyService.removeFromHistory(user.getId(), trackId);
     }

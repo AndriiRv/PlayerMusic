@@ -1,4 +1,4 @@
-package com.example.musicplayer.chat.model;
+package com.example.musicplayer.conversation.chat.model;
 
 public class Chat {
     private int id;

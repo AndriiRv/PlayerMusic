@@ -1,7 +1,9 @@
 package com.example.musicplayer.player.music.service;
 
 import com.example.musicplayer.authentication.model.User;
+import com.example.musicplayer.player.countofplayed.service.PlayedService;
 import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.picture.service.PictureService;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
@@ -26,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,58 +51,56 @@ import static com.example.musicplayer.player.music.model.Track.sizeTrackComparat
 public class MusicPlayerService {
     private final MusicService musicService;
     private final PictureService pictureService;
+    private final PlayedService playedService;
     private final Logger log = LoggerFactory.getLogger(MusicPlayerService.class.getName());
     private final String pathToFolder;
-    private final Track track;
-    private List<Track> listOfTracks;
+    private List<TrackDto> listOfTracks;
 
     @Autowired
     public MusicPlayerService(MusicService musicService,
                               PictureService pictureService,
-                              @Value("${music-player.directory}") String pathToFolder,
-                              Track track) {
+                              PlayedService playedService,
+                              @Value("${music-player.directory}") String pathToFolder) {
         this.musicService = musicService;
         this.pictureService = pictureService;
+        this.playedService = playedService;
         this.pathToFolder = pathToFolder;
-        this.track = track;
         listOfTracks = new ArrayList<>();
     }
 
-    public List<Track> getListOfTracks() {
+    public List<TrackDto> getListOfTracks() {
         return listOfTracks;
     }
 
-    private List<Track> getMusic() {
+    private List<TrackDto> getMusic() {
         File file = new File(pathToFolder);
         File[] tracks = file.listFiles();
 
         if (listOfTracks.isEmpty()) {
             if (tracks != null && file.exists()) {
-                if (musicService.isMusicTableEmpty() == 0) {
-                    int id = 0;
 
-                    for (File trackElement : tracks) {
-                        String trackWithExtension = trackElement.getName();
-                        if (trackWithExtension.endsWith("mp3") && musicService.checkIfTrackExistInTable(trackElement.getName()) != 1) {
-                            Track track = new Track();
-                            id++;
+                int id = 0;
 
-                            track.setId(id);
-                            setFullTitleSingerAndTitle(track, trackElement);
-                            setSizeAndLength(track, trackElement);
-                            setDateTime(track, trackElement);
-                            setAlbumYearAndGenreToMusicTrack(track, trackElement);
+                for (File trackElement : tracks) {
+                    String trackWithExtension = trackElement.getName();
+                    if (trackWithExtension.endsWith("mp3") && musicService.checkIfTrackExistInTable(trackElement.getName()) != 1) {
+                        TrackDto trackDto = new TrackDto();
+                        id++;
 
-                            int musicTrackId = musicService.insertMusicToDb(track);
-                            setCoverToMusicTrack(trackElement, musicTrackId);
-                            listOfTracks.add(track);
-                            log.info("{}. save in db: {}", id, trackElement.getName());
-                        }
+                        trackDto.setId(id);
+                        setFullTitleSingerAndTitle(trackDto, trackElement);
+                        setSizeAndLength(trackDto, trackElement);
+                        setDateTime(trackDto, trackElement);
+                        setAlbumYearAndGenreToMusicTrack(trackDto, trackElement);
+
+                        int musicTrackId = musicService.insertMusicToDb(trackDto);
+                        setCoverToMusicTrack(trackDto, trackElement, musicTrackId);
+                        listOfTracks.add(trackDto);
+                        log.info("{}. save in db: {}", id, trackElement.getName());
                     }
-                } else {
-                    listOfTracks = musicService.getMusicFromTable();
-                    log.info("Load from bd");
                 }
+                listOfTracks = musicService.getMusicFromTable();
+                log.info("Load from bd");
             } else {
                 log.warn("Music tracks ain't found");
             }
@@ -110,17 +109,17 @@ public class MusicPlayerService {
         }
         checkIfTrackExistInSystem();
         return listOfTracks.stream()
-                .sorted(Comparator.comparing(Track::getFullTitle))
+                .sorted(Comparator.comparing(TrackDto::getFullTitle))
                 .collect(Collectors.toList());
     }
 
-    private void setFullTitleSingerAndTitle(Track track, File trackElement) {
+    private void setFullTitleSingerAndTitle(TrackDto track, File trackElement) {
         track.setFullTitle(trackElement.getName());
         track.setSinger(getManuallyTitleAndSinger(track).getSinger());
         track.setTitle(getManuallyTitleAndSinger(track).getTitle());
     }
 
-    private Track getManuallyTitleAndSinger(Track track) {
+    private TrackDto getManuallyTitleAndSinger(TrackDto track) {
         int indexDash = track.getFullTitle().indexOf(" - ");
         if (indexDash != -1) {
             int indexAfterTitle = track.getFullTitle().indexOf(".mp3");
@@ -139,7 +138,7 @@ public class MusicPlayerService {
         return track;
     }
 
-    private void setSizeAndLength(Track track, File trackElement) {
+    private void setSizeAndLength(TrackDto track, File trackElement) {
         double size;
         int convertFromByteToMb = 1048576;
         size = trackElement.length();
@@ -148,7 +147,7 @@ public class MusicPlayerService {
         track.setLength(getDuration(trackElement));
     }
 
-    private void setDateTime(Track track, File trackElement) {
+    private void setDateTime(TrackDto track, File trackElement) {
         Path dateCreatedOfTrack = Paths.get(String.valueOf(trackElement));
         BasicFileAttributes attr = null;
         try {
@@ -167,7 +166,7 @@ public class MusicPlayerService {
                 zonedDateTime.getSecond()));
     }
 
-    private void setCoverToMusicTrack(File trackFile, int musicTrackId) {
+    private void setCoverToMusicTrack(TrackDto track, File trackFile, int musicTrackId) {
         byte[] coverFromMusicTrack = getCoverFromMusicTrack(trackFile.getName());
 
         track.setByteOfPicture(coverFromMusicTrack);
@@ -206,7 +205,7 @@ public class MusicPlayerService {
         return new byte[0];
     }
 
-    private void setAlbumYearAndGenreToMusicTrack(Track track, File trackFile) {
+    private void setAlbumYearAndGenreToMusicTrack(TrackDto track, File trackFile) {
         try {
             Mp3File mp3file = new Mp3File(pathToFolder + trackFile.getName());
             if (mp3file.hasId3v1Tag()) {
@@ -228,13 +227,13 @@ public class MusicPlayerService {
                 }
             }
 
-            if (track.getAlbumTitle() == null || !isStringIsUTF8(track.getAlbumTitle())) {
+            if (track.getAlbumTitle() == null || isStringIsUTF8(track.getAlbumTitle())) {
                 track.setAlbumTitle(null);
             }
-            if (track.getGenre() == null || !isStringIsUTF8(track.getGenre())) {
+            if (track.getGenre() == null || isStringIsUTF8(track.getGenre())) {
                 track.setGenre(null);
             }
-            if (track.getYear() == null || !isStringIsUTF8(track.getYear())) {
+            if (track.getYear() == null || isStringIsUTF8(track.getYear())) {
                 track.setYear(null);
             }
 
@@ -245,13 +244,14 @@ public class MusicPlayerService {
 
     private boolean isStringIsUTF8(String string) {
         try {
-            return StandardCharsets.US_ASCII.newEncoder().canEncode(string);
+            return !StandardCharsets.US_ASCII.newEncoder().canEncode(string);
         } catch (NullPointerException e) {
-            return false;
+            return true;
         }
     }
 
-    public String getLyric(User user, String url, String nameOfTrack, String artistOfTrack, String apiKey) {
+    public String getLyric(User user, String url, String nameOfTrack, String artistOfTrack) {
+        String apiKey = "mVoBkkq8qCPSyOdCG8tNrZ2jvbs0EU5mzSrT2KqTzR9yExymX1qoakiEybGSH5RC";
         log.info(user.getUsername() + " get lyric in " + artistOfTrack + " - " + nameOfTrack);
         return url + artistOfTrack + "/" + nameOfTrack + "?apikey=" + apiKey;
     }
@@ -278,8 +278,8 @@ public class MusicPlayerService {
         }
     }
 
-    public List<Track> getShuffleMusic(int page, boolean isShuffle) {
-        List<Track> shuffledMusic;
+    public List<TrackDto> getShuffleMusic(int page, boolean isShuffle) {
+        List<TrackDto> shuffledMusic;
 
         if (listOfTracks == null || listOfTracks.isEmpty()) {
             shuffledMusic = getMusic();
@@ -314,8 +314,8 @@ public class MusicPlayerService {
         return "";
     }
 
-    public List<Track> sort(String sort, String directory, int page) {
-        List<Track> allTracks;
+    public List<TrackDto> sort(String sort, String directory, int page) {
+        List<TrackDto> allTracks;
 
         if (listOfTracks == null || listOfTracks.isEmpty()) {
             allTracks = getMusic();
@@ -359,6 +359,10 @@ public class MusicPlayerService {
         return allTracks.stream()
                 .limit(page)
                 .collect(Collectors.toList());
+    }
+
+    public void addCountOfPlayedByMusicTitle(int musicId){
+        playedService.addCountOfPlayedByMusicId(musicId);
     }
 
     public ResponseEntity<ByteArrayResource> mediaResourceProcessing(User user, String fullTitle, String process) {

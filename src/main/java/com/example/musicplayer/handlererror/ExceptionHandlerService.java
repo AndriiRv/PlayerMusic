@@ -20,6 +20,8 @@ public class ExceptionHandlerService {
                 return "error/error500.html";
             } else if (statusCode == HttpStatus.METHOD_NOT_ALLOWED.value()) {
                 return "error/error405.html";
+            } else if(statusCode == HttpStatus.FORBIDDEN.value()){
+                return "error/error403.html";
             }
         }
         return "error/error404.html";

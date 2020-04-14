@@ -84,12 +84,12 @@ public class MusicRepository {
         return (int) Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
-    public List<Track> getMusicFromTable() {
+    public List<TrackDto> getMusicFromTable() {
         String sql = ""
                 + "SELECT m.*, tc.picture AS byteOfPicture "
                 + "FROM music AS m "
                 + "LEFT JOIN track_cover AS tc ON tc.music_id = m.id";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Track.class));
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(TrackDto.class));
     }
 
     public List<String> getMusicTitleFromTable() {

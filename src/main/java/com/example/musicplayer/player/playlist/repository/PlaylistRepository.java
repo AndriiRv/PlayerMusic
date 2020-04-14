@@ -81,4 +81,12 @@ public class PlaylistRepository {
                 .addValue("userId", userId)
                 .addValue("playlistId", playlistId));
     }
+
+    public void deleteTrackFromPlaylist(Integer playlistId, int trackId) {
+        String sql = ""
+                + "DELETE FROM user_playlist WHERE user_playlist_id = :playlistId AND music_id = :trackId";
+        jdbcTemplate.update(sql, new MapSqlParameterSource()
+                .addValue("playlistId", playlistId)
+                .addValue("trackId", trackId));
+    }
 }
