@@ -1,7 +1,4 @@
 let counter = 0;
-let addR = 107;
-let addG = 1;
-let addB = 125;
 
 window.onload = function () {
     let soundWaveButton = document.getElementById("soundWaveButton");
@@ -10,6 +7,11 @@ window.onload = function () {
         counter++;
         soundWaveButton.style.opacity = "1";
         if (counter % 2 !== 0) {
+
+            let addR = getRandomInt(255);
+            let addG = getRandomInt(255);
+            let addB = getRandomInt(255);
+
             $("#canvas").css('display', 'block');
             $("#soundWaveColorSlider").css('display', 'none');
             $("#listOfTrack").css('position', 'absolute');
@@ -43,7 +45,7 @@ window.onload = function () {
                 x = 0;
                 analyser.getByteFrequencyData(dataArray);
 
-                ctx.clearRect(0,0,WIDTH,HEIGHT);
+                ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
                 for (let i = 0; i < bufferLength; i++) {
                     barHeight = dataArray[i];
@@ -67,3 +69,7 @@ window.onload = function () {
         }
     };
 };
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}

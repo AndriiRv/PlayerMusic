@@ -1,0 +1,53 @@
+#menu {
+    display: flex;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 4;
+    background-color: #333333;
+    height: 46px;
+}
+
+#currentUserName {
+    width: 77px;
+    text-align: center;
+}
+
+.dropdown-content {
+    display: none;
+}
+
+.menuElement, .dropdownElement {
+    color: orange;
+    cursor: pointer;
+    padding: 9px 10px;
+    border-color: black;
+    border-style: ridge;
+    border-width: 1px;
+    background-color: #212529;
+}
+
+.menuElement:hover, .dropdownElement:hover {
+    color: yellow;
+    cursor: pointer;
+}
+
+#leftFromSearch {
+    display: flex;
+    justify-content: flex-end;
+    flex-basis: 35%;
+}
+
+#searchTrack {
+    flex-basis: 30%;
+}
+
+#inputSearchTrack {
+    display: flex;
+    width: 100%;
+}
+
+#rightFromSearch {
+    display: flex;
+    flex-basis: 35%;
+}

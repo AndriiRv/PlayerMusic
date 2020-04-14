@@ -1,0 +1,177 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    background-attachment: fixed;
+}
+
+input[type='file'] {
+    color: transparent;
+}
+
+#leftMainDiv {
+    display: inline-flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 10%;
+    position: fixed;
+    height: 100%;
+    width: 256px;
+    background-color: #333333;
+    z-index: 2;
+}
+
+#rightMainDiv {
+    display: inline-flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 10%;
+    position: fixed;
+    height: 100%;
+    width: 20px;
+    background-color: #333333;
+    z-index: 2;
+    right: 0
+}
+
+div#historyPic, div#likePic {
+    margin-left: 10%;
+}
+
+#historyPic {
+    background-size: 24px 24px;
+    height: 24px;
+    width: 30px;
+    background-image: url('../../images/history.png');
+    background-repeat: no-repeat;
+}
+
+#likePic {
+    background-size: 24px 24px;
+    height: 24px;
+    width: 30px;
+    background-image: url('../../images/like.png');
+    background-repeat: no-repeat;
+}
+
+#playlistPic {
+    cursor: pointer;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    background-image: url('../../images/playlist.png');
+}
+
+#lyric {
+    display: none;
+    text-align: justify;
+    color: white;
+    bottom: 10%;
+    padding: 5px;
+    position: fixed;
+    left: 5%;
+    width: 20%;
+    overflow-y: auto;
+    height: 50%;
+    z-index: 2;
+}
+
+#acceptCookieDiv {
+    display: none;
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    bottom: 0;
+    position: fixed;
+    z-index: 5;
+}
+
+#buttonsAcceptCookie {
+    display: block;
+}
+
+a, a:hover {
+    color: orange;
+}
+
+#listOfTrack, table, th, td {
+    color: white;
+}
+
+#uploadId {
+    color: white;
+}
+
+#uploadMusicDiv {
+    display: none;
+}
+
+#listOfTrack {
+    z-index: 1;
+    margin-top: 3%;
+    position: absolute;
+}
+
+@media screen and (min-width: 1024px) {
+    #listOfTrack {
+        width: 30%;
+        margin-left: 35%;
+        height: 94%;
+        overflow-y: auto;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        width: 30%;
+        margin-left: 60%;
+    }
+}
+
+#idSort {
+    background-image: url('../../images/whiteSort.png');
+    background-size: 35px 35px;
+    background-color: transparent;
+    color: white;
+}
+
+#favouriteTracksButton {
+    display: none;
+}
+
+footer {
+    width: auto;
+    bottom: 0;
+    right: 1%;
+}
+
+.titleOfTrackInTable:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    color: white;
+}
+
+.titleOfTrackInTable {
+    width: 100%;
+    float: left;
+    height: 100%;
+}
+
+#shuffle {
+    color: #007bff;
+}
+
+#shuffle:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#fieldForRenameId {
+    background: transparent;
+    border: none;
+}
+
+#fieldForRenameId:hover {
+    background: white;
+}

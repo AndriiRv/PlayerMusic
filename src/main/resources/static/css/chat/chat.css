@@ -1,0 +1,23 @@
+#messageDiv {
+    display: none;
+    text-align: justify;
+    color: white;
+    bottom: 10%;
+    padding: 5px;
+    position: fixed;
+    right: 5%;
+    width: 25%;
+    overflow-y: auto;
+    height: 50%;
+    z-index: 2;
+}
+
+#chat {
+    position: fixed;
+    max-width: 152px;
+}
+
+#message {
+    padding-left: 150px;
+    width: 100%;
+}

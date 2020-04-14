@@ -1,44 +1,64 @@
-let counterForLyricShow = 0;
+let lyricDiv = $("#lyric");
+let bufferLyricText = null;
+let bufferSongTrack = null;
 
+let isOpenLyricDiv = true;
 $(".lyricButton").on('click', function () {
-    counterForLyricShow++;
-    if (counterForLyricShow % 2 !== 0) {
-        $.post({
-            url: '/lyric',
-            data: {
-                url: "https://orion.apiseeds.com/api/music/lyric/",
-                nameOfTrack: songTrack,
-                artistOfTrack: artistTrack,
-                apiKey: "mVoBkkq8qCPSyOdCG8tNrZ2jvbs0EU5mzSrT2KqTzR9yExymX1qoakiEybGSH5RC"
-            },
-            success: function (data) {
-                $.get({
-                    url: data,
-                    success: function (json) {
-                        $("#lyric").css({
-                            "display": "block"
-                        });
-                        $("#lyric").text(json.result.track.text);
-                        console.log(json.result.track.text);
-                        console.log(json.result.artist.name + " - " + json.result.track.name + " get from APISeeds Lyrics");
-                    },
-                    error: function () {
-                        counterForLyricShow = 0;
-                        $("#lyric").css({
-                            "display": "none"
-                        });
-                        title.notify("Lyric of track not found via API", {
-                            position: 'top left',
-                            className: 'error'
-                        });
-                        console.log("Lyric of track not found via API");
-                    }
-                });
-            }
-        });
+
+    if (isOpenLyricDiv) {
+        if (bufferSongTrack === songTrack && bufferLyricText !== "") {
+            lyricDiv.css({
+                "display": "block"
+            });
+            lyricDiv.text(bufferLyricText);
+            isOpenLyricDiv = false;
+        } else if (bufferSongTrack === songTrack && bufferLyricText === "") {
+            messageLyricNotFound();
+        } else {
+            isOpenLyricDiv = false;
+            $.post({
+                url: '/lyric',
+                data: {
+                    url: "https://orion.apiseeds.com/api/music/lyric/",
+                    nameOfTrack: songTrack,
+                    artistOfTrack: artistTrack
+                },
+                success: function (data) {
+                    $.get({
+                        url: data,
+                        success: function (json) {
+                            lyricDiv.css({
+                                "display": "block"
+                            });
+                            bufferSongTrack = songTrack;
+                            let getJsonText = json.result.track.text;
+                            lyricDiv.text(getJsonText);
+                            bufferLyricText = getJsonText;
+                        },
+                        error: function () {
+                            isOpenLyricDiv = true;
+                            bufferSongTrack = songTrack;
+                            messageLyricNotFound();
+                        }
+                    });
+                }
+            });
+        }
     } else {
-        $("#lyric").css({
+        isOpenLyricDiv = true;
+        lyricDiv.css({
             "display": "none"
         });
     }
 });
+
+function messageLyricNotFound() {
+    lyricDiv.css({
+        "display": "none"
+    });
+    title.notify("Lyric of track not found via API", {
+        position: 'top left',
+        className: 'error'
+    });
+    bufferLyricText = "";
+}

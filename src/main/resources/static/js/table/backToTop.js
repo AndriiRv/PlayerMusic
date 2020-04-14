@@ -2,7 +2,7 @@ var backToTop = $('#backToTop');
 // if (backToTop.length) {
     var scrollTrigger = 100,
         doBackToTop = function () {
-            var scrollTop = $(window).scrollTop();
+            var scrollTop = $("#listOfTrack").scrollTop();
             if (scrollTop > scrollTrigger) {
                 backToTop.fadeIn();
                 backToTop.addClass('show');
@@ -12,12 +12,12 @@ var backToTop = $('#backToTop');
             }
         };
     doBackToTop();
-    $(window).on('scroll', function () {
+    $("#listOfTrack").on('scroll', function () {
         doBackToTop();
     });
     backToTop.on('click', function (e) {
         e.preventDefault();
-        $('html, body').animate({
+        $("#listOfTrack").animate({
             scrollTop: 0
         }, 700);
     });

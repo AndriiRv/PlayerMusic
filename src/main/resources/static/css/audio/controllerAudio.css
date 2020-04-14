@@ -1,46 +1,17 @@
 #bottomController {
-    display: flex;
-    background-color: #f2f2f2;
-    height: 49px;
+    display: none;
+    background-color: #212529;
+    height: 70px;
     width: 100%;
     position: fixed;
     bottom: 0;
     z-index: 2;
+    color: white;
 }
 
 #picInBottomController {
     display: flex;
     width: 100%;
-}
-
-.controllerAssistDiv {
-    display: inline-flex;
-}
-
-.exitFromDiv {
-    background-image: url('../../images/redCross.png');
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
-}
-
-#historyTrackDiv {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-basis: 10%;
-}
-
-#historyTable, #favouriteTable {
-    display: none;
-    text-align: justify;
-    position: fixed;
-    bottom: 10%;
-    left: 4%;
-    width: 20%;
-    overflow-y: auto;
-    height: 50%;
-    z-index: 2;
 }
 
 #playlistTable {
@@ -72,20 +43,60 @@
     background-image: url('../../images/redCross.png');
 }
 
-#titleAndRemoveButton {
-    color: white;
-    /*border-style: double;*/
+#leftSideBottomController {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 10px;
+    flex-basis: 30%;
 }
 
-#titleAndRemoveButton > .titleOfTrackInTable {
-    width: 100%;
-    /*border-style: double;*/
+#soundWaveButton {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    background-image: url('../../images/soundWave/soundWave.png');
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    opacity: 0.5;
+}
+
+#picAndTitleOfTrack {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 10px;
+    flex-basis: 50%;
+}
+
+#additionalButtons {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding-left: 15px;
+    flex-basis: 50%;
+}
+
+#selectPlaylistButton {
+    background-color: transparent;
+    border: none;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    background-image: url('../../images/playlist.png');
+}
+
+#centerSideBottomController {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
 }
 
 #playController {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     flex-basis: 30%;
 }
 
@@ -96,25 +107,20 @@
     flex-basis: 40%;
 }
 
-#volumeNTitleOfTrack {
+#selectPlaylistDiv {
+    width: 100px;
+    height: 100%;
+    margin-bottom: 180px;
+}
+
+#rightSideBottomController {
     display: flex;
     align-items: center;
-    justify-content: left;
-    padding-left: 10px;
-    flex-basis: 50%;
+    justify-content: center;
+    flex-basis: 30%;
 }
 
-#soundWaveButton {
-    background-color: transparent;
-    border: none;
-    background-image: url('../../images/soundWave.svg');
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
-    opacity: 0.5;
-}
-
-#volumeNTitleOfTrack > .downloadButton {
+#leftSideBottomController > .downloadButton {
     background-color: transparent;
     border: none;
     background-image: url('../../images/download.svg');
@@ -131,13 +137,14 @@
     height: 24px;
     width: 24px;
     background-image: url('../../images/lyric.png');
+    cursor: pointer;
 }
 
 .shuffleButton {
     cursor: pointer;
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
+    background-size: 34px 34px;
+    height: 34px;
+    width: 34px;
     background-image: url('../../images/shuffle.png');
 }
 
@@ -145,9 +152,9 @@
     display: none;
     background-color: transparent;
     border: none;
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
+    background-size: 34px 34px;
+    height: 34px;
+    width: 34px;
 }
 
 .playButton {
@@ -161,26 +168,27 @@
 .prevTrackButton, .nextTrackButton {
     background-color: transparent;
     border: none;
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
+    background-size: 34px 34px;
+    height: 34px;
+    width: 34px;
 }
 
 .prevTrackButton {
-    background-image: url('../../images/prev.svg');
+    background-image: url('../../images/prevNextButton/prev.png');
 }
 
 .nextTrackButton {
-    background-image: url('../../images/next.svg');
+    background-image: url('../../images/prevNextButton/next.png');
 }
 
 .loopButton {
+    cursor: pointer;
     background-color: transparent;
     border: none;
     background-image: url('../../images/loop.svg');
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
+    background-size: 34px 34px;
+    height: 34px;
+    width: 34px;
     opacity: 0.5;
     z-index: 3;
 }
@@ -196,7 +204,7 @@
     z-index: 3;
 }
 
-#barAllPlayed {
+.barAllPlayed {
     flex-grow: 2;
     border-style: solid;
     border-color: black;
@@ -205,7 +213,7 @@
     z-index: 3;
 }
 
-#barPlay {
+.barPlay {
     height: 100%;
     background: #007fd1;
     background: -webkit-gradient(linear, left top, right top, from(#007fd1), to(#c600ff));
@@ -217,14 +225,20 @@
 }
 
 #showInfoAboutTrack {
-    cursor: pointer;
     margin-bottom: 0;
+    padding-left: 10px;
+    max-height: 70px;
+}
+
+#showInfoAboutTrack:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .addToFavouriteButton {
     background-color: transparent;
     border: none;
-    background-image: url('../../images/favourite.svg');
+    background-image: url('../../images/favourite/favouriteActive.svg');
     background-size: 20px 20px;
     height: 20px;
     width: 20px;
@@ -235,10 +249,10 @@
     background-color: transparent;
     border: none;
     background-image: url('../../images/download.svg');
-    background-size: 60px 60px;
-    height: 60px;
-    width: 60px;
-    margin-right: 10px;
+    background-size: 24px 24px;
+    height: 24px;
+    width: 24px;
+    margin-right: 5px;
     z-index: 3;
 }
 

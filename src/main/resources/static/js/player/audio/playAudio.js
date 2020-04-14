@@ -1,5 +1,5 @@
-var titleOfTrack = null;
 let titleOfTrackInPlayer = $('.titleOfTrackInPlayer');
+let numberOfTrack = null;
 
 let audio = $("#audioId");
 
@@ -8,30 +8,14 @@ let currentTimeSelector = $(".currentTime");
 
 let hrefTitleForDownload;
 
-let barAllPlayed = $("#barAllPlayed");
-let barPlay = $("#barPlay");
+let barAllPlayed = $(".barAllPlayed");
+let barPlay = $(".barPlay");
 
 let intervalVolumeBoost = null;
 
 let artistTrack = null;
 let songTrack = null;
-
-function volumeBoost() {
-    clearInterval(intervalVolumeBoost);
-    let volumeBoost = 0;
-
-    intervalVolumeBoost = setInterval(function () {
-        if (audio.get(0).currentTime <= 1.5) {
-            audio.get(0).volume = 0;
-        }
-        volumeBoost += 0.01;
-        audio.get(0).volume = volumeBoost;
-
-        if (audio.get(0).volume >= 0.3) {
-            clearInterval(intervalVolumeBoost);
-        }
-    }, 100);
-}
+let fullTitle = null;
 
 function getSingerAndTitle(fullTitle) {
     let indexDash = fullTitle.indexOf(" - ");
@@ -43,7 +27,7 @@ function getSingerAndTitle(fullTitle) {
     }
 }
 
-function showSelectTrack(titleOfTrackInTable, nameOfTrack) {
+function highlightSelectTrack(titleOfTrackInTable, nameOfTrack) {
     titleOfTrackInTable.filter(function () {
         return $(this).text() === nameOfTrack;
     }).css({
@@ -59,19 +43,25 @@ function clearSelectTrack(titleOfTrackInTable) {
     });
 }
 
-$("body").on("click", ".titleOfTrackInTable", function () {
-
-    if ($(this).closest("tbody").attr('id') === "mainTableTBody") {
-        listOfTrack = defaultList;
-    } else if ($(this).closest("tbody").attr('id') === "historyTBody") {
-        listOfTrack = historyList;
-    } else if ($(this).closest("tbody").attr('id') === "favouriteTBody") {
-        listOfTrack = favouriteList;
+function setTrackToHistoryToUser(nameOfTrack) {
+    let currentUserName = $("#currentUserName").text();
+    if (currentUserName) {
+        addTrackToHistory(nameOfTrack);
     }
+}
+
+function setTitleToNameOfTab(newNameOfTab) {
+    $("#titleOfTab").html(newNameOfTab + " | Music Player");
+}
+
+$("body").on("click", ".titleOfTrackInTable", function () {
+    $("#bottomController").css({
+        "display": "flex"
+    });
 
     let titleOfTrackInTable = $(".titleOfTrackInTable");
 
-    volumeBoost();
+    // volumeBoost();
 
     playButton.hide();
     pauseButton.show();
@@ -79,12 +69,15 @@ $("body").on("click", ".titleOfTrackInTable", function () {
     clearSelectTrack(titleOfTrackInTable);
 
     let nameOfTrack = $(this).text();
-    titleOfTrack = nameOfTrack;
+    fullTitle = nameOfTrack;
 
-    let currentUserName = $("#currentUserName").text();
-    if (currentUserName) {
-        addTrackToHistory(nameOfTrack);
-    }
+    numberOfTrack = $(this).siblings("#musicId").text();
+    numberOfTrack = numberOfTrack.replace(fullTitle, '');
+
+    addCountOfPlayedByMusicId(numberOfTrack);
+
+    let srcCoverTrack = $(this).prevAll('img').first().attr("src");
+    getPicture(srcCoverTrack);
 
     for (let i = 0; i <= String(nameOfTrack).length; i++) {
         if (nameOfTrack.includes('[')) {
@@ -93,6 +86,10 @@ $("body").on("click", ".titleOfTrackInTable", function () {
         if (nameOfTrack.includes('#')) {
             nameOfTrack = nameOfTrack.replace('#', '%23');
         }
+    }
+    if (!currentUserName.text().includes("guest")) {
+        setTrackToHistoryToUser(nameOfTrack);
+        changeFavouritePic();
     }
 
     titleOfTrackInPlayer.empty();
@@ -109,15 +106,17 @@ $("body").on("click", ".titleOfTrackInTable", function () {
         }
     }
 
-    showSelectTrack(titleOfTrackInTable, nameOfTrack);
+    highlightSelectTrack(titleOfTrackInTable, nameOfTrack);
 
     hrefTitleForDownload = nameOfTrack;
     nameOfTrack = nameOfTrack.replace(".mp3", "");
 
-    $("#titleOfTab").html(nameOfTrack);
+    setTitleToNameOfTab(nameOfTrack);
 
     console.log("Manual select: " + nameOfTrack);
+
     titleOfTrackInPlayer.append(nameOfTrack);
+
     audio.get(0).onloadedmetadata = function () {
         let duration = audio.get(0).duration;
         getTime(duration, durationSelector);
@@ -129,25 +128,22 @@ $("body").on("click", ".titleOfTrackInTable", function () {
     }, 10);
 });
 
-let click = false;
-
-barAllPlayed.on('mousedown', function () {
-    click = true;
-
-    barAllPlayed.on('mousemove', function (e) {
-        if (click === true) {
-
-            let allWidth = barAllPlayed.width();
-            let currentXByDiv = e.pageX - barAllPlayed.offset().left;
-            audio.get(0).currentTime = (currentXByDiv * audio.get(0).duration) / allWidth;
-            barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
-        }
-    });
+barAllPlayed.on('click', function (e) {
+    let allWidth = barAllPlayed.width();
+    let currentXByDiv = e.pageX - barAllPlayed.offset().left;
+    audio.get(0).currentTime = (currentXByDiv * audio.get(0).duration) / allWidth;
+    barPlay.width((audio.get(0).currentTime / audio.get(0).duration) * 100 + '%');
 });
 
-barAllPlayed.bind('mouseup', function () {
-    barAllPlayed.unbind('mousemove')
-});
+barAllPlayed.hover(function () {
+        let div = '';
+        div += '<div id="hoverOnBarPlay" style="height:100%; width: 5px; background-color: black; float: right; border-style: double;"></div>';
+        barPlay.append(div)
+    },
+    function () {
+        $("#hoverOnBarPlay").remove();
+    }
+);
 
 function getTime(time, selector) {
     let hr = Math.floor(time / 3600).toString();

@@ -1,30 +1,37 @@
-let counterForMenu = 0;
+let submitSignIn = $("#submitSignIn");
+let usernamePassword = $("#signInUsername");
+let passwordField = $("#signInPassword");
 
-$("#currentUserName").on("click", function () {
-    counterForMenu++;
+let passwordCheckbox = $("#inputCheckbox");
 
-    if (counterForMenu % 2 !== 0) {
-        $(".dropdown .dropdown-content").show();
-    } else {
-        $(".dropdown .dropdown-content").hide();
-    }
-});
-
-$("#submitSignIn").on('click', function () {
+submitSignIn.on('click', function () {
     $.post({
         url: '/login',
         data: {
-            username: $("#loginUsername").val(),
-            password: $("#loginPassword").val(),
+            username: usernamePassword.val(),
+            password: passwordField.val(),
         },
         success: function () {
             location.reload();
         },
         error: function (data) {
-            $("#errorSignIn").empty();
-            $('#errorSignIn').append('<ul>');
-            $('#errorSignIn').append(data.responseText);
-            $('#errorSignIn').append('</ul>');
+            highlightErrorInput(usernamePassword);
+            highlightErrorInput(passwordField);
+            usernamePassword.notify(data.responseText, {
+                position: 'top',
+                className: 'error'
+            });
         }
     });
+});
+
+let checkboxActive = true;
+passwordCheckbox.on('click', function () {
+    if (checkboxActive) {
+        passwordField.get(0).type = 'text';
+        checkboxActive = false;
+    } else {
+        passwordField.get(0).type = 'password';
+        checkboxActive = true;
+    }
 });

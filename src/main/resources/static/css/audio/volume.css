@@ -11,10 +11,10 @@
 }
 
 .volumeMax {
-    background-image: url('../../images/volumeMax.svg');
+    background-image: url('../../images/volume/volumeMax.svg');
     opacity: 0.7;
 }
 
 .volumeMin {
-    background-image: url('../../images/volumeMin.svg');
+    background-image: url('../../images/volume/volumeMin.svg');
 }

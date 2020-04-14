@@ -1,27 +1,38 @@
+let descriptionCookieText = "We use cookies to enhance your experience on our site. By accepting our cookie policy you\n" +
+    "    agreeing to our use of\n" +
+    "    cookies.";
+
+let acceptCookieDiv = $("#acceptCookieDiv");
+let descriptionCookie = $("#descriptionCookie");
+descriptionCookie.text(descriptionCookieText);
+
+let acceptCookieButton = $("#acceptCookieButton");
+let declineCookieButton = $("#declineCookieButton");
+
 if (!getCookie("acceptedCookie")) {
-    $("#acceptCookieDiv").show();
+    acceptCookieDiv.show();
 } else {
-    $("#acceptCookieDiv").hide();
+    acceptCookieDiv.hide();
 }
 
-$("#acceptCookieButton").on('click', function () {
+acceptCookieButton.on('click', function () {
     $("#acceptCookieDiv").hide();
-    var getDateForCookie = new Date(Date.now() + 31536000e3);
+    let getDateForCookie = new Date(Date.now() + 31536000e3);
     getDateForCookie = getDateForCookie.toUTCString();
     document.cookie = "acceptedCookie=true; expires=" + getDateForCookie;
 });
 
-$("#declineCookieButton").on('click', function () {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-        var splitCookies = cookies[i].split("=");
+declineCookieButton.on('click', function () {
+    let cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        let splitCookies = cookies[i].split("=");
         document.cookie = splitCookies[0] + "=;expires=Thu, 21 Sep 1979 00:00:01 UTC;";
     }
-    $("#acceptCookieDiv").hide();
+    acceptCookieDiv.hide();
 });
 
 function getCookie(name) {
-    var matches = document.cookie.match(new RegExp(
+    let matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([.$?*|{}()\[\]\\\/+^])/g, '\\$1') + "=([^;]*)"
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;

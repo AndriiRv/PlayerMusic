@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=570"/>
+    <meta charset="UTF-8" name="viewport" content="width=400"/>
     <title id="titleOfTab">Music Player</title>
     <link rel="icon" type="image/ico" id="icon" th:href="@{/images/iconPlay.ico}"/>
-
     <link th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css}"
           rel="stylesheet"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
 
     <link th:href="@{css/loader/preload.css}" rel="stylesheet"/>
-    <link th:href="@{css/loader/spinner.css}" rel="stylesheet"/>
-    <link th:href="@{css/menu.css}" rel="stylesheet"/>
-    <link th:href="@{css/style.css}" rel="stylesheet"/>
-    <link th:href="@{css/player.css}" rel="stylesheet"/>
+    <link th:href="@{css/menu/menu.css}" rel="stylesheet"/>
+    <link th:href="@{css/common/style.css}" rel="stylesheet"/>
+    <link th:href="@{css/player/player.css}" rel="stylesheet"/>
     <link th:href="@{css/audio/controllerAudio.css}" rel="stylesheet"/>
     <link th:href="@{css/audio/volume.css}" rel="stylesheet"/>
-    <link th:href="@{css/backToTop.css}" rel="stylesheet"/>
-    <link th:href="@{css/sign.css}" rel="stylesheet">
-    <link th:href="@{css/showHideManager/showHideManager.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css"/>
+    <link th:href="@{css/common/backToTop.css}" rel="stylesheet"/>
+    <link th:href="@{css/sign/sign.css}" rel="stylesheet">
+    <link th:href="@{css/playlist/playlist.css}" rel="stylesheet">
+    <link th:href="@{css/chat/chat.css}" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css"/>
 </head>
-<body class="bg-light">
+<body>
 
 <!-------------------------------------------SIGN IN / UP---------------------------------------------------------------->
 <div class="container sign modal" id="container">
@@ -32,22 +32,23 @@
             <div id="errorSignUp"></div>
 
             <label>
-                <input type="text" name="name" placeholder="Name" required/>
+                <input id="signUpName" type="text" name="name" placeholder="Name"/>
             </label>
             <label>
-                <input type="text" name="surname" placeholder="Surname"/>
+                <input id="signUpSurname" type="text" name="surname" placeholder="Surname"/>
             </label>
             <label>
-                <input type="email" name="email" placeholder="Email"/>
+                <input id="signUpEmail" type="email" name="email" placeholder="Email"/>
             </label>
             <label>
-                <input type="text" name="username" placeholder="Username"/>
+                <input id="signUpUsername" type="text" name="username" placeholder="Username"/>
             </label>
             <label>
-                <input type="password" name="password" placeholder="Password">
+                <input id="signUpPassword" type="password" name="password" placeholder="Password">
             </label>
             <label>
-                <input type="password" name="passwordConfirmation" placeholder="Confirm your password">
+                <input id="signUpPassConf" type="password" name="passwordConfirmation"
+                       placeholder="Confirm your password">
             </label>
 
             <button id="submitSignUp">Sign Up</button>
@@ -56,14 +57,22 @@
     <div class="form-container sign-in-container">
         <div class="form">
             <h1>Sign in</h1>
-            <div id="errorSignIn"></div>
             <label>
-                <input id="loginUsername" type="text" name="username" placeholder="Username"/>
+                <input id="signInUsername" type="text" name="username" placeholder="Username"/>
             </label>
             <label>
-                <input id="loginPassword" type="password" name="password" placeholder="Password"/>
+                <input id="signInPassword" type="password" name="password" placeholder="Password"/>
             </label>
+            <div id="checkboxDiv">
+                <input id="inputCheckbox" type="checkbox"/>
+                <label for="inputCheckbox">Show password</label>
+            </div>
             <button id="submitSignIn">Sign In</button>
+            <div id="emailSender">Forget password?</div>
+            <div id="inputEmailDiv">
+                <input id="inputEmail" type="text" placeholder="Input your email"/>
+                <button id="submitSendEmail">Send email</button>
+            </div>
         </div>
     </div>
     <div class="overlay-container">
@@ -85,59 +94,51 @@
 <!-------------------------------------------MENU---------------------------------------------------------------->
 <div id="menu">
     <div id="leftFromSearch">
-        <a class="nav-link active" style="color: orange; cursor: pointer" onclick="sort('/sort/title=ASC');">Home</a>
-        <div class="dropdown nav-link active" th:if="${name}!=guest">
-            <p id="currentUserName" style="color: orange;" th:if="${name}!=guest" th:text="${name}"></p>
-            <div class="dropdown-content">
-                <a class="nav-link active" href="/sort/title=ASC">Home</a>
-                <a class="nav-link active" th:if="${name}!=guest" href="/edit">Edit</a>
-                <a class="nav-link active" href="/logout">Log out</a>
+        <div id="homeButton" class="menuElement" onclick="sort('/sort/title=ASC');">Home</div>
+        <div id="currentUserUsername" class="menuElement" th:if="${name}!=guest"
+             th:text="${username}"></div>
+        <div id="currentUserName" hidden th:text="${name}"></div>
+        <div id="currentUserSurname" hidden th:text="${surname}"></div>
+        <div id="currentUserEmail" hidden th:text="${email}"></div>
+        <div class="dropdown-content">
+            <div id="favouriteTrack" class="dropdownElement">
+                <div id="likePic"></div>
+                Likes
+            </div>
+            <div id="historyTrack" class="dropdownElement">
+                <div id="historyPic"></div>
+                History
+            </div>
+            <div id="playlist" class="dropdownElement">
+                <div id="playlistPic"></div>
+                Playlists
+            </div>
+            <div id="uploadedTrack" class="dropdownElement">
+                Tracks
             </div>
         </div>
-        <a class="nav-link active" th:if="${name}!=guest" href="/friendship">Friends</a>
     </div>
     <div id="searchTrack">
-        <input type="search" name="trackTitle" class="form-control" placeholder="" id="inputSearchTrack" maxlength="60"
+        <input type="text" name="trackTitle" class="form-control" placeholder=""
+               id="inputSearchTrack" maxlength="60"
                value="">
     </div>
     <div id="rightFromSearch">
-        <button id="signButton" th:if="${name}==guest" rel="modal:open" href="#container">Sign in</button>
-        <a class="nav-link active" th:if="${name}!=guest" href="/chat">Messages</a>
-        <a class="nav-link active" th:if="${name}!=guest" href="/playlists">Playlists</a>
+        <div id="signButton" class="menuElement" th:if="${name}==guest" rel="modal:open"
+             href="#container">Sign in
+        </div>
+        <div id="peopleButton" class="menuElement" th:if="${name}!=guest">Friends and people</div>
+        <div id="chatButton" class="menuElement" th:if="${name}!=guest">Messages</div>
+        <div class="dropdown-content">...
+            <div id="uploadMusic" class="dropdownElement">Upload your music</div>
+            <div id="editProfile" class="dropdownElement">Edit</div>
+            <div id="logout" class="dropdownElement">Log out</div>
+        </div>
     </div>
-</div>
-
-<!-------------------------------------------LEFT MAIN DIV---------------------------------------------------------------->
-<div id="leftMainDiv" th:if="${name}!=guest">
-    <div id="showHideHistoryTrack"></div>
-    <div id="showHideFavouriteTrack"></div>
-</div>
-
-<!-------------------------------------------HISTORY---------------------------------------------------------------->
-<div id="historyTable" style="cursor: move;" class="border border-warning" th:if="${name}!=guest">
-    <div class="controllerAssistDiv">
-        <div class="exitFromDiv"></div>
-    </div>
-    <div id="historyTitle"></div>
-</div>
-
-<!-------------------------------------------FAVOURITE---------------------------------------------------------------->
-<div id="favouriteTable" style="cursor: move;" class="border border-warning" th:if="${name}!=guest">
-    <div class="controllerAssistDiv">
-        <div class="exitFromDiv"></div>
-    </div>
-    <div id="favouriteTitle"></div>
-</div>
-
-<!-------------------------------------------RIGHT MAIN DIV---------------------------------------------------------------->
-<div id="rightMainDiv" th:if="${name}!=guest">
-    <div id="showHidePlaylists"></div>
 </div>
 
 <div id="playlistTable" style="cursor: move;" class="border border-warning" th:if="${name}!=guest">
-    <div class="controllerAssistDiv">
-        <div class="exitFromDiv"></div>
-    </div>
+    <div id="addNewPlaylistDiv"></div>
     <div id="playlistTitle"></div>
     <div id="listOfTrackInPlaylist"></div>
 </div>
@@ -147,52 +148,24 @@
 
 <!-------------------------------------------ACCEPT COOKIE---------------------------------------------------------------->
 <div id="acceptCookieDiv">
-    We use cookies to enhance your experience on our site. By accepting our cookie policy you agreeing to our use of
-    cookies.
+    <span id="descriptionCookie"></span>
     <div id="buttonsAcceptCookie">
         <button id="acceptCookieButton">Accept</button>
         <button id="declineCookieButton">Decline</button>
     </div>
 </div>
 
-<div id="notification"></div>
-
 <!-------------------------------------------PRELOADER---------------------------------------------------------------->
-<div id="preloader">
-    <div class="mainPreloader">
-        <span class="animation"></span>
-        <br>Please wait<br>
-        <small>Music Player is loading...</small>
-    </div>
-</div>
+<div id="preloader"></div>
 
-<!-------------------------------------------MAIN PLAYER---------------------------------------------------------------->
-<div id="player">
-    <div id="left"></div>
-    <div id="main">
-        <div id="themeLogo"></div>
-        <div id="controller" style="margin-top: 10%;">
-            <button class="prevTrackButton nextPrevButtons"></button>
-            <button class="playButton"></button>
-            <button class="pauseButton"></button>
-            <button class="nextTrackButton nextPrevButtons"></button>
-        </div>
-        <div id="common">
-            <button id="loopButton"></button>
-            <h3 id="titleOfTrackInPlayer" class="titleOfTrackClass"></h3>
-
-            <button th:if="${name}!=guest" class="addToFavouriteButton" name="trackTitle" value=""></button>
-
-            <div id="time">
-                <div id="currentTime"></div>
-                <div id="duration"></div>
-            </div>
-        </div>
-    </div>
-    <div id="right"></div>
-</div>
-
+<!-------------------------------------------LYRIC---------------------------------------------------------------->
 <pre id="lyric" class="border border-warning"></pre>
+
+<!-------------------------------------------MESSAGE---------------------------------------------------------------->
+<div id="messageDiv" class="border border-warning">
+    <div id="chat"></div>
+    <div id="message"></div>
+</div>
 
 <!-------------------------------------------BOTTOM CONTROLLER---------------------------------------------------------------->
 <div id="bottomController">
@@ -201,31 +174,44 @@
             <audio id="audioId" hidden class="audioClass" style="width: 500px" src="" preload="auto"
                    autoplay></audio>
         </div>
-        <div id="playController">
-            <button id="soundWaveButton"></button>
-            <button class="prevTrackButton nextPrevButtons"></button>
-            <button class="playButton"></button>
-            <button class="pauseButton"></button>
-            <button class="nextTrackButton nextPrevButtons"></button>
-            <div class="shuffleButton"></div>
-            <button class="loopButton"></button>
-        </div>
-        <div id="playBackTimeline">
-            <div class="currentTime"></div>
-            <div id="barAllPlayed">
-                <div id="barPlay"></div>
+        <div id="leftSideBottomController">
+            <div id="soundWaveButton" title="Try visualization!"></div>
+            <div id="picAndTitleOfTrack">
+                <img class="picture" style="width: 49px; height: 49px;" src="" alt="">
+                <div id="showInfoAboutTrack" class="titleOfTrackInPlayer"></div>
             </div>
-            <div class="duration"></div>
+            <div th:if="${name}!=guest" id="additionalButtons">
+                <div class="lyricButton" title="Lyric"></div>
+                <button class="downloadButton" title="Download"></button>
+                <button class="addToFavouriteButton" title="Like" name="trackTitle"
+                        value=""></button>
+                <button id="selectPlaylistButton" title="Add to playlist"
+                        onclick="selectPlaylist()"></button>
+                <div id="selectPlaylistDiv"></div>
+            </div>
+        </div>
+        <div id="centerSideBottomController">
+            <div id="playController">
+                <div class="shuffleButton" title="Shuffle list of track"></div>
+                <button class="prevTrackButton" title="Previous track"></button>
+                <button class="playButton" title="Play"></button>
+                <button class="pauseButton" title="Pause"></button>
+                <button class="nextTrackButton" title="Next track"></button>
+                <div class="loopButton" title="Repeat"></div>
+            </div>
+            <div id="playBackTimeline">
+                <div class="currentTime"></div>
+                <div class="barAllPlayed">
+                    <div class="barPlay"></div>
+                </div>
+                <div class="duration"></div>
+            </div>
+        </div>
+        <div id="rightSideBottomController">
             <button class="volumeMin"></button>
             <label class="volumeSlider"></label>
             <input class="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.5"/>
             <button class="volumeMax" disabled></button>
-        </div>
-        <div id="volumeNTitleOfTrack">
-            <h6 id="showInfoAboutTrack" class="titleOfTrackInPlayer"></h6>
-            <button th:if="${name}!=guest" class="lyricButton"></button>
-            <button th:if="${name}!=guest" class="downloadButton"></button>
-            <button th:if="${name}!=guest" class="addToFavouriteButton" name="trackTitle" value=""></button>
         </div>
     </div>
 </div>
@@ -235,21 +221,17 @@
     <table id="mainTable" class="table table-bordered table-hover">
         <thead>
         <tr>
-            <th th:if="${name}!=guest">
-                Upload mp3 tracks
-                <form method="post" id="uploadForm" enctype="multipart/form-data">
-                    <input type="file" id="uploadId" name="musicTrackAsFile" accept="audio/*"/><br/>
-                    <button type="submit" id="uploadSendButton">Send</button>
-                </form>
-            </th>
-            <th colspan="2">
+            <th style="display: flex; flex-direction: row">
+                <div style="margin-right: 10px" class="shuffleButton"
+                     title="Shuffle list of track"></div>
                 <label for="idSort"></label>
                 <select size="1" id="idSort"
-                        oninvalid="setCustomValidity('Select the sort')" oninput="setCustomValidity('')"
-                        class="custom-select"
+                        oninvalid="setCustomValidity('Select the sort')"
+                        oninput="setCustomValidity('')"
+                        class="custom-select" title="Choose sort"
                         required
                         onChange="sort(this.value);">
-                    <option value="" selected disabled hidden>Choose sort</option>
+                    <option value="" selected>Choose sort</option>
                     <option value="/sort/date=DESC">Last added</option>
                     <option value="/sort/title=ASC">Alphabetically</option>
                     <option value="/sort/title=DESC">Reverse alphabetically</option>
@@ -265,25 +247,50 @@
         <tbody id="mainTableTBody"></tbody>
     </table>
 
+    <!-------------------------------------------UPLOAD TRACK---------------------------------------------------------------->
+    <div id="uploadForm"></div>
+
+    <!-------------------------------------------EDIT FORM---------------------------------------------------------------->
+    <div id="editForm"></div>
+
+    <!-------------------------------------------PEOPLE FORM---------------------------------------------------------------->
+    <div id="peopleDiv"></div>
+    <div id="friendDiv"></div>
+
     <footer style="text-align: center">
-        <p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii Reva</a></p>
+        <p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii
+            Reva</a></p>
     </footer>
 
     <a href="#" id="backToTop">&uarr;</a>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-
-
 <script src="https://rawgit.com/notifyjs/notifyjs/master/dist/notify.js"></script>
-<script th:src="@{/js/async/sideDivLogic/favouriteTracks.js}"></script>
 
+<script th:src="@{/js/async/favouriteTracks.js}"></script>
 <script th:src="@{/js/async/jquery-modal.js}"></script>
+<script th:src="@{/js/async/modal.js}"></script>
+<script th:src="@{/js/async/loader.js}"></script>
+<script th:src="@{/js/async/lyric.js}"></script>
+<script th:src="@{/js/async/history.js}"></script>
+<script th:src="@{/js/async/playlist.js}"></script>
+<script th:src="@{/js/async/draggable.js}"></script>
+<script th:src="@{/js/async/uploadTrack.js}"></script>
+<script th:src="@{/js/async/manipulationWithListOfTrack.js}"></script>
+<script th:src="@{/js/async/picture.js}"></script>
+<script th:src="@{/js/async/editProfile.js}"></script>
+<script th:src="@{/js/async/logout.js}"></script>
+<script th:src="@{/js/async/people.js}"></script>
+<script th:src="@{/js/async/synchronousSwitching.js}"></script>
+<script th:src="@{/js/async/playedCounter.js}"></script>
+<script th:src="@{/js/async/chat.js}"></script>
 
-<script th:src="@{/js/table/loader/preloader.js}"></script>
-<script th:src="@{/js/table/loader/spinner.js}"></script>
+<script th:src="@{/js/async/sign/registration.js}"></script>
+<script th:src="@{/js/async/sign/login.js}"></script>
+<script th:src="@{/js/async/sign/emailSender.js}"></script>
+
 <script th:src="@{/js/table/acceptCookie.js}"></script>
 <script th:src="@{/js/table/manipulationWithDivs.js}"></script>
 <script th:src="@{/js/table/downloadTrack.js}"></script>
@@ -297,21 +304,12 @@
 
 <script th:src="@{/js/visualizer/visualizer.js}"></script>
 
-<script th:src="@{/js/async/modal.js}"></script>
-<script th:src="@{/js/async/lyric.js}"></script>
-<script th:src="@{/js/async/sideDivLogic/history.js}"></script>
-<script th:src="@{/js/async/sideDivLogic/playlist.js}"></script>
-<script th:src="@{/js/async/searchPlaceholder.js}"></script>
-<script th:src="@{/js/async/draggable.js}"></script>
-<script th:src="@{/js/async/uploadTrack.js}"></script>
-<script th:src="@{/js/async/manipulationWithListOfTrack.js}"></script>
+<script th:src="@{/js/search/globalSearch.js}"></script>
+<script th:src="@{/js/search/searchPlaceholder.js}"></script>
 
-<script th:src="@{/js/async/sign/registration.js}"></script>
-<script th:src="@{/js/async/sign/login.js}"></script>
-
-<script th:src="@{/js/showhidediv/showHideHistory.js}"></script>
-<script th:src="@{/js/showhidediv/showHideFavourite.js}"></script>
-<script th:src="@{/js/showhidediv/showHidePlaylist.js}"></script>
+<script th:src="@{/js/player/infoAboutTrack.js}"></script>
+<script th:src="@{/js/player/common/sort.js}"></script>
+<script th:src="@{/js/player/menu.js}"></script>
 
 </body>
 </html>

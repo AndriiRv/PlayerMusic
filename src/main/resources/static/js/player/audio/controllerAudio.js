@@ -39,8 +39,8 @@ $(document).on("click", 'table tbody tr', function () {
     indexIteration = $(this).index();
     countOfIterationByListOfTrack = countOfIterationByListOfTrack + indexIteration;
 
-    // disableEnableNextButton(countOfIterationByListOfTrack);
-    // disableEnablePrevButton(countOfIterationByListOfTrack);
+    disableEnableNextButton();
+    disableEnablePrevButton();
 });
 
 function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, process) {
@@ -49,7 +49,7 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
 
     clearSelectTrack(titleOfTrackInTable);
 
-    let nextTrackTitle = null;
+    let nextTrackTitle;
 
     if (listOfTrack[countOfIterationByListOfTrack].fullTitle || listOfTrack[countOfIterationByListOfTrack].fullTitle !== undefined) {
         nextTrackTitle = listOfTrack[countOfIterationByListOfTrack].fullTitle;
@@ -57,11 +57,17 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
         nextTrackTitle = listOfTrack[countOfIterationByListOfTrack];
     }
 
-    showSelectTrack(titleOfTrackInTable, nextTrackTitle);
+    if (!currentUserName.text().includes("guest")) {
+        numberOfTrack = listOfTrack[countOfIterationByListOfTrack].id;
+        changeFavouritePic();
+    }
+
+    highlightSelectTrack(titleOfTrackInTable, nextTrackTitle);
     titleOfTrackInPlayer.append(nextTrackTitle.replace(".mp3", ""));
 
-    console.log(process + nextTrackTitle);
+    setTitleToNameOfTab(nextTrackTitle);
 
+    console.log(process + nextTrackTitle);
     audio.attr("src", "play/" + nextTrackTitle);
 }
 
@@ -69,7 +75,8 @@ $(".audioClass").bind("ended", function () {
     countOfIterationByListOfTrack++;
 
     playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "After ended: ");
-    // disableEnableNextButton(countOfIterationByListOfTrack);
+    disableEnableNextButton();
+    disableEnablePrevButton();
 });
 
 nextTrackButton.on("click", function () {
@@ -82,7 +89,7 @@ nextTrackButton.on("click", function () {
 
     playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "Next: ");
 
-    // disableEnableNextButton(countOfIterationByListOfTrack);
+    disableEnableNextButton();
 });
 
 prevTrackButton.on("click", function () {
@@ -95,32 +102,28 @@ prevTrackButton.on("click", function () {
 
     playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "Prev: ");
 
-    // disableEnablePrevButton(countOfIterationByListOfTrack);
+    disableEnablePrevButton();
 });
 
-// function disableEnableNextButton(countOfIterationByListOfTrack) {
-//     if (countOfIterationByListOfTrack >= 1) {
-//         prevTrackButton.css("opacity", "1");
-//         prevTrackButton.prop('disabled', false);
-//     }
-//     if (countOfIterationByListOfTrack < (countOfTrack - 1)) {
-//         nextTrackButton.css("opacity", "1");
-//         nextTrackButton.prop('disabled', false);
-//     } else if (countOfIterationByListOfTrack >= (countOfTrack - 1)) {
-//         nextTrackButton.css("opacity", "0.5");
-//         nextTrackButton.prop('disabled', true);
-//     }
-// }
-//
-// function disableEnablePrevButton(countOfIterationByListOfTrack) {
-//     if (countOfIterationByListOfTrack <= 0) {
-//         prevTrackButton.css("opacity", "0.5");
-//         prevTrackButton.prop('disabled', true);
-//     } else if (countOfIterationByListOfTrack >= 1) {
-//         prevTrackButton.css("opacity", "1");
-//         prevTrackButton.prop('disabled', false);
-//     }
-// }
+function disableEnableNextButton() {
+    if (countOfIterationByListOfTrack < (countOfTrack - 1)) {
+        nextTrackButton.css("opacity", "1");
+        nextTrackButton.prop('disabled', false);
+    } else if (countOfIterationByListOfTrack >= (countOfTrack - 1)) {
+        nextTrackButton.css("opacity", "0.5");
+        nextTrackButton.prop('disabled', true);
+    }
+}
+
+function disableEnablePrevButton() {
+    if (countOfIterationByListOfTrack <= 0) {
+        prevTrackButton.css("opacity", "0.5");
+        prevTrackButton.prop('disabled', true);
+    } else if (countOfIterationByListOfTrack >= 1) {
+        prevTrackButton.css("opacity", "1");
+        prevTrackButton.prop('disabled', false);
+    }
+}
 
 loopButton.on("click", function () {
     counterForLoop++;

@@ -5,7 +5,7 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="player_play" sketch:type="MSArtboardGroup" fill="#000000">
+        <g id="player_play" sketch:type="MSArtboardGroup" fill="#FFFFFF">
             <path d="M5.73824467,20.7362586 C4.77823865,21.2861565 4,20.845104 4,19.7224215 L4,4.27904086 C4,3.16921616 4.77411174,2.71294188 5.73824467,3.26520369 L19.2503931,11.0050529 C20.2103991,11.5549508 20.214526,12.4441476 19.2503931,12.9964094 L5.73824467,20.7362586 Z" id="Triangle-1" sketch:type="MSShapeGroup"></path>
         </g>
     </g>
