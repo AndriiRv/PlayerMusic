@@ -1,8 +1,8 @@
 package com.example.musicplayer.conversation.chat.controller;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.conversation.chat.model.Chat;
 import com.example.musicplayer.conversation.chat.service.ChatService;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,7 +31,7 @@ public class ChatController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void removeChatById(int chatId){
+    public void removeChatById(int chatId) {
         chatService.removeChatById(chatId);
     }
 }

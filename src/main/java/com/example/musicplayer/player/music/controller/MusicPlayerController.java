@@ -1,10 +1,9 @@
 package com.example.musicplayer.player.music.controller;
 
-import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicPlayerService;
 import com.example.musicplayer.player.music.service.MusicService;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -47,12 +46,12 @@ public class MusicPlayerController {
         return "index.html";
     }
 
-    @PostMapping("/lyric")
-    @ResponseBody
-    public String getLyric(@AuthenticationPrincipal User user, String url, String nameOfTrack,
-                           String artistOfTrack) {
-        return musicPlayerService.getLyric(user, url, nameOfTrack, artistOfTrack);
-    }
+//    @PostMapping("/lyric")
+//    @ResponseBody
+//    public String getLyric(@AuthenticationPrincipal User user, String url, String nameOfTrack,
+//                           String artistOfTrack) {
+//        return musicPlayerService.getLyric(user, url, nameOfTrack, artistOfTrack);
+//    }
 
     @GetMapping("/shuffle/{isShuffle}")
     @ResponseBody

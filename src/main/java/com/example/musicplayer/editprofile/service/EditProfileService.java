@@ -1,8 +1,8 @@
 package com.example.musicplayer.editprofile.service;
 
-import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.authentication.service.UserService;
-import com.example.musicplayer.registration.model.UserRegistration;
+import com.example.musicplayer.sign.authentication.model.User;
+import com.example.musicplayer.sign.authentication.service.UserService;
+import com.example.musicplayer.sign.registration.model.UserRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

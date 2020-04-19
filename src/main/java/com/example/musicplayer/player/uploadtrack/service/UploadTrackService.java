@@ -1,7 +1,7 @@
 package com.example.musicplayer.player.uploadtrack.service;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.music.service.MusicPlayerService;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

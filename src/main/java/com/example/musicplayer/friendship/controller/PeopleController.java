@@ -1,12 +1,11 @@
 package com.example.musicplayer.friendship.controller;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.friendship.service.FriendshipService;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;

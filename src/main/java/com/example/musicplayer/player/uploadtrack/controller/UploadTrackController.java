@@ -1,7 +1,7 @@
 package com.example.musicplayer.player.uploadtrack.controller;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.uploadtrack.service.UploadTrackService;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

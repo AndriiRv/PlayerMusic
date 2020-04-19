@@ -1,10 +1,9 @@
 package com.example.musicplayer.player.music.service;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.countofplayed.service.PlayedService;
-import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.picture.service.PictureService;
+import com.example.musicplayer.sign.authentication.model.User;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
@@ -248,12 +247,6 @@ public class MusicPlayerService {
         } catch (NullPointerException e) {
             return true;
         }
-    }
-
-    public String getLyric(User user, String url, String nameOfTrack, String artistOfTrack) {
-        String apiKey = "mVoBkkq8qCPSyOdCG8tNrZ2jvbs0EU5mzSrT2KqTzR9yExymX1qoakiEybGSH5RC";
-        log.info(user.getUsername() + " get lyric in " + artistOfTrack + " - " + nameOfTrack);
-        return url + artistOfTrack + "/" + nameOfTrack + "?apikey=" + apiKey;
     }
 
     public void checkIfTrackExistInSystem() {

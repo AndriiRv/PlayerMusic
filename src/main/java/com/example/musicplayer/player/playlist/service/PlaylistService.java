@@ -1,6 +1,5 @@
 package com.example.musicplayer.player.playlist.service;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.playlist.model.Playlist;
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.playlist.repository.PlaylistRepository;

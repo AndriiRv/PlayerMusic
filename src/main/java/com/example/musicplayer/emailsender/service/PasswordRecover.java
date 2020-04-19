@@ -1,7 +1,7 @@
 package com.example.musicplayer.emailsender.service;
 
-import com.example.musicplayer.authentication.service.UserService;
 import com.example.musicplayer.emailsender.model.EmailLetter;
+import com.example.musicplayer.sign.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

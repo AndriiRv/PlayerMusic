@@ -1,10 +1,10 @@
 package com.example.musicplayer.player.favourite.service;
 
-import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.authentication.service.UserService;
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.favourite.repository.FavouriteRepository;
 import com.example.musicplayer.player.music.service.MusicService;
+import com.example.musicplayer.sign.authentication.model.User;
+import com.example.musicplayer.sign.authentication.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

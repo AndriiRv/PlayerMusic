@@ -1,9 +1,9 @@
 package com.example.musicplayer.conversation.message.service;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.conversation.message.model.Message;
 import com.example.musicplayer.conversation.message.model.MessageDto;
 import com.example.musicplayer.conversation.message.repository.MessageRepository;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class MessageService {
 
     }
 
-    private MessageDto convertToDto(Message message) {
+    private MessageDto toDto(Message message) {
         MessageDto messageDto = new MessageDto();
         messageDto.setId(message.getId());
         messageDto.setName(message.getName());
@@ -45,12 +45,8 @@ public class MessageService {
 
         List<MessageDto> list = new ArrayList<>();
         for (Message element : messages) {
-            list.add(convertToDto(element));
+            list.add(toDto(element));
         }
         return list;
     }
-
-//    public List<Message> getMessagesByUserIdAndChatId(User user, int chatId) {
-//        return messageRepository.getMessagesByUserIdAndChatId(user.getId(), chatId);
-//    }
 }

@@ -1,8 +1,8 @@
 package com.example.musicplayer.player.favourite.controller;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.player.favourite.service.FavouriteService;
 import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

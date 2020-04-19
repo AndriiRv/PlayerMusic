@@ -1,9 +1,9 @@
 package com.example.musicplayer.editprofile.controller;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.editprofile.service.EditProfileService;
-import com.example.musicplayer.registration.model.UserRegistration;
-import com.example.musicplayer.registration.service.UserRegistrationService;
+import com.example.musicplayer.sign.authentication.model.User;
+import com.example.musicplayer.sign.registration.model.UserRegistration;
+import com.example.musicplayer.sign.registration.service.UserRegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

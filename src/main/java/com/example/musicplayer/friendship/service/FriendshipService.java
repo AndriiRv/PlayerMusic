@@ -1,9 +1,9 @@
 package com.example.musicplayer.friendship.service;
 
-import com.example.musicplayer.authentication.model.User;
-import com.example.musicplayer.authentication.service.UserService;
 import com.example.musicplayer.conversation.chat.service.ChatService;
 import com.example.musicplayer.friendship.repository.FriendshipRepository;
+import com.example.musicplayer.sign.authentication.model.User;
+import com.example.musicplayer.sign.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

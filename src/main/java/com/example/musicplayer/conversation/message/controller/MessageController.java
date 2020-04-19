@@ -1,8 +1,8 @@
 package com.example.musicplayer.conversation.message.controller;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.conversation.message.model.MessageDto;
 import com.example.musicplayer.conversation.message.service.MessageService;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;

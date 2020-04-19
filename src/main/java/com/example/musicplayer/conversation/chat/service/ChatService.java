@@ -1,8 +1,8 @@
 package com.example.musicplayer.conversation.chat.service;
 
-import com.example.musicplayer.authentication.model.User;
 import com.example.musicplayer.conversation.chat.model.Chat;
 import com.example.musicplayer.conversation.chat.repository.ChatRepository;
+import com.example.musicplayer.sign.authentication.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
