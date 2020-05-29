@@ -1,37 +1,50 @@
 function openUploadForm() {
-    editForm.empty();
-    peopleDiv.empty();
-    friendDiv.empty();
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
 }
 
 function openEditForm() {
-    peopleDiv.empty();
-    friendDiv.empty();
-    uploadForm.empty();
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
 }
 
 function openFavouriteForm() {
-    editForm.empty();
-    uploadForm.empty();
-    peopleDiv.empty();
-    friendDiv.empty();
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
 }
 
 function openHistoryForm() {
-    editForm.empty();
-    uploadForm.empty();
-    peopleDiv.empty();
-    friendDiv.empty();
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
+}
+
+function openPlaylistForm() {
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
 }
 
 function openPeopleForm() {
-    editForm.empty();
-    uploadForm.empty();
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
 }
 
 function openListOfTrack() {
-    editForm.empty();
-    uploadForm.empty();
-    peopleDiv.empty();
-    friendDiv.empty();
+    hideDashboard();
+}
+
+function openDashboard() {
+    supportDashboard.empty();
+    $('#listOfTrack').hide();
+}
+
+function openSearch() {
+    supportDashboard.empty();
+    hideDashboardDivs();
+    $('#listOfTrack').hide();
 }

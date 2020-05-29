@@ -37,7 +37,7 @@ function getChats() {
                 $("#chat").html(html);
             } else {
                 $.notify("You're haven't any friends", {
-                    position: 'top right',
+                    position: 'top left',
                     className: 'error'
                 });
             }
@@ -67,7 +67,7 @@ function getMessages() {
                 html += '       <div>' + message.name + ' ' + message.surname + ' (' + message.datetime + ')' + '</div>';
                 html += '   </div>';
                 html += '</div>';
-                html += '<div style="overflow-wrap: break-word; background-color: rebeccapurple;">' + message.message + '</div>';
+                html += '<div style="overflow-wrap: break-word; background-color: rebeccapurple;">' + message.messageText + '</div>';
             });
             html += '<div id="sendMessageDiv">';
             html += '   <input id="messageText" style="width: 100%;" type="text" placeholder="Write a message..."/>';

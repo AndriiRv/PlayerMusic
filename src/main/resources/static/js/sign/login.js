@@ -12,7 +12,22 @@ submitSignIn.on('click', function () {
             password: passwordField.val(),
         },
         success: function () {
-            location.reload();
+            $.ajax({
+                url: '/getAuthorizedUser',
+                async: false,
+                success: function (userObject) {
+                    currentUserName.text(userObject.name);
+                    currentUserUsername.text(userObject.username);
+                    currentUserSurname.text(userObject.surname);
+                    currentUserEmail.text(userObject.email);
+                }
+            });
+            signButton.hide();
+            peopleButton.show();
+            chatButton.show();
+            currentUserUsername.show();
+            getDashboard();
+            $("#closeModal").click();
         },
         error: function (data) {
             highlightErrorInput(usernamePassword);

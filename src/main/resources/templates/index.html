@@ -19,6 +19,7 @@
     <link th:href="@{css/sign/sign.css}" rel="stylesheet">
     <link th:href="@{css/playlist/playlist.css}" rel="stylesheet">
     <link th:href="@{css/chat/chat.css}" rel="stylesheet">
+    <link th:href="@{css/dashboard/dashboard.css}" rel="stylesheet">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.2/jquery.modal.min.css"/>
 </head>
@@ -94,12 +95,13 @@
 <!-------------------------------------------MENU---------------------------------------------------------------->
 <div id="menu">
     <div id="leftFromSearch">
-        <div id="homeButton" class="menuElement" onclick="sort('/sort/title=ASC');">Home</div>
-        <div id="currentUserUsername" class="menuElement" th:if="${name}!=guest"
-             th:text="${username}"></div>
-        <div id="currentUserName" hidden th:text="${name}"></div>
-        <div id="currentUserSurname" hidden th:text="${surname}"></div>
-        <div id="currentUserEmail" hidden th:text="${email}"></div>
+        <div id="dashboardButton" class="menuElement" onclick="turnDashboard();">Turn</div>
+        <div id="homeButton" class="menuElement" onclick="getDashboard()">Home</div>
+        <div id="usernameThymelyeaf" style="display: none" th:text="${username}"></div>
+        <div id="currentUserUsername" style="display: none" class="menuElement"></div>
+        <div id="currentUserName" hidden></div>
+        <div id="currentUserSurname" hidden></div>
+        <div id="currentUserEmail" hidden></div>
         <div class="dropdown-content">
             <div id="favouriteTrack" class="dropdownElement">
                 <div id="likePic"></div>
@@ -113,9 +115,6 @@
                 <div id="playlistPic"></div>
                 Playlists
             </div>
-            <div id="uploadedTrack" class="dropdownElement">
-                Tracks
-            </div>
         </div>
     </div>
     <div id="searchTrack">
@@ -124,23 +123,16 @@
                value="">
     </div>
     <div id="rightFromSearch">
-        <div id="signButton" class="menuElement" th:if="${name}==guest" rel="modal:open"
-             href="#container">Sign in
-        </div>
-        <div id="peopleButton" class="menuElement" th:if="${name}!=guest">Friends and people</div>
-        <div id="chatButton" class="menuElement" th:if="${name}!=guest">Messages</div>
+        <div id="signButton" class="menuElement" rel="modal:open" href="#container">Sign in</div>
+        <a id="closeModal" hidden href="#" rel="modal:close"></a>
+        <div id="peopleButton" style="display: none" class="menuElement">Friends and people</div>
+        <div id="chatButton" style="display: none" class="menuElement">Messages</div>
         <div class="dropdown-content">...
             <div id="uploadMusic" class="dropdownElement">Upload your music</div>
             <div id="editProfile" class="dropdownElement">Edit</div>
             <div id="logout" class="dropdownElement">Log out</div>
         </div>
     </div>
-</div>
-
-<div id="playlistTable" style="cursor: move;" class="border border-warning" th:if="${name}!=guest">
-    <div id="addNewPlaylistDiv"></div>
-    <div id="playlistTitle"></div>
-    <div id="listOfTrackInPlaylist"></div>
 </div>
 
 <!-------------------------------------------CANVAS---------------------------------------------------------------->
@@ -180,14 +172,14 @@
                 <img class="picture" style="width: 49px; height: 49px;" src="" alt="">
                 <div id="showInfoAboutTrack" class="titleOfTrackInPlayer"></div>
             </div>
-            <div th:if="${name}!=guest" id="additionalButtons">
+            <div id="additionalButtons">
                 <div class="lyricButton" title="Lyric"></div>
                 <button class="downloadButton" title="Download"></button>
                 <button class="addToFavouriteButton" title="Like" name="trackTitle"
                         value=""></button>
                 <button id="selectPlaylistButton" title="Add to playlist"
                         onclick="selectPlaylist()"></button>
-                <div id="selectPlaylistDiv"></div>
+                <div id="selectPlaylistId"></div>
             </div>
         </div>
         <div id="centerSideBottomController">
@@ -213,6 +205,19 @@
             <input class="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.5"/>
             <button class="volumeMax" disabled></button>
         </div>
+    </div>
+</div>
+
+<div id="dashboard">
+    <div id="support"></div>
+    <div id="dashboardCenter">
+        <div id="byGenre"></div>
+        <div id="countOfPlayed"></div>
+        <div id="countOfFavourite"></div>
+    </div>
+    <div id="dashboardSide">
+        <div id="dashboardFavourite"></div>
+        <div id="dashboardHistory"></div>
     </div>
 </div>
 
@@ -247,16 +252,6 @@
         <tbody id="mainTableTBody"></tbody>
     </table>
 
-    <!-------------------------------------------UPLOAD TRACK---------------------------------------------------------------->
-    <div id="uploadForm"></div>
-
-    <!-------------------------------------------EDIT FORM---------------------------------------------------------------->
-    <div id="editForm"></div>
-
-    <!-------------------------------------------PEOPLE FORM---------------------------------------------------------------->
-    <div id="peopleDiv"></div>
-    <div id="friendDiv"></div>
-
     <footer style="text-align: center">
         <p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii
             Reva</a></p>
@@ -269,13 +264,10 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://rawgit.com/notifyjs/notifyjs/master/dist/notify.js"></script>
 
-<!--<script th:src="@{/js/common/acceptCookie.js}"></script>-->
 <script th:src="@{/js/common/backToTop.js}"></script>
 <script th:src="@{/js/common/downloadTrack.js}"></script>
 <script th:src="@{/js/common/loader.js}"></script>
-<!--<script th:src="@{/js/common/manipulationWithDivs.js}"></script>-->
 <script th:src="@{/js/common/menu.js}"></script>
-<!--<script th:src="@{/js/common/searchingInSystems.js}"></script>-->
 <script th:src="@{/js/common/sort.js}"></script>
 <script th:src="@{/js/common/synchronousSwitching.js}"></script>
 
@@ -285,25 +277,30 @@
 
 <script th:src="@{/js/conversation/chat.js}"></script>
 
+<script th:src="@{/js/dashboard/dashboard.js}"></script>
+<script th:src="@{/js/dashboard/dashboardSide.js}"></script>
+<script th:src="@{/js/dashboard/genreDashboard.js}"></script>
+
 <script th:src="@{/js/editprofile/editProfile.js}"></script>
 
 <script th:src="@{/js/emailsender/emailSender.js}"></script>
 
 <script th:src="@{/js/friendship/people.js}"></script>
 
-<script th:src="@{/js/player/countofplayed/playedCounter.js}"></script>
 <script th:src="@{/js/player/favourite/favouriteTracks.js}"></script>
 <script th:src="@{/js/player/history/history.js}"></script>
 <script th:src="@{/js/player/lyric/Lyric.js}"></script>
 <script th:src="@{/js/player/music/Track.js}"></script>
 <script th:src="@{/js/player/music/controllerAudio.js}"></script>
-<script th:src="@{/js/player/music/manipulationWithListOfTrack.js}"></script>
+<script th:src="@{/js/player/music/listOfTrack.js}"></script>
 <script th:src="@{/js/player/music/playAudio.js}"></script>
 <script th:src="@{/js/player/music/volume.js}"></script>
 <script th:src="@{/js/player/picture/picture.js}"></script>
 <script th:src="@{/js/player/playlist/playlist.js}"></script>
-<script th:src="@{/js/player/globalSearch.js}"></script>
+<script th:src="@{/js/player/search/globalSearch.js}"></script>
 <script th:src="@{/js/player/search/searchPlaceholder.js}"></script>
+<script th:src="@{/js/player/statistic/played/playedCounter.js}"></script>
+<script th:src="@{/js/player/statistic/favourite/favouriteCounter.js}"></script>
 <script th:src="@{/js/player/uploadtrack/uploadTrack.js}"></script>
 <script th:src="@{/js/player/infoAboutTrack.js}"></script>
 

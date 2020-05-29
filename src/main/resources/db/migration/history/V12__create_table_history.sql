@@ -1,7 +1,7 @@
 CREATE TABLE history
 (
-    id       SERIAL PRIMARY KEY,
-    user_id  INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
-    music_id INTEGER NOT NULL REFERENCES music (id) ON DELETE CASCADE,
-    date     TIMESTAMP
+    id        SERIAL PRIMARY KEY,
+    user_id   INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+    music_id  INTEGER NOT NULL REFERENCES music (id) ON DELETE CASCADE,
+    date_time TIMESTAMP NOT NULL
 );

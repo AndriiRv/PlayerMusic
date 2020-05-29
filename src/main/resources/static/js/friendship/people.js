@@ -1,8 +1,5 @@
 let peopleButton = $("#peopleButton");
 
-let peopleDiv = $('#peopleDiv');
-let friendDiv = $('#friendDiv');
-
 peopleButton.on("click", function () {
     openPeopleForm();
 
@@ -11,14 +8,11 @@ peopleButton.on("click", function () {
 });
 
 function getPeopleDiv() {
-    $('#listOfTrack').removeClass("main");
     getPeople();
     getFriend();
 }
 
 function getPeople() {
-    $("#mainTableTBody").empty();
-
     let html = '';
 
     $.get({
@@ -26,14 +20,19 @@ function getPeople() {
         async: false,
         success: function (data) {
             if (data.length !== 0) {
-                defaultList = data;
+                // defaultList = data;
                 listOfTrack = data;
                 countOfTrack = data.length;
 
-                html += '<h3>People</h3>';
+                html += '<div id="peopleAndFriends" style="display: flex; width: 1175px;">';
+                html += '   <div id="playlistList" style="flex-basis: 30%; margin-left: 15px;">';
+                html += '   <h3>People</h3>';
+                html += '   <table>';
+                html += '   <thead></thead>';
+                html += '   <tbody>';
                 $.each(data, function (i, man) {
-                    html += '<div style="display: flex">';
-                    html += '<div>' + man.name + ' ' + man.surname + '</div>';
+                    html += '   <tr>';
+                    html += '       <td><div>' + man.name + ' ' + man.surname + '</div></td>';
                     $.get({
                         url: '/friends/isAlready',
                         data: {
@@ -42,19 +41,25 @@ function getPeople() {
                         async: false,
                         success: function (data) {
                             if (data === 0) {
-                                html += '<button onclick="addFriend(' + man.id + ')">Add friend</button>';
+                                html += '       <td><button onclick="addFriend(' + man.id + ')">Add friend</button></td>';
                             } else {
-                                html += '<button onclick="deleteFriend(' + man.id + ')">Delete friend</button>';
+                                html += '       <td><button onclick="deleteFriend(' + man.id + ')">Delete friend</button></td>';
                             }
-                            html += '</div>';
-                            $('#peopleDiv').html(html);
-                            closeLoader();
                         }
                     });
+                    html += '   </tr>';
                 });
+                html += '   </tbody></table>';
+                html += '   </div>';
+                html += '<div id="friends"></div>';
+                html += '</div>';
+                supportDashboard.html(html);
+                closeLoader();
             } else {
-                html += '<h3>Except you is nobody registered in platform</h3>';
-                $('#peopleDiv').html(html);
+                html += '<div style="width: 1175px;">';
+                html += '   <h3>Except you is nobody registered in platform</h3>';
+                html += '</div>';
+                supportDashboard.html(html);
                 closeLoader();
             }
         }
@@ -65,19 +70,17 @@ function getFriend() {
     let html = '';
     $.getJSON("/friends", function (data) {
         if (data.length !== 0) {
-            defaultList = data;
+            // defaultList = data;
             listOfTrack = data;
             countOfTrack = data.length;
 
-            html += '<h3>My friend</h3>';
+            html += '<h3>My friends</h3>';
             $.each(data, function (i, man) {
-                html += '<div style="display: flex">';
-                html += '    <div>' + man.name + ' ' + man.surname + '</div>';
-                html += '</div>';
+                html += '<div style="margin-bottom: 10px;">' + man.name + ' ' + man.surname + '</div>';
             });
-            $('#friendDiv').html(html);
-            closeLoader();
+            $("#friends").html(html);
         }
+        closeLoader();
     });
 }
 
@@ -95,7 +98,7 @@ function addFriend(userId) {
 }
 
 function deleteFriend(userId) {
-    if (confirm("Are you sure delete friend? (Messages will be removed without restore)")) {
+    if (confirm("Are you sure delete friend? (Messages between your are will be removed without restore)")) {
         $.ajax({
             type: 'DELETE',
             url: '/friends',

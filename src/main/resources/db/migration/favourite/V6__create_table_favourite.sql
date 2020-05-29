@@ -4,5 +4,5 @@ CREATE TABLE favourite
     user_id              INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
     music_id             INTEGER NOT NULL REFERENCES music (id) ON DELETE CASCADE,
     own_user_music_title TEXT,
-    date                 TIMESTAMP
+    date_time            TIMESTAMP NOT NULL
 );

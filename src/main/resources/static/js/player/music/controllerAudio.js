@@ -34,7 +34,16 @@ pauseButton.on('click', function () {
     // hideCurrentTimeTrack();
 });
 
-$(document).on("click", 'table tbody tr', function () {
+$("#listOfTrack").on("click", 'table tbody tr', function () {
+    countOfIterationByListOfTrack = 0;
+    indexIteration = $(this).index();
+    countOfIterationByListOfTrack = countOfIterationByListOfTrack + indexIteration;
+
+    disableEnableNextButton();
+    disableEnablePrevButton();
+});
+
+$("#dashboard").on("click", function () {
     countOfIterationByListOfTrack = 0;
     indexIteration = $(this).index();
     countOfIterationByListOfTrack = countOfIterationByListOfTrack + indexIteration;
@@ -57,6 +66,8 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
         nextTrackTitle = listOfTrack[countOfIterationByListOfTrack];
     }
 
+    getPictureByTrackId(listOfTrack[countOfIterationByListOfTrack].id);
+
     if (!currentUserName.text().includes("guest")) {
         numberOfTrack = listOfTrack[countOfIterationByListOfTrack].id;
         changeFavouritePic();
@@ -68,6 +79,9 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
     setTitleToNameOfTab(nextTrackTitle);
 
     console.log(process + nextTrackTitle);
+
+    musicTrackObject.setFullTitle(nextTrackTitle);
+
     audio.attr("src", "play/" + nextTrackTitle);
 }
 

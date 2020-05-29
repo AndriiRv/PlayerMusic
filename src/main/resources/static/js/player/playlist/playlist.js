@@ -1,39 +1,42 @@
 $("#playlist").on("click", function () {
+    openPlaylistForm();
+
     getPlaylists();
 });
 
-$("#mainTableTBody").on("click", "#createPlaylistButton", function () {
+supportDashboard.on("click", "#createPlaylistButton", function () {
     let inputValue = $("#createPlaylist").val();
     addPlaylist(inputValue);
 });
 
 function getPlaylists() {
+    getLoader();
     setTitleToNameOfTab("My playlists");
-    $("#mainTableTBody").empty();
+    supportDashboard.empty();
 
     let html = '';
-    html += '<label style="color:white" for="createPlaylist">Input name new playlist:</label>';
-    html += '<input id="createPlaylist" type="text"/>';
+    html += '<input id="createPlaylist" placeholder="Input name new playlist" type="text"/>';
     html += '<button id="createPlaylistButton">Create playlist</button>';
-    $("#mainTableTBody").html(html);
+    supportDashboard.html(html);
 
     $.getJSON('/playlist', function (data) {
         if (data.length !== 0) {
-            html += '<table class="table table-bordered table-hover">';
-            html += '<thead><tr><th style="border-color: white; border-style:solid;">Your playlists</th></tr></thead><tbody id="playlistTBody">';
-
+            html += '<h2 style="margin-left: 15px; margin-top: 15px;">Playlists</h2>';
+            html += '<div id="playlist" style="display: flex; width: 1175px;">';
+            html += '<div id="playlistList" style="flex-basis: 30%; margin-left: 15px;">';
             $.each(data, function (i, playlist) {
-                html += '<tr>';
-                html += '<td>';
-                html += '<div class="titleOfPlaylistInTable" onclick="showTrackInSelectPlaylist(\'' + playlist.title + '\')">' + playlist.title + '</div>';
-                html += '<div class="menuElement" onclick="removePlaylist(' + playlist.id + ')">Remove</button>';
-                html += '</td>';
-                html += '</tr>';
+                html += '<div style="display: block; width: 150px;">';
+                html += '   <div class="titleOfPlaylistInTable" onclick="showTrackInSelectPlaylist(\'' + playlist.title + '\')">' + playlist.title + '</div>';
+                html += '   <div class="menuElement" onclick="removePlaylist(' + playlist.id + ')">Remove</div>';
+                html += '</div>';
             });
-            html += '</tbody></table>';
-            $("#mainTableTBody").html(html);
+            html += '</div>';
+            html += '<div style="width: 80%; display: grid; grid-template-columns: 200px 200px 200px 200px;" id="listMusicOfPlaylist"></div>';
+            supportDashboard.html(html);
+            closeLoader();
         } else {
-            $("#showHidePlaylists").notify("You not created any playlists", {
+            closeLoader();
+            $.notify("You not created any playlists", {
                 position: 'top left',
                 className: 'error'
             });
@@ -42,90 +45,95 @@ function getPlaylists() {
 }
 
 function addPlaylist(titleOfPlaylist) {
-    $.post({
-        url: '/playlist',
-        data: {
-            titleOfPlaylist: titleOfPlaylist
-        },
-        success: function () {
-            $("#currentUserUsername").notify(titleOfPlaylist + " - created new playlist", {
-                position: 'bottom left',
-                className: 'success'
-            });
-            getPlaylists();
-            console.log(titleOfPlaylist + " - created new playlist");
-        },
-        error: function () {
-            $("#currentUserUsername").notify("Name of playlist can not be empty", {
-                position: 'bottom left',
-                className: 'error'
-            });
-            getPlaylists();
-        }
-    });
+    if (titleOfPlaylist !== '') {
+        $.post({
+            url: '/playlist',
+            data: {
+                titleOfPlaylist: titleOfPlaylist
+            },
+            success: function () {
+                $.notify(titleOfPlaylist + " - created new playlist", {
+                    position: 'top left',
+                    className: 'success'
+                });
+                getPlaylists();
+                console.log(titleOfPlaylist + " - created new playlist");
+            },
+            error: function () {
+                $.notify("Name of playlist can not be empty", {
+                    position: 'top left',
+                    className: 'error'
+                });
+                getPlaylists();
+            }
+        });
+    }
 }
 
 let isSelectingPlaylistOpen = true;
 
 function selectPlaylist() {
-    if (isSelectingPlaylistOpen) {
-        isSelectingPlaylistOpen = false;
+    if (currentUserUsername.text() !== "") {
+        if (isSelectingPlaylistOpen) {
+            isSelectingPlaylistOpen = false;
 
-        let html = '';
-        $.getJSON('/playlist', function (data) {
-            if (data.length !== 0) {
-                $.each(data, function (i, playlist) {
-                    html += '<button onclick="addMusicToPlaylist(\'' + playlist.title + '\',\'' + fullTitle + '\');">to "' + playlist.title + '"</button>';
-                });
-                $("#selectPlaylistDiv").html(html);
-            } else {
-                $("#selectPlaylistButton").notify("You not created any playlists", {
-                    position: 'top left',
-                    className: 'error'
-                });
-            }
-        });
+            let html = '';
+            $.getJSON('/playlist', function (data) {
+                if (data.length !== 0) {
+                    $("#selectPlaylistId").show();
+                    html += '<select onchange="addMusicToPlaylist(this.value, musicTrackId)">';
+                    html += '<option value=""></option>';
+                    $.each(data, function (i, playlist) {
+                        html += '<option value="' + playlist.title + '">' + playlist.title + '</option>';
+                    });
+                    $("#selectPlaylistId").html(html);
+                } else {
+                    $.notify("You not created any playlists", {
+                        position: 'top left',
+                        className: 'error'
+                    });
+                }
+            });
+        } else {
+            $("#selectPlaylistId").hide();
+            isSelectingPlaylistOpen = true;
+        }
     } else {
-        $("#selectPlaylistDiv").empty();
-        isSelectingPlaylistOpen = true;
+        getSignModalWindow();
     }
 }
 
 function showTrackInSelectPlaylist(titleOfPlaylist) {
-    $("#mainTableTBody").empty();
-
     let html = '';
     $.getJSON('/playlist/music', {titleOfPlaylist: titleOfPlaylist}, function (data) {
         if (data.length !== 0) {
             $.each(data, function (i, track) {
-                html += '<tr>';
-                html += '<td class="commonTd" style="display: flex">';
-                html += '<img id="cover" style="width: 50px; height: 50px; margin-right: 3%" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
-                html += '<div class="titleOfTrackInTable">' + track.fullTitle + '</div>';
-                html += '<div class="menuElement" onclick="removeTrackFromPlaylist(\'' + titleOfPlaylist + '\',\'' + track.id + '\');">Remove</div>';
-                html += '</td>';
-                html += '</tr>';
+                html += '<div style="max-width: 173px;">';
+                html += '   <div id="musicId" hidden>' + track.id + '</div>';
+                html += '   <img id="cover" alt="cover" style="width: 173px; height: 173px; margin-right: 3%" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
+                html += '   <div style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; height: auto;" class="titleOfTrackInTable">' + track.fullTitle + '</div>';
+                html += '   <div class="menuElement" onclick="removeTrackFromPlaylist(\'' + titleOfPlaylist + '\',\'' + track.id + '\');">Remove</div>';
+                html += '</div>';
             });
-            $("#mainTableTBody").html(html);
-            $('#listOfTrack').removeClass("main");
+            $("#listMusicOfPlaylist").html(html);
         } else {
-            $("#currentUserUsername").notify("You has not added track to playlist", {
-                position: 'bottom left',
+            $.notify("You has not added track to playlist", {
+                position: 'top left',
                 className: 'error'
             });
         }
     });
 }
 
-function addMusicToPlaylist(titleOfPlaylist, trackTitle) {
+function addMusicToPlaylist(titleOfPlaylist, trackId) {
     $.post({
         url: '/playlist/addMusic',
         data: {
             titleOfPlaylist: titleOfPlaylist,
-            trackTitle: trackTitle
+            trackId: trackId
         },
         success: function () {
-            $("#selectPlaylistButton").notify("Add to \"" + titleOfPlaylist + "\n", {
+            $.notify("Add to playlist: \"" + titleOfPlaylist + "\n", {
                 position: 'top left',
                 className: 'success'
             });
@@ -143,10 +151,6 @@ function removePlaylist(playlistId) {
                 playlistId: playlistId
             },
             success: function () {
-                $("#deletePlaylistButton").notify(playlistId + " deleted your playlist", {
-                    position: 'top left',
-                    className: 'info'
-                });
                 getPlaylists();
                 console.log(playlistId + ", deleted playlist")
             }
@@ -155,7 +159,7 @@ function removePlaylist(playlistId) {
 }
 
 function removeTrackFromPlaylist(titleOfPlaylist, trackId) {
-    if (confirm("Are you sure delete music " + titleOfTrack + "from playlist \"" +  "\"?")) {
+    if (confirm("Are you sure delete music from playlist \"" + titleOfPlaylist + "\"?")) {
         $.ajax({
             type: 'DELETE',
             url: '/playlist/music',
@@ -164,11 +168,8 @@ function removeTrackFromPlaylist(titleOfPlaylist, trackId) {
                 trackId: trackId
             },
             success: function () {
-                $("#deletePlaylistButton").notify(titleOfTrack + " deleted from your playlist", {
-                    position: 'top left',
-                    className: 'info'
-                });
                 getPlaylists();
+                console.log(trackId + ", deleted music from playlist")
             }
         });
     }

@@ -1,14 +1,25 @@
-// let audio = $("#audioId");
-
 let Track = function (fullTitle) {
+    this.id = null;
     this.fullTitle = fullTitle;
     Track.prototype.parseFullTitle(fullTitle);
-    this.singer = Track.prototype.getSinger();
-    this.title = Track.prototype.getTitle();
+    // this.singer = null;
+    // this.title = null;
+};
+
+Track.prototype.getId = function () {
+    return this.id;
+};
+
+Track.prototype.setId = function (id) {
+    this.id = id;
 };
 
 Track.prototype.getFullTitle = function () {
     return this.fullTitle;
+};
+
+Track.prototype.setFullTitle = function (fullTitle) {
+    this.fullTitle = fullTitle;
 };
 
 Track.prototype.setSinger = function (singer) {

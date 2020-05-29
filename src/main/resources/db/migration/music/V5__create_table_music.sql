@@ -9,7 +9,5 @@ CREATE TABLE music
     genre      TEXT,
     length     TEXT,
     size       DOUBLE PRECISION,
-    date       DATE,
-    time       TEXT,
-    date_time  TEXT
+    date_time  TIMESTAMP
 );

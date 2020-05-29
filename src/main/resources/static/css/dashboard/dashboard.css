@@ -1,0 +1,26 @@
+#dashboard {
+    display: none;
+    color: white;
+    margin-left: 17%;
+    height: 94%;
+    margin-top: 46px;
+}
+
+#dashboardCenter {
+    max-width: 850px;
+    margin-right: 50px;
+    z-index: 2;
+    background-color: rgba(47, 45, 45, 0.8);
+}
+
+#support {
+    z-index: 0;
+    background-color: rgba(47, 45, 45, 0.8);
+}
+
+#dashboardSide {
+    max-width: 290px;
+    min-width: 290px;
+    z-index: 2;
+    background-color: rgba(47, 45, 45, 0.8);
+}

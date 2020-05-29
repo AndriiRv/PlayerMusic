@@ -5,25 +5,13 @@
     width: 100%;
     position: fixed;
     bottom: 0;
-    z-index: 2;
+    z-index: 3;
     color: white;
 }
 
 #picInBottomController {
     display: flex;
     width: 100%;
-}
-
-#playlistTable {
-    display: none;
-    text-align: justify;
-    position: fixed;
-    bottom: 10%;
-    right: 7%;
-    width: 20%;
-    overflow-y: auto;
-    height: 50%;
-    z-index: 2;
 }
 
 .controllerDiv {
@@ -107,10 +95,8 @@
     flex-basis: 40%;
 }
 
-#selectPlaylistDiv {
-    width: 100px;
-    height: 100%;
-    margin-bottom: 180px;
+#selectPlaylistId {
+    display: none;
 }
 
 #rightSideBottomController {

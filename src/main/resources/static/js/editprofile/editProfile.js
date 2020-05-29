@@ -2,13 +2,11 @@ let editProfile = $("#editProfile");
 
 editProfile.on("click", function () {
     openEditForm();
-
     getEditProfile();
 });
 
-function getEditProfile(){
+function getEditProfile() {
     setTitleToNameOfTab("Edit Profile");
-    $("#mainTableTBody").empty();
 
     let html = '';
     html += '<div id="editForm">' +
@@ -33,16 +31,12 @@ function getEditProfile(){
         '<button id="editButton" class="btn btn-primary btn-lg btn-block">Change data</button>' +
         '</div>';
 
-    $('#editForm').html(html);
-    $('#listOfTrack').removeClass("main");
-    let editForm = $("#editForm");
-    editForm.css({
-        "color": "white"
+    supportDashboard.html(html);
+
+    $("#editButton").on("click", function () {
+        updateProfile();
     });
 }
-
-let editForm = $("#editForm");
-let editButton = $("#editButton");
 
 let editProfilePassword = null;
 let editProfileName = null;
@@ -50,21 +44,21 @@ let editProfileSurname = null;
 let editProfileEmail = null;
 
 function setDto() {
-    $('#listOfTrack').on('input', $("#editProfilePassword"), function () {
+    supportDashboard.on('input', $("#editProfilePassword"), function () {
         editProfilePassword = $("#editProfilePassword");
     });
-    $('#listOfTrack').on('input', $("#editProfileName"), function () {
+    supportDashboard.on('input', $("#editProfileName"), function () {
         editProfileName = $("#editProfileName");
     });
-    $('#listOfTrack').on('input', $("#editProfileSurname"), function () {
+    supportDashboard.on('input', $("#editProfileSurname"), function () {
         editProfileSurname = $("#editProfileSurname");
     });
-    $('#listOfTrack').on('input', $("#editProfileEmail"), function () {
+    supportDashboard.on('input', $("#editProfileEmail"), function () {
         editProfileEmail = $("#editProfileEmail");
     });
 }
 
-editForm.on("click", editButton, function () {
+function updateProfile() {
     setDto();
     $.post({
         url: '/edit',
@@ -77,15 +71,15 @@ editForm.on("click", editButton, function () {
         },
         success: function () {
             $.notify(currentUserUsername.text() + " was updated!", {
-                position: 'top right',
+                position: 'top left',
                 className: 'success'
             });
         },
         error: function (data) {
             $.notify(data.responseText, {
-                position: 'top right',
+                position: 'top left',
                 className: 'error'
             });
         }
     });
-});
+}

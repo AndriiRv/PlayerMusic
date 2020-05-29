@@ -1,6 +1,5 @@
 let uploadMusic = $("#uploadMusic");
-
-let uploadForm = $('#uploadForm');
+let uploadDiv = $('#uploadDiv');
 
 uploadMusic.on("click", function () {
     openUploadForm();
@@ -10,35 +9,50 @@ uploadMusic.on("click", function () {
 
 function getUploadFrom() {
     setTitleToNameOfTab("Upload music track");
-    $('#mainTableTBody').empty();
+    getUploadedTrack();
 
-    uploadForm.css({
+    uploadDiv.css({
         "display": "block"
     });
 
     let html = '';
     html +=
-        '<h2 style="color: white;">You can upload your own music tracks to our database</h2>' +
-        '<form method="post" id="uploadForm" enctype="multipart/form-data">' +
-        '   <input type="file" id="uploadId" name="musicTrackAsFile" accept=".mp3"/><br/>' +
-        '   <button id="uploadSendButton">Send</button>' +
-        '</form>';
+        '<div id="uploadDiv">' +
+        '   <h3 style="color: white;">You can upload your own music tracks to our database</h3>' +
+        '   <form method="post" id="uploadForm" enctype="multipart/form-data">' +
+        '      <input type="file" id="uploadId" name="musicTrackAsFile" accept=".mp3"/><br/>' +
+        '      <button id="uploadSendButton">Send</button>' +
+        '   </form>' +
+        '</div>';
 
-    uploadForm.html(html);
-    $('#listOfTrack').removeClass("main");
-    let uploadMusicDiv = $("#uploadMusicDiv");
-    uploadMusicDiv.css({
-        "color": "white"
+    html += '<div id="uploadedTrack" style="display: block"></div>';
+
+    supportDashboard.html(html);
+
+    $("#uploadSendButton").on("click", function (e) {
+        upload(e);
+    });
+
+}
+
+function getUploadedTrack() {
+    let html = '';
+    $.getJSON('/upload', function (data) {
+        if (data.length !== 0) {
+            html += '<h3>Your uploaded music tracks</h3>';
+            $.each(data, function (i, track) {
+                html += '<div id="uploadedMusic" style="display: flex">';
+                html += '   <div id="musicId" hidden>' + track.id + '</div>';
+                html += '   <img id="cover" alt="cover" style="width: 64px; height: 64px; margin-right: 3%" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
+                html += '   <div class="titleOfTrackInTable">' + track.fullTitle + '</div>';
+                html += '</div>';
+            });
+            $("#uploadedTrack").html(html);
+        }
     });
 }
 
-let uploadInput = $("#uploadId");
-
-uploadInput.on("click", function () {
-    $("#uploadSendButton").css({"display": "block"});
-});
-
-$("#uploadForm").on("click", $("#uploadSendButton"), function (e) {
+function upload(e) {
     let form = $('#uploadForm')[0];
     let uploadingTrack = new FormData(form);
 
@@ -56,10 +70,11 @@ $("#uploadForm").on("click", $("#uploadSendButton"), function (e) {
         data: uploadingTrack,
         success: function () {
             $('#uploadId').val("");
-            $("#currentUserName").notify("Music track successful upload to system!", {
-                position: 'bottom left',
+            $.notify("Music track successful upload to system!", {
+                position: 'top left',
                 className: 'success'
             });
+            getUploadFrom();
         }
     });
-});
+}

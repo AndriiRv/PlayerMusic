@@ -1,65 +1,54 @@
 let addToFavouriteButton = $(".addToFavouriteButton");
-// let title = $("#showInfoAboutTrack");
 let favouriteTrackButton = $("#favouriteTrack");
 
 function changeFavouritePic() {
-    $.get({
-        url: '/favourite/already',
-        data: {
-            musicId: numberOfTrack,
-        },
-        success: function (data) {
-            if (data === 1) {
-                addToFavouriteButton.css({
-                    "background-image": "url('../../images/favourite/favouriteActive.svg')"
-                });
-            } else {
-                addToFavouriteButton.css({
-                    "background-image": "url('../../images/favourite/favourite.svg')"
-                });
+    if (currentUserUsername.text() !== "") {
+        $.get({
+            url: '/favourite/already',
+            data: {
+                musicId: numberOfTrack,
+            },
+            success: function (data) {
+                if (data === 1) {
+                    addToFavouriteButton.css({
+                        "background-image": "url('../../images/favourite/favouriteActive.svg')"
+                    });
+                } else {
+                    addToFavouriteButton.css({
+                        "background-image": "url('../../images/favourite/favourite.svg')"
+                    });
+                }
             }
-        }
-    });
-}
-
-function getCountOfFavouriteByMusicId(musicId) {
-    let result = null;
-    $.get({
-        url: '/favourite/count',
-        data: {
-            musicId: musicId,
-        },
-        async: false,
-        success: function (data) {
-            result = data;
-        }
-    });
-    return result;
+        });
+    }
 }
 
 addToFavouriteButton.on('click', function () {
-    addToFavouriteButton.val(title.text() + ".mp3");
-    $.post({
-        url: '/favourite',
-        data: {
-            trackTitle: addToFavouriteButton.val()
-        },
-        success: function (responseText, statusText, data) {
-            if (data.status === 201) {
-                title.notify(responseText, {
-                    position: 'top left',
-                    className: 'success'
-                });
-                changeFavouritePic();
-            } else if (data.status === 200) {
-                title.notify(responseText, {
-                    position: 'top left',
-                    className: 'info'
-                });
-                changeFavouritePic();
+    if (currentUserUsername.text() !== "") {
+        $.post({
+            url: '/favourite',
+            data: {
+                trackId: musicTrackId
+            },
+            success: function (responseText, statusText, data) {
+                if (data.status === 201) {
+                    title.notify(responseText, {
+                        position: 'top left',
+                        className: 'success'
+                    });
+                    changeFavouritePic();
+                } else if (data.status === 200) {
+                    title.notify(responseText, {
+                        position: 'top left',
+                        className: 'info'
+                    });
+                    changeFavouritePic();
+                }
             }
-        }
-    });
+        });
+    } else {
+        getSignModalWindow();
+    }
 });
 
 favouriteTrackButton.on('click', function () {
@@ -70,26 +59,30 @@ favouriteTrackButton.on('click', function () {
 });
 
 function getFavourite() {
+    getLoader();
     listOfTrack = null;
 
     let html = '';
     $.getJSON('/favourite', function (data) {
-        if (data.length !== 0) {
+        countOfTrack = data.length;
+        if (countOfTrack !== 0) {
             listOfTrack = data;
-            countOfTrack = data.length;
+            html += '<h2>Likes</h2>';
+            html += '<div style="display: grid; grid-template-columns: 200px 200px 200px 200px 200px 175px; grid-auto-rows: 250px;">';
             $.each(data, function (i, track) {
-                html += '<tr>';
-                html += '<td class="commonTd" style="display: flex">';
-                html += '<img id="cover" style="width: 74px; height: 74px; margin-right: 3%" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
-                html += '<div class="titleOfTrackInTable">' + track.fullTitle + '</div>';
-                html += '</td>';
-                html += '</tr>';
+                html += '<div style="max-width: 173px;">';
+                html += '   <div id="musicId" hidden>' + track.id + '</div>';
+                html += '   <img id="cover" style="width: 173px; height: 173px;" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
+                html += '   <div class="titleOfTrackInTable" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden; height: auto">' + track.fullTitle + '</div>';
+                html += '</div>'
             });
-            $('#mainTableTBody').html(html);
-            $('#listOfTrack').removeClass("main");
+            html += '</div>';
+            supportDashboard.html(html);
+            closeLoader();
         } else {
-            $("#homeButton").notify("You don't like any music tracks yet", {
-                position: 'bottom left',
+            closeLoader();
+            $.notify("You don't like any music tracks yet", {
+                position: 'top left',
                 className: 'error'
             });
         }

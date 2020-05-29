@@ -13,19 +13,11 @@ let barPlay = $(".barPlay");
 
 let intervalVolumeBoost = null;
 
-// let artistTrack = null;
-// let songTrack = null;
-// let fullTitle = null;
+let musicTrackId = 0;
 
-// function getSingerAndTitle(fullTitle) {
-//     let indexDash = fullTitle.indexOf(" - ");
-//    let indexAfterTitle = fullTitle.indexOf(".mp3");
-//
-//     if (indexDash !== -1) {
-//         artistTrack = fullTitle.substring(0, indexDash);
-//         songTrack = fullTitle.substring(indexDash + 3, indexAfterTitle);
-//     }
-// }
+let lyricObj;
+
+let musicTrackObject;
 
 function highlightSelectTrack(titleOfTrackInTable, nameOfTrack) {
     titleOfTrackInTable.filter(function () {
@@ -56,17 +48,17 @@ function setTitleToNameOfTab(newNameOfTab) {
 
 $("body").on("click", ".titleOfTrackInTable", function () {
     let nameOfTrack = $(this).text();
+    let trackId = $(this).siblings("#musicId").text();
 
-    let musicTrack = new Track(nameOfTrack);
-    // musicTrack.playMusicTrack();
+    musicTrackObject = new Track(nameOfTrack);
+    musicTrackObject.setId(trackId);
+
+    musicTrackId = musicTrackObject.getId();
 
     let lyric = new Lyric();
-    lyric.setSinger(musicTrack.getSinger());
-    lyric.setTitle(musicTrack.getTitle());
-    Lyric.prototype.newInstance(lyric);
-
-    // let lyricObject = new Lyric();
-    // lyricObject.openLyric(lyricObject);
+    lyric.setSinger(musicTrackObject.getSinger());
+    lyric.setTitle(musicTrackObject.getTitle());
+    lyricObj = lyric;
 
     $("#bottomController").css({
         "display": "flex"
@@ -81,16 +73,11 @@ $("body").on("click", ".titleOfTrackInTable", function () {
 
     clearSelectTrack(titleOfTrackInTable);
 
-    // let nameOfTrack = $(this).text();
-    fullTitle = nameOfTrack;
-
     numberOfTrack = $(this).siblings("#musicId").text();
-    numberOfTrack = numberOfTrack.replace(fullTitle, '');
 
     addCountOfPlayedByMusicId(numberOfTrack);
 
-    let srcCoverTrack = $(this).prevAll('img').first().attr("src");
-    getPicture(srcCoverTrack);
+    getPictureByTrackId(trackId);
 
     for (let i = 0; i <= String(nameOfTrack).length; i++) {
         if (nameOfTrack.includes('[')) {
@@ -107,8 +94,6 @@ $("body").on("click", ".titleOfTrackInTable", function () {
 
     titleOfTrackInPlayer.empty();
     audio.attr("src", "play/" + nameOfTrack);
-
-
 
     for (let j = 0; j <= String(nameOfTrack).length; j++) {
         if (nameOfTrack.includes('%5B')) {

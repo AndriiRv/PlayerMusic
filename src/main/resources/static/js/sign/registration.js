@@ -44,6 +44,12 @@ function highlightDataIfItAlreadyInUse(errorString) {
             "border-style": "solid"
         });
     }
+    if (errorString.includes("Email is incorrect")) {
+        signUpEmail.css({
+            "border-color": "red",
+            "border-style": "solid"
+        });
+    }
 }
 
 function setBorderToInputByElement(object) {

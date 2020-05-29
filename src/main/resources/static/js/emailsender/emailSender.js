@@ -26,13 +26,13 @@ submitSendEmail.on("click", function () {
         },
         success: function () {
             $.notify("Message with new password \nwill send to your email", {
-                position: 'top right',
+                position: 'top left',
                 className: 'info'
             });
         },
         error: function (data) {
             $.notify(data.responseText, {
-                position: 'top right',
+                position: 'top left',
                 className: 'error'
             });
         }

@@ -11,7 +11,7 @@
     bottom: 0;
     width: 100%;
     height: 50%;
-    z-index: 1;
+    z-index: -10;
 }
 
 #themeLogo {
@@ -84,14 +84,3 @@
     margin-left: 10px;
     z-index: 2;
 }
-
-/*#findInYouTube {*/
-/*    background-color: transparent;*/
-/*    border: none;*/
-/*    background-image: url('../images/youtube.svg');*/
-/*    background-size: 60px 60px;*/
-/*    height: 60px;*/
-/*    width: 60px;*/
-/*    margin-left: 10px;*/
-/*    z-index: 2;*/
-/*}*/
