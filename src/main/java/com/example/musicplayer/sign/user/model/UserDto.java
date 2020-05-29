@@ -1,10 +1,20 @@
-package com.example.musicplayer.authentication.model;
+package com.example.musicplayer.sign.user.model;
 
 public class UserDto {
     private String username;
     private String name;
     private String surname;
     private String email;
+
+    public UserDto(String username, String name, String surname, String email) {
+        this.username = username;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+    }
+
+    public UserDto() {
+    }
 
     public String getUsername() {
         return username;

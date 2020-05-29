@@ -1,11 +1,10 @@
 package com.example.musicplayer.sign.registration.service;
 
-import com.example.musicplayer.sign.authentication.model.User;
-import com.example.musicplayer.sign.authentication.service.UserService;
 import com.example.musicplayer.sign.registration.model.UserRegistration;
+import com.example.musicplayer.sign.user.model.User;
+import com.example.musicplayer.sign.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ public class UserRegistrationService {
     private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserRegistrationService.class);
 
-    @Autowired
     public UserRegistrationService(UserRegistrationValidator userRegistrationValidator,
                                    UserService userService,
                                    PasswordEncoder passwordEncoder) {
@@ -61,7 +59,10 @@ public class UserRegistrationService {
     }
 
     private void logRegisterUser(UserRegistration userRegistration, String result) {
-        logger.info(userRegistration.getName() + " " + userRegistration.getSurname() + " with username: '"
-                + userRegistration.getUsername() + "'" + result);
+        logger.info("{} {} with username: '{}' {}",
+                userRegistration.getName(),
+                userRegistration.getSurname(),
+                userRegistration.getUsername(),
+                result);
     }
 }

@@ -2,13 +2,12 @@ package com.example.musicplayer.friendship.service;
 
 import com.example.musicplayer.conversation.chat.service.ChatService;
 import com.example.musicplayer.friendship.repository.FriendshipRepository;
-import com.example.musicplayer.sign.authentication.model.User;
-import com.example.musicplayer.sign.authentication.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
+import com.example.musicplayer.sign.user.service.UserService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FriendshipService {
@@ -16,7 +15,6 @@ public class FriendshipService {
     private final UserService userService;
     private final ChatService chatService;
 
-    @Autowired
     public FriendshipService(FriendshipRepository friendshipRepository,
                              UserService userService,
                              ChatService chatService) {
@@ -42,26 +40,15 @@ public class FriendshipService {
         return friendshipRepository.isFriendHasByUserId(friendId, userId);
     }
 
-    public List<User> getAllUsers(User currentUser) {
-        List<User> allUsersWithoutCurrentUser = new ArrayList<>();
-
-        for (User user : userService.getAllUsers()) {
-            if (!user.getUsername().equals(currentUser.getUsername())) {
-                allUsersWithoutCurrentUser.add(user);
-            }
-        }
-        return allUsersWithoutCurrentUser;
+    public List<User> getAllUsersExceptCurrentUser(User currentUser) {
+        return userService.getAllUsers().stream()
+                .filter(user -> !user.getUsername().equals(currentUser.getUsername()))
+                .collect(Collectors.toList());
     }
 
-    public List<User> getFriendsByUserIdForFriend(int userId) {
-        List<User> getFriends = new ArrayList<>();
-
-        List<Integer> friendsByUserId = friendshipRepository.getFriendsByUserId(userId);
-
-        for (Integer user : friendsByUserId) {
-            getFriends.add(userService.getUserByUserId(user));
-        }
-
-        return getFriends;
+    public List<User> getFriendsByUserId(int userId) {
+        return friendshipRepository.getFriendsByUserId(userId).stream()
+                .map(userService::getUserByUserId)
+                .collect(Collectors.toList());
     }
 }

@@ -1,8 +1,8 @@
 package com.example.musicplayer.player.picture.service;
 
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.picture.model.Picture;
 import com.example.musicplayer.player.picture.repository.PictureRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.List;
 public class PictureService {
     private final PictureRepository pictureRepository;
 
-    @Autowired
     public PictureService(PictureRepository pictureRepository) {
         this.pictureRepository = pictureRepository;
     }
@@ -20,8 +19,10 @@ public class PictureService {
         pictureRepository.addPictureToMusic(musicId, picture);
     }
 
-    public byte[] getPictureByMusicId(int musicId) {
-        return pictureRepository.getPictureByMusicId(musicId);
+    public TrackDto getPictureByMusicId(int musicId) {
+        TrackDto trackDto = new TrackDto();
+        trackDto.setByteOfPicture(pictureRepository.getPictureByMusicId(musicId));
+        return trackDto;
     }
 
     public List<Picture> getAllPicture() {

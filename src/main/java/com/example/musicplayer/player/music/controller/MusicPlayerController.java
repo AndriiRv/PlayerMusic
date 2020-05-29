@@ -2,9 +2,8 @@ package com.example.musicplayer.player.music.controller;
 
 import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicPlayerService;
-import com.example.musicplayer.player.music.service.MusicService;
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
+import com.example.musicplayer.sign.user.model.UserDto;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,28 +12,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.util.Set;
 
 @Controller
 public class MusicPlayerController {
     private final MusicPlayerService musicPlayerService;
-    private final MusicService musicService;
 
-    @Autowired
-    public MusicPlayerController(MusicPlayerService musicPlayerService,
-                                 MusicService musicService) {
+    public MusicPlayerController(MusicPlayerService musicPlayerService) {
         this.musicPlayerService = musicPlayerService;
-        this.musicService = musicService;
     }
 
     @GetMapping("/")
-    public String common(Model model, @AuthenticationPrincipal User user, HttpServletRequest request) {
+    public String common(Model model, @AuthenticationPrincipal User user) {
         if (user != null) {
             model.addAttribute("name", user.getName());
             model.addAttribute("username", user.getUsername());
@@ -46,17 +39,16 @@ public class MusicPlayerController {
         return "index.html";
     }
 
-//    @PostMapping("/lyric")
-//    @ResponseBody
-//    public String getLyric(@AuthenticationPrincipal User user, String url, String nameOfTrack,
-//                           String artistOfTrack) {
-//        return musicPlayerService.getLyric(user, url, nameOfTrack, artistOfTrack);
-//    }
-
-    @GetMapping("/shuffle/{isShuffle}")
+    @GetMapping("/getAuthorizedUser")
     @ResponseBody
-    public List<TrackDto> shuffle(@RequestParam int page, @PathVariable boolean isShuffle) {
-        return musicPlayerService.getShuffleMusic(page, isShuffle);
+    public UserDto getUser(@AuthenticationPrincipal User user) {
+        return new UserDto(user.getUsername(), user.getName(), user.getSurname(), user.getEmail());
+    }
+
+    @GetMapping("/shuffle")
+    @ResponseBody
+    public Set<TrackDto> shuffle(@RequestParam int page) {
+        return musicPlayerService.getShuffleMusic(page);
     }
 
     @GetMapping(value = "/play/{musicTitle}")
@@ -77,13 +69,13 @@ public class MusicPlayerController {
 
     @GetMapping("/sort/{sortName}={directory}")
     @ResponseBody
-    public List<TrackDto> sort(@PathVariable String sortName, @PathVariable String directory, Integer page) {
-        return musicPlayerService.sort(sortName, directory, page);
+    public Set<TrackDto> sort(@PathVariable String sortName, @PathVariable String directory, Integer page) {
+        return musicPlayerService.getSortedMusic(sortName, directory, page);
     }
 
     @GetMapping("/searchPlaceholder")
     @ResponseBody
     public String getRandomTrackToPutInSearchPlaceholder() {
-        return musicService.getRandomTrackToPutInSearchPlaceholder();
+        return musicPlayerService.getRandomTrackToPutInSearchPlaceholder();
     }
 }

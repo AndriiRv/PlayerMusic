@@ -1,51 +1,58 @@
 package com.example.musicplayer.player.favourite.service;
 
-import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.favourite.repository.FavouriteRepository;
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicService;
-import com.example.musicplayer.sign.authentication.model.User;
-import com.example.musicplayer.sign.authentication.service.UserService;
+import com.example.musicplayer.player.statistic.favourite.service.StatisticFavouriteService;
+import com.example.musicplayer.sign.user.model.User;
+import com.example.musicplayer.sign.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class FavouriteService {
     private final FavouriteRepository favouriteRepository;
     private final MusicService musicService;
     private final UserService userService;
+    private final StatisticFavouriteService statisticFavouriteService;
     private final Logger log = LoggerFactory.getLogger(FavouriteService.class.getName());
 
-    @Autowired
     public FavouriteService(FavouriteRepository favouriteRepository,
                             MusicService musicService,
-                            UserService userService) {
+                            UserService userService,
+                            StatisticFavouriteService statisticFavouriteService) {
         this.musicService = musicService;
         this.favouriteRepository = favouriteRepository;
         this.userService = userService;
+        this.statisticFavouriteService = statisticFavouriteService;
     }
 
-    public boolean setMusicToFavourite(int userId, String trackFullTitle) {
-        boolean checkIfTrackAlreadyInFavourite;
+    public Integer getCountOfFavouriteMusicByUserId(int userId) {
+        return favouriteRepository.getCountOfFavouriteMusicByUserId(userId);
+    }
 
-        Track track = musicService.getTrackByFullTitle(trackFullTitle);
-        if (favouriteRepository.isTrackAlreadyInFavouriteByUserId(userId, track.getId()) == 0) {
-            favouriteRepository.setMusicToFavouriteByUserId(userId, track.getId());
-            checkIfTrackAlreadyInFavourite = false;
-            log.info("{} added {} to favourite",
-                    userService.getUserByUserId(userId).getUsername(),
-                    trackFullTitle);
+    public Map<String, Boolean> setMusicToFavourite(int userId, int trackId) {
+        String fullTitle = musicService.getFullTitleByMusicId(trackId);
+        Map<String, Boolean> map = new HashMap<>();
+
+        if (favouriteRepository.isTrackAlreadyInFavouriteByUserId(userId, trackId) == 0) {
+            favouriteRepository.setMusicToFavouriteByUserId(userId, trackId);
+
+            statisticFavouriteService.addCountOfFavouriteByMusicId(trackId);
+
+            map.put(fullTitle, false);
+            log.info("{} added {} to favourite", userService.getUserByUserId(userId).getUsername(), fullTitle);
         } else {
-            checkIfTrackAlreadyInFavourite = true;
+            map.put(fullTitle, true);
         }
-        return checkIfTrackAlreadyInFavourite;
-    }
-
-    public Integer getCountOfFavouriteByMusicId(int musicId) {
-        return favouriteRepository.getCountOfFavouriteByMusicId(musicId);
+        return map;
     }
 
     public void renameTrackByUser(User user, int trackId, String newTitleByUser) {
@@ -56,12 +63,17 @@ public class FavouriteService {
         return favouriteRepository.isTrackAlreadyInFavouriteByUserId(user.getId(), musicId);
     }
 
-    public List<Track> getFavouriteTracksByUser(int userId) {
-        return favouriteRepository.getFavouriteTracksByUserId(userId);
+    public Set<TrackDto> getFavouriteTracksByUser(int userId) {
+        return favouriteRepository.getFavouriteTracksByUserId(userId).stream()
+                .map(TrackDto::of)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public void deleteTrackFromFavourite(int userId, String trackFullTitle) {
-        favouriteRepository.deleteTrackFromFavourite(userId, musicService.getTrackByFullTitle(trackFullTitle).getId());
-        log.info("{} remove {} from favourite", userService.getUserByUserId(userId).getUsername(), trackFullTitle);
+    public void deleteTrackFromFavourite(int userId, int trackId) {
+        favouriteRepository.deleteTrackFromFavourite(userId, trackId);
+        log.info("{} remove {} from favourite",
+                userService.getUserByUserId(userId).getUsername(),
+                musicService.getFullTitleByMusicId(trackId)
+        );
     }
 }

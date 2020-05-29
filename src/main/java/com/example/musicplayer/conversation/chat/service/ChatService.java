@@ -2,8 +2,7 @@ package com.example.musicplayer.conversation.chat.service;
 
 import com.example.musicplayer.conversation.chat.model.Chat;
 import com.example.musicplayer.conversation.chat.repository.ChatRepository;
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
 public class ChatService {
     private final ChatRepository chatRepository;
 
-    @Autowired
     public ChatService(ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }

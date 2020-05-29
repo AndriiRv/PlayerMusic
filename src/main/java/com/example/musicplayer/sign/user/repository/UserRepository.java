@@ -1,7 +1,6 @@
-package com.example.musicplayer.sign.authentication.repository;
+package com.example.musicplayer.sign.user.repository;
 
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,6 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,21 +18,16 @@ import java.util.Objects;
 public class UserRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Autowired
     public UserRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<User> getAllUsers() {
-        String sql = "SELECT u.id, c.username, c.password, u.name, u.surname, r.title AS role, u.email AS email " +
-                "FROM \"user\" AS u INNER JOIN credential AS c ON u.credential_id = c.id " +
-                "INNER JOIN role r ON u.role_id = r.id";
+        String sql = "SELECT u.id, c.username, c.password, u.name, u.surname, r.title AS role, u.email AS email "
+                + "FROM \"user\" AS u "
+                + "INNER JOIN credential AS c ON u.credential_id = c.id "
+                + "INNER JOIN role r ON u.role_id = r.id";
         return jdbcTemplate.query(sql, new MapSqlParameterSource(), new BeanPropertyRowMapper<>(User.class));
-    }
-
-    public List<String> getAllEmails() {
-        String sql = "SELECT email FROM \"user\"";
-        return jdbcTemplate.queryForList(sql, new MapSqlParameterSource(), String.class);
     }
 
     public User saveUser(User user) {
@@ -44,15 +39,16 @@ public class UserRepository {
                 .addValue("password", user.getPassword()), keyHolder, new String[] {"id"});
         int credentialId = (int) Objects.requireNonNull(keyHolder.getKey()).longValue();
 
-        String sqlInsertToUser = "INSERT INTO \"user\" (credential_id, surname, name, role_id, email) " +
-                "VALUES (:credential_id, :surname, :name, :role_id, :email)";
+        String sqlInsertToUser = "INSERT INTO \"user\" (credential_id, surname, name, role_id, email, date_of_registration) " +
+                "VALUES (:credential_id, :surname, :name, :role_id, :email, :dateOfRegistration)";
 
         jdbcTemplate.update(sqlInsertToUser, new MapSqlParameterSource()
                 .addValue("credential_id", credentialId)
                 .addValue("surname", user.getSurname())
                 .addValue("name", user.getName())
                 .addValue("role_id", 1)
-                .addValue("email", user.getEmail()));
+                .addValue("email", user.getEmail())
+                .addValue("dateOfRegistration", LocalDateTime.now()));
         return user;
     }
 
@@ -73,7 +69,7 @@ public class UserRepository {
         jdbcTemplate.update(sqlUpdateUser, parameterSourceUser);
     }
 
-    public void updatePasswordByEmail(String email, String password) {
+    public void updatePasswordByEmailRecover(String email, String password) {
         String getCredentialIdByEmailSql = "SELECT credential_id FROM \"user\" WHERE email = :email";
         Integer credentialId = jdbcTemplate.queryForObject(getCredentialIdByEmailSql, new MapSqlParameterSource("email", email), Integer.class);
 

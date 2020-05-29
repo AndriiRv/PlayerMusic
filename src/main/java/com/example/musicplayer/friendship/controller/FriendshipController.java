@@ -1,7 +1,7 @@
 package com.example.musicplayer.friendship.controller;
 
 import com.example.musicplayer.friendship.service.FriendshipService;
-import com.example.musicplayer.sign.authentication.model.User;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,7 +24,7 @@ public class FriendshipController {
 
     @GetMapping
     public List<User> myFriends(@AuthenticationPrincipal User user) {
-        return friendshipService.getFriendsByUserIdForFriend(user.getId());
+        return friendshipService.getFriendsByUserId(user.getId());
     }
 
     @PostMapping

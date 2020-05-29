@@ -2,8 +2,8 @@ package com.example.musicplayer.player.history.controller;
 
 import com.example.musicplayer.player.history.service.HistoryService;
 import com.example.musicplayer.player.music.model.Track;
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,15 +16,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/history")
 public class HistoryController {
     private final HistoryService historyService;
 
-    @Autowired
     public HistoryController(HistoryService historyService) {
         this.historyService = historyService;
+    }
+
+    @GetMapping("/count")
+    public Integer getCountOfHistoryMusicByUserId(@AuthenticationPrincipal User user) {
+        return historyService.getCountOfHistoryMusicByUserId(user.getId());
     }
 
     @PostMapping
@@ -36,12 +41,8 @@ public class HistoryController {
     }
 
     @GetMapping
-    public List<Track> getHistoryTrackByUserId(@AuthenticationPrincipal User user) {
-        List<Track> historyByUserId = historyService.getHistoryByUserId(user.getId());
-        if (!historyByUserId.isEmpty()) {
-            return historyByUserId;
-        }
-        return new ArrayList<>();
+    public Set<TrackDto> getHistoryTrackByUserId(@AuthenticationPrincipal User user) {
+        return historyService.getHistoryByUserId(user.getId());
     }
 
     @DeleteMapping

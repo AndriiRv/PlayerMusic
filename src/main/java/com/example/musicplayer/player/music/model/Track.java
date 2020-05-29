@@ -1,44 +1,43 @@
 package com.example.musicplayer.player.music.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Track {
     private Integer id;
     private String fullTitle;
     private String singer;
     private String title;
-    private Double size;
+    private double size;
     private String length;
     private LocalDateTime dateTime;
-    private LocalDate date;
-    private LocalTime time;
     private byte[] byteOfPicture;
     private String albumTitle;
     private String year;
     private String genre;
+    private Integer countOfPlayed;
+    private Integer countOfFavourite;
 
-    public Track(Integer id, String fullTitle, String title, String singer, Double size,
-                 String length, LocalDateTime dateTime, LocalDate date, LocalTime time,
-                 byte[] byteOfPicture, String albumTitle, String year, String genre) {
-        this.id = id;
-        this.fullTitle = fullTitle;
-        this.singer = singer;
-        this.title = title;
-        this.size = size;
-        this.length = length;
-        this.dateTime = dateTime;
-        this.date = date;
-        this.time = time;
-        this.byteOfPicture = byteOfPicture;
-        this.albumTitle = albumTitle;
-        this.year = year;
-        this.genre = genre;
+    public static Track of(TrackDto trackDto) {
+        Track track = new Track();
+        track.setId(trackDto.getId());
+        track.setFullTitle(trackDto.getFullTitle());
+        track.setSinger(trackDto.getSinger());
+        track.setTitle(trackDto.getTitle());
+        track.setSize(trackDto.getSize());
+        track.setLength(trackDto.getLength());
+        track.setDateTime(trackDto.getDateTime());
+        track.setByteOfPicture(trackDto.getByteOfPicture());
+        track.setAlbumTitle(trackDto.getAlbumTitle());
+        track.setYear(trackDto.getYear());
+        track.setGenre(trackDto.getGenre());
+        track.setCountOfPlayed(trackDto.getCountOfPlayed());
+        track.setCountOfFavourite(trackDto.getCountOfFavourite());
+        return track;
     }
 
-    public Track() {
+    private Track() {
     }
 
     public Integer getId() {
@@ -73,11 +72,11 @@ public class Track {
         this.title = title;
     }
 
-    public Double getSize() {
+    public double getSize() {
         return size;
     }
 
-    public void setSize(Double size) {
+    public void setSize(double size) {
         this.size = size;
     }
 
@@ -87,22 +86,6 @@ public class Track {
 
     public void setLength(String length) {
         this.length = length;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
     }
 
     public LocalDateTime getDateTime() {
@@ -145,11 +128,48 @@ public class Track {
         this.genre = genre;
     }
 
-    public static Comparator<TrackDto> fullTitleTrackComparator = Comparator.comparing(TrackDto::getFullTitle);
+    public Integer getCountOfPlayed() {
+        return countOfPlayed;
+    }
 
-    public static Comparator<TrackDto> lengthTrackComparator = Comparator.comparing(TrackDto::getLength);
+    public void setCountOfPlayed(Integer countOfPlayed) {
+        this.countOfPlayed = countOfPlayed;
+    }
 
-    public static Comparator<TrackDto> sizeTrackComparator = (track1, track2) -> (int) (track1.getSize() - track2.getSize());
+    public Integer getCountOfFavourite() {
+        return countOfFavourite;
+    }
 
-    public static Comparator<TrackDto> dateTrackComparator = Comparator.comparing(TrackDto::getDateTime);
+    public void setCountOfFavourite(Integer countOfFavourite) {
+        this.countOfFavourite = countOfFavourite;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Track track = (Track) o;
+        return Double.compare(track.size, size) == 0 &&
+                Objects.equals(id, track.id) &&
+                Objects.equals(fullTitle, track.fullTitle) &&
+                Objects.equals(singer, track.singer) &&
+                Objects.equals(title, track.title) &&
+                Objects.equals(length, track.length) &&
+                Objects.equals(dateTime, track.dateTime) &&
+                Arrays.equals(byteOfPicture, track.byteOfPicture) &&
+                Objects.equals(albumTitle, track.albumTitle) &&
+                Objects.equals(year, track.year) &&
+                Objects.equals(genre, track.genre);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, fullTitle, singer, title, size, length, dateTime, albumTitle, year, genre);
+        result = 31 * result + Arrays.hashCode(byteOfPicture);
+        return result;
+    }
 }

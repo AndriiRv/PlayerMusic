@@ -1,4 +1,4 @@
-package com.example.musicplayer.sign.authentication.model;
+package com.example.musicplayer.sign.user.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

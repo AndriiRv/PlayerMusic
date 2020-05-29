@@ -1,8 +1,7 @@
 package com.example.musicplayer.emailsender.service;
 
 import com.example.musicplayer.emailsender.model.EmailLetter;
-import com.example.musicplayer.sign.authentication.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ public class PasswordRecover {
     private final PasswordEncoder passwordEncoder;
     private static final int SIZE_OF_PASSWORD = 12;
 
-    @Autowired
     public PasswordRecover(UserService userService,
                            PasswordEncoder passwordEncoder) {
         this.userService = userService;
@@ -28,7 +26,7 @@ public class PasswordRecover {
     EmailLetter passwordRecoverEmailMessage(String email, Set<String> allEmails) {
         if (allEmails.stream().anyMatch((e -> e.equals(email)))) {
             String newPassword = getPassword();
-            userService.updatePasswordByEmail(email, passwordEncoder.encode(newPassword));
+            userService.updatePasswordByEmailRecover(email, passwordEncoder.encode(newPassword));
             String subject = "Password Recover";
             String text = "Your new password: " + newPassword + " \nYou can change it, if you go ahead to edit your account\nPlayer Music (2020)";
             return new EmailLetter(email, subject, text);

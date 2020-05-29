@@ -1,8 +1,7 @@
 package com.example.musicplayer.conversation.chat.repository;
 
 import com.example.musicplayer.conversation.chat.model.Chat;
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,7 +16,6 @@ import java.util.Objects;
 public class ChatRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Autowired
     public ChatRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }

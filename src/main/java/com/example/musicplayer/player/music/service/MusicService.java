@@ -3,21 +3,21 @@ package com.example.musicplayer.player.music.service;
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.repository.MusicRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class MusicService {
     private final MusicRepository musicRepository;
+    private final Logger log = LoggerFactory.getLogger(MusicService.class.getName());
 
-    @Autowired
     public MusicService(MusicRepository musicRepository) {
         this.musicRepository = musicRepository;
     }
@@ -34,46 +34,47 @@ public class MusicService {
         return musicRepository.checkIfTrackExistInTable(fullTitle);
     }
 
-    public int insertMusicToDb(TrackDto trackDto) {
-        return musicRepository.insertMusicToDb(converterFromDto(trackDto));
+    int insertMusicToDb(TrackDto trackDto) {
+        return musicRepository.insertMusicToDb(Track.of(trackDto));
     }
 
     public Integer isMusicTableEmpty() {
         return musicRepository.isMusicTableEmpty();
     }
 
-    public List<TrackDto> getMusicFromTable() {
-        return musicRepository.getMusicFromTable();
+    public Set<TrackDto> getMusicFromTable() {
+        Set<TrackDto> musicTracks = musicRepository.getTracks().stream()
+                .map(TrackDto::of)
+                .collect(Collectors.toSet());
+        log.info("Load from bd");
+        return musicTracks;
     }
 
-    public List<String> getMusicTitleFromTable() {
-        return musicRepository.getMusicTitleFromTable();
-    }
+    public boolean checkIfTrackExistInSystem(String pathToFolder, Map<Integer, TrackDto> musicTracks) {
+        File file = new File(pathToFolder);
+        File[] tracks = file.listFiles();
 
-    public void removeMusicTrackFromDbByFullTitle(String fullTitle) {
-        musicRepository.removeMusicTrackFromDbByFullTitle(fullTitle);
-    }
+        if (tracks != null && file.exists()) {
+            Set<String> allMusicTitle = Arrays.stream(tracks)
+                    .map(File::getName)
+                    .filter(nameOfFile -> nameOfFile.endsWith(".mp3"))
+                    .collect(Collectors.toSet());
 
-    public String getRandomTrackToPutInSearchPlaceholder() {
-        if (isMusicTableEmpty() != 0) {
-            return musicRepository.getRandomTrackToPutInSearchPlaceholder();
+            Set<String> musicTitleFromTable = musicTracks.values().stream()
+                    .map(TrackDto::getFullTitle)
+                    .collect(Collectors.toSet());
+
+            musicTitleFromTable.removeAll(allMusicTitle);
+
+            musicTitleFromTable.forEach(titleOfTrack -> {
+                removeMusicTrackFromDbByFullTitle(titleOfTrack);
+                log.info("'{}' - removed from db", titleOfTrack);
+            });
         }
-        return "";
+        return true;
     }
 
-    private Track converterFromDto(TrackDto trackDto) {
-        Track track = new Track();
-        track.setFullTitle(trackDto.getFullTitle());
-        track.setSinger(trackDto.getSinger());
-        track.setTitle(trackDto.getTitle());
-        track.setSize(trackDto.getSize());
-        track.setLength(trackDto.getLength());
-        track.setDate(trackDto.getDate());
-        track.setTime(trackDto.getTime());
-        track.setDateTime(trackDto.getDateTime());
-        track.setGenre(trackDto.getGenre());
-        track.setYear(trackDto.getYear());
-        track.setAlbumTitle(trackDto.getAlbumTitle());
-        return track;
+    private void removeMusicTrackFromDbByFullTitle(String fullTitle) {
+        musicRepository.removeMusicTrackByFullTitle(fullTitle);
     }
 }

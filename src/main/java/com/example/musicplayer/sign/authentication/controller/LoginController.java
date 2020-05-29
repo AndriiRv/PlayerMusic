@@ -1,17 +1,17 @@
-package com.example.musicplayer.authentication.controller;
+package com.example.musicplayer.sign.authentication.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 public class LoginController {
     private final Logger log = LoggerFactory.getLogger(LoginController.class.getName());
 
@@ -29,7 +29,7 @@ public class LoginController {
                                                HttpServletRequest request) {
         try {
             request.login(username, password);
-            log.info("'" + username + "' was sign in successful");
+            log.info("'{}' was sign in successful", username);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Invalid username \nand/or password.", HttpStatus.CONFLICT);

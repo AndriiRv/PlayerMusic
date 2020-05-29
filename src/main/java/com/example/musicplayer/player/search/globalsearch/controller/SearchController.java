@@ -1,9 +1,7 @@
-package com.example.musicplayer.player.search.controller;
+package com.example.musicplayer.player.search.globalsearch.controller;
 
-import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.model.TrackDto;
-import com.example.musicplayer.player.search.service.SearchService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.player.search.globalsearch.service.SearchService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +11,6 @@ import java.util.Set;
 public class SearchController {
     private final SearchService searchService;
 
-    @Autowired
     public SearchController(SearchService searchService) {
         this.searchService = searchService;
     }

@@ -1,7 +1,7 @@
 package com.example.musicplayer.editprofile.controller;
 
 import com.example.musicplayer.editprofile.service.EditProfileService;
-import com.example.musicplayer.sign.authentication.model.User;
+import com.example.musicplayer.sign.user.model.User;
 import com.example.musicplayer.sign.registration.model.UserRegistration;
 import com.example.musicplayer.sign.registration.service.UserRegistrationService;
 import org.springframework.http.HttpStatus;

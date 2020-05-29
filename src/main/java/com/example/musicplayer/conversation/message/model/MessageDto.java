@@ -4,7 +4,7 @@ public class MessageDto {
     private int id;
     private String name;
     private String surname;
-    private String message;
+    private String messageText;
     private String datetime;
 
     public int getId() {
@@ -31,12 +31,12 @@ public class MessageDto {
         this.surname = surname;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessageText() {
+        return messageText;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
     }
 
     public String getDatetime() {

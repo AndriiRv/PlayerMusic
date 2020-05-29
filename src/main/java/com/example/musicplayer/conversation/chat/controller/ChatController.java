@@ -2,8 +2,7 @@ package com.example.musicplayer.conversation.chat.controller;
 
 import com.example.musicplayer.conversation.chat.model.Chat;
 import com.example.musicplayer.conversation.chat.service.ChatService;
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +18,6 @@ import java.util.List;
 public class ChatController {
     private final ChatService chatService;
 
-    @Autowired
     public ChatController(ChatService chatService) {
         this.chatService = chatService;
     }

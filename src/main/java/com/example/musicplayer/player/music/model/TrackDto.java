@@ -1,9 +1,6 @@
 package com.example.musicplayer.player.music.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 public class TrackDto {
     private Integer id;
@@ -13,13 +10,30 @@ public class TrackDto {
     private Double size;
     private String length;
     private LocalDateTime dateTime;
-    private LocalDate date;
-    private LocalTime time;
     private byte[] byteOfPicture;
     private String albumTitle;
     private String year;
     private String genre;
-    private String countOfFavourite;
+    private Integer countOfPlayed;
+    private Integer countOfFavourite;
+
+    public static TrackDto of(Track track) {
+        TrackDto trackDto = new TrackDto();
+        trackDto.setId(track.getId());
+        trackDto.setFullTitle(track.getFullTitle());
+        trackDto.setSinger(track.getSinger());
+        trackDto.setTitle(track.getTitle());
+        trackDto.setSize(track.getSize());
+        trackDto.setLength(track.getLength());
+        trackDto.setDateTime(track.getDateTime());
+        trackDto.setByteOfPicture(track.getByteOfPicture());
+        trackDto.setAlbumTitle(track.getAlbumTitle());
+        trackDto.setYear(track.getYear());
+        trackDto.setGenre(track.getGenre());
+        trackDto.setCountOfPlayed(track.getCountOfPlayed());
+        trackDto.setCountOfFavourite(track.getCountOfFavourite());
+        return trackDto;
+    }
 
     public Integer getId() {
         return id;
@@ -77,22 +91,6 @@ public class TrackDto {
         this.dateTime = dateTime;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
     public byte[] getByteOfPicture() {
         return byteOfPicture;
     }
@@ -125,11 +123,19 @@ public class TrackDto {
         this.genre = genre;
     }
 
-    public String getCountOfFavourite() {
+    public Integer getCountOfPlayed() {
+        return countOfPlayed;
+    }
+
+    public void setCountOfPlayed(Integer countOfPlayed) {
+        this.countOfPlayed = countOfPlayed;
+    }
+
+    public Integer getCountOfFavourite() {
         return countOfFavourite;
     }
 
-    public void setCountOfFavourite(String countOfFavourite) {
+    public void setCountOfFavourite(Integer countOfFavourite) {
         this.countOfFavourite = countOfFavourite;
     }
 }

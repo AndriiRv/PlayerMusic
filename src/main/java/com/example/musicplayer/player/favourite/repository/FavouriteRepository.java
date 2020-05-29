@@ -1,7 +1,6 @@
 package com.example.musicplayer.player.favourite.repository;
 
 import com.example.musicplayer.player.music.model.Track;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,9 +14,14 @@ import java.util.List;
 public class FavouriteRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Autowired
     public FavouriteRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public Integer getCountOfFavouriteMusicByUserId(int userId) {
+        String sql = ""
+                + "SELECT COUNT(*) FROM favourite WHERE user_id = :userId";
+        return jdbcTemplate.queryForObject(sql, new MapSqlParameterSource("userId", userId), Integer.class);
     }
 
     public Integer isTrackAlreadyInFavouriteByUserId(int userId, int musicId) {
@@ -28,16 +32,6 @@ public class FavouriteRepository {
                         "AND music_id = :musicId";
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("userId", userId)
-                .addValue("musicId", musicId);
-        return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
-    }
-
-    public Integer getCountOfFavouriteByMusicId(int musicId) {
-        String sql =
-                "SELECT COUNT(*) " +
-                        "FROM favourite " +
-                        "WHERE music_id = :musicId";
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("musicId", musicId);
         return jdbcTemplate.queryForObject(sql, parameterSource, Integer.class);
     }
@@ -54,23 +48,24 @@ public class FavouriteRepository {
 
     public void setMusicToFavouriteByUserId(int userId, int musicId) {
         String sql = "" +
-                "INSERT INTO favourite (user_id, music_id, date) " +
-                "VALUES(:userId, :musicId, :date)";
+                "INSERT INTO favourite (user_id, music_id, date_time) " +
+                "VALUES(:userId, :musicId, :dateTime)";
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("musicId", musicId)
-                .addValue("date", LocalDateTime.now());
+                .addValue("dateTime", LocalDateTime.now());
         jdbcTemplate.update(sql, parameterSource);
     }
 
     public List<Track> getFavouriteTracksByUserId(int userId) {
-        String sql =
-                "SELECT m.*, f.own_user_music_title AS ownTitle, picture AS byteOfPicture " +
-                        "FROM music AS m " +
-                        "INNER JOIN favourite AS f ON f.music_id = m.id " +
-                        "LEFT JOIN track_cover AS tc ON tc.music_id = m.id " +
-                        "WHERE f.user_id = :userId " +
-                        "ORDER BY f.date DESC";
+        String sql = ""
+                + "SELECT m.*, picture AS byteOfPicture, s.counter_played AS countOfPlayed, s.counter_favourite AS countOfFavourite "
+                + "FROM music AS m "
+                + "INNER JOIN favourite AS f ON f.music_id = m.id "
+                + "LEFT JOIN track_cover AS tc ON tc.music_id = m.id "
+                + "LEFT JOIN statistic AS s ON s.music_id = m.id "
+                + "WHERE f.user_id = :userId "
+                + "ORDER BY f.date_time DESC";
         return jdbcTemplate.query(sql, new MapSqlParameterSource("userId", userId), new BeanPropertyRowMapper<>(Track.class));
     }
 

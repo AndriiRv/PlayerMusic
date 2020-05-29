@@ -2,8 +2,7 @@ package com.example.musicplayer.conversation.message.controller;
 
 import com.example.musicplayer.conversation.message.model.MessageDto;
 import com.example.musicplayer.conversation.message.service.MessageService;
-import com.example.musicplayer.sign.authentication.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +16,6 @@ import java.util.List;
 public class MessageController {
     private final MessageService messageService;
 
-    @Autowired
     public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }

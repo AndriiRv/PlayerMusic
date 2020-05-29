@@ -1,18 +1,17 @@
 package com.example.musicplayer.sign.registration.service;
 
-import com.example.musicplayer.sign.authentication.model.User;
-import com.example.musicplayer.sign.authentication.service.UserService;
 import com.example.musicplayer.sign.registration.model.UserRegistration;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
+import com.example.musicplayer.sign.user.service.UserService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 public class UserRegistrationValidator {
     private final UserService userService;
 
-    @Autowired
     public UserRegistrationValidator(UserService userService) {
         this.userService = userService;
     }
@@ -21,7 +20,8 @@ public class UserRegistrationValidator {
         UserRegistrationValidationResult userRegistrationFormValidationResult = new UserRegistrationValidationResult();
         validatePassword(userRegistration, userRegistrationFormValidationResult);
         validateUsername(userRegistration, userRegistrationFormValidationResult);
-        validateEmail(userRegistration, userRegistrationFormValidationResult);
+        validateUniqueEmail(userRegistration, userRegistrationFormValidationResult);
+        validateEmailOnCorrect(userRegistration, userRegistrationFormValidationResult);
         return userRegistrationFormValidationResult;
     }
 
@@ -54,12 +54,18 @@ public class UserRegistrationValidator {
         }
     }
 
-    private void validateEmail(UserRegistration userRegistration, UserRegistrationValidationResult userRegistrationValidationResult) {
+    private void validateUniqueEmail(UserRegistration userRegistration, UserRegistrationValidationResult userRegistrationValidationResult) {
         List<User> allUsers = userService.getAllUsers();
         for (User user : allUsers) {
             if (user.getEmail().equals(userRegistration.getEmail())) {
                 userRegistrationValidationResult.addError("*Email is already in use");
             }
+        }
+    }
+
+    private void validateEmailOnCorrect(UserRegistration userRegistration, UserRegistrationValidationResult userRegistrationValidationResult) {
+        if (!userRegistration.getEmail().isBlank() && !Pattern.matches("^\\S+@\\S+$", userRegistration.getEmail())) {
+            userRegistrationValidationResult.addError("*Email is incorrect");
         }
     }
 }

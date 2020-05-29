@@ -2,7 +2,6 @@ package com.example.musicplayer.player.lyric.controller;
 
 import com.example.musicplayer.player.lyric.model.Lyric;
 import com.example.musicplayer.player.lyric.service.LyricService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class LyricController {
     private final LyricService lyricService;
 
-    @Autowired
     public LyricController(LyricService lyricService) {
         this.lyricService = lyricService;
     }

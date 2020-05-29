@@ -1,24 +1,28 @@
 package com.example.musicplayer.player.history.service;
 
-import com.example.musicplayer.player.countofplayed.service.PlayedService;
-import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.history.repository.HistoryRepository;
+import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class HistoryService {
     private final HistoryRepository historyRepository;
     private final MusicService musicService;
 
-    @Autowired
     public HistoryService(HistoryRepository historyRepository,
                           MusicService musicService) {
         this.historyRepository = historyRepository;
         this.musicService = musicService;
+    }
+
+    public Integer getCountOfHistoryMusicByUserId(int userId) {
+        return historyRepository.getCountOfHistoryMusicByUserId(userId);
     }
 
     public void setTrackToHistoryByUserId(int userId, String trackFullTitle) {
@@ -29,8 +33,17 @@ public class HistoryService {
         }
     }
 
-    public List<Track> getHistoryByUserId(int userId) {
-        return historyRepository.getHistoryByUserId(userId);
+    public Set<TrackDto> getHistoryByUserId(int userId) {
+        Set<TrackDto> trackDtos = historyRepository.getHistoryByUserId(userId).stream()
+                .map(TrackDto::of)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        trackDtos.forEach(e -> {
+            if (e.getCountOfFavourite() == null) {
+                e.setCountOfFavourite(0);
+            }
+        });
+        return trackDtos;
     }
 
     private int isTrackAlreadyInHistoryByUserId(int userId, int musicId) {

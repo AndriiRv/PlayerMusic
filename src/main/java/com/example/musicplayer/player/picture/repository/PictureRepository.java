@@ -1,7 +1,6 @@
 package com.example.musicplayer.player.picture.repository;
 
 import com.example.musicplayer.player.picture.model.Picture;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,7 +13,6 @@ import java.util.List;
 public class PictureRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Autowired
     public PictureRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -29,7 +27,6 @@ public class PictureRepository {
     public byte[] getPictureByMusicId(int musicId) {
         try {
             String sql = "SELECT picture FROM track_cover WHERE music_id = :musicId";
-
             return jdbcTemplate.queryForObject(
                     sql,
                     new MapSqlParameterSource("musicId", musicId),

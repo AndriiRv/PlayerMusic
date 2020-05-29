@@ -2,7 +2,6 @@ package com.example.musicplayer.player.playlist.repository;
 
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.playlist.model.Playlist;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,7 +14,6 @@ import java.util.List;
 public class PlaylistRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Autowired
     public PlaylistRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }

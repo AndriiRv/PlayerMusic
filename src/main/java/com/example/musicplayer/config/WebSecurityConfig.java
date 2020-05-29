@@ -1,7 +1,6 @@
 package com.example.musicplayer.config;
 
-import com.example.musicplayer.sign.authentication.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
 
-    @Autowired
     public WebSecurityConfig(UserService userService) {
         this.userService = userService;
     }
@@ -27,8 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/admin/**").hasAuthority("ADMIN")
-                .antMatchers("/", "/played/**", "/history/count", "/favourite/count", "/email/**",
+                .antMatchers("/", "/dashboard/**", "/played/**", "/statistic/**", "/email/**",
                         "/search/**", "/picture", "/allPicture", "/defaultList", "/shuffle/**",
                         "/play/**", "/sign", "/login", "/searchPlaceholder", "/sort/**").permitAll()
                 .anyRequest().authenticated()

@@ -1,20 +1,12 @@
 package com.example.musicplayer.player.music.service;
 
-import com.example.musicplayer.player.countofplayed.service.PlayedService;
+import com.example.musicplayer.dashboard.service.DashboardService;
 import com.example.musicplayer.player.music.model.TrackDto;
-import com.example.musicplayer.player.picture.service.PictureService;
-import com.example.musicplayer.sign.authentication.model.User;
-import com.mpatric.mp3agic.ID3v1;
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-import javazoom.jl.decoder.Bitstream;
-import javazoom.jl.decoder.BitstreamException;
-import javazoom.jl.decoder.Header;
+import com.example.musicplayer.player.music.model.TrackList;
+import com.example.musicplayer.player.search.searchplaceholder.SearchPlaceholderService;
+import com.example.musicplayer.sign.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.CacheControl;
@@ -23,339 +15,107 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static com.example.musicplayer.player.music.model.Track.dateTrackComparator;
-import static com.example.musicplayer.player.music.model.Track.fullTitleTrackComparator;
-import static com.example.musicplayer.player.music.model.Track.lengthTrackComparator;
-import static com.example.musicplayer.player.music.model.Track.sizeTrackComparator;
 
 @Service
 public class MusicPlayerService {
     private final MusicService musicService;
-    private final PictureService pictureService;
-    private final PlayedService playedService;
-    private final Logger log = LoggerFactory.getLogger(MusicPlayerService.class.getName());
+    private final MusicTrackSaverService musicTrackSaverService;
+    private final SearchPlaceholderService searchPlaceholderService;
+    private final DashboardService dashboardService;
+    private final TrackList trackList;
     private final String pathToFolder;
-    private List<TrackDto> listOfTracks;
+    private final Logger log = LoggerFactory.getLogger(MusicPlayerService.class.getName());
 
-    @Autowired
     public MusicPlayerService(MusicService musicService,
-                              PictureService pictureService,
-                              PlayedService playedService,
+                              MusicTrackSaverService musicTrackSaverService,
+                              SearchPlaceholderService searchPlaceholderService,
+                              DashboardService dashboardService,
+                              TrackList trackList,
                               @Value("${music-player.directory}") String pathToFolder) {
         this.musicService = musicService;
-        this.pictureService = pictureService;
-        this.playedService = playedService;
+        this.musicTrackSaverService = musicTrackSaverService;
+        this.searchPlaceholderService = searchPlaceholderService;
+        this.dashboardService = dashboardService;
+        this.trackList = trackList;
         this.pathToFolder = pathToFolder;
-        listOfTracks = new ArrayList<>();
     }
 
-    public List<TrackDto> getListOfTracks() {
-        return listOfTracks;
+    @PostConstruct
+    private void postConstruct() {
+        trackList.setMusicTracks(getMusicTracksFromDb());
+        dashboardService.getMusicForDashboard();
     }
 
-    private List<TrackDto> getMusic() {
-        File file = new File(pathToFolder);
-        File[] tracks = file.listFiles();
-
-        if (listOfTracks.isEmpty()) {
-            if (tracks != null && file.exists()) {
-
-                int id = 0;
-
-                for (File trackElement : tracks) {
-                    String trackWithExtension = trackElement.getName();
-                    if (trackWithExtension.endsWith("mp3") && musicService.checkIfTrackExistInTable(trackElement.getName()) != 1) {
-                        TrackDto trackDto = new TrackDto();
-                        id++;
-
-                        trackDto.setId(id);
-                        setFullTitleSingerAndTitle(trackDto, trackElement);
-                        setSizeAndLength(trackDto, trackElement);
-                        setDateTime(trackDto, trackElement);
-                        setAlbumYearAndGenreToMusicTrack(trackDto, trackElement);
-
-                        int musicTrackId = musicService.insertMusicToDb(trackDto);
-                        setCoverToMusicTrack(trackDto, trackElement, musicTrackId);
-                        listOfTracks.add(trackDto);
-                        log.info("{}. save in db: {}", id, trackElement.getName());
-                    }
-                }
-                listOfTracks = musicService.getMusicFromTable();
-                log.info("Load from bd");
-            } else {
-                log.warn("Music tracks ain't found");
-            }
+    private Map<Integer, TrackDto> getMusicTracksFromDb() {
+        Map<Integer, TrackDto> musicTrackFromDb;
+        if (musicService.isMusicTableEmpty() == 0) {
+            return musicTrackSaverService.addTrackToDb();
         } else {
-            log.info("Load from RAM");
-        }
-        checkIfTrackExistInSystem();
-        return listOfTracks.stream()
-                .sorted(Comparator.comparing(TrackDto::getFullTitle))
-                .collect(Collectors.toList());
-    }
-
-    private void setFullTitleSingerAndTitle(TrackDto track, File trackElement) {
-        track.setFullTitle(trackElement.getName());
-        track.setSinger(getManuallyTitleAndSinger(track).getSinger());
-        track.setTitle(getManuallyTitleAndSinger(track).getTitle());
-    }
-
-    private TrackDto getManuallyTitleAndSinger(TrackDto track) {
-        int indexDash = track.getFullTitle().indexOf(" - ");
-        if (indexDash != -1) {
-            int indexAfterTitle = track.getFullTitle().indexOf(".mp3");
-
-            String singer;
-            String title;
-
-            singer = track.getFullTitle().substring(0, indexDash);
-            title = track.getFullTitle().substring(indexDash + 3, indexAfterTitle);
-            track.setTitle(title);
-            track.setSinger(singer);
-        } else {
-            track.setTitle("");
-            track.setSinger("");
-        }
-        return track;
-    }
-
-    private void setSizeAndLength(TrackDto track, File trackElement) {
-        double size;
-        int convertFromByteToMb = 1048576;
-        size = trackElement.length();
-
-        track.setSize(Math.round((size / convertFromByteToMb) * 100.0) / 100.0);
-        track.setLength(getDuration(trackElement));
-    }
-
-    private void setDateTime(TrackDto track, File trackElement) {
-        Path dateCreatedOfTrack = Paths.get(String.valueOf(trackElement));
-        BasicFileAttributes attr = null;
-        try {
-            attr = Files.readAttributes(dateCreatedOfTrack, BasicFileAttributes.class);
-        } catch (IOException e) {
-            log.warn(e.toString());
-        }
-        String creationDateTime = String.valueOf(Objects.requireNonNull(attr).creationTime());
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(creationDateTime);
-
-        track.setDateTime(zonedDateTime.toLocalDateTime());
-        track.setDate(zonedDateTime.toLocalDate());
-        track.setTime(LocalTime.of(
-                zonedDateTime.getHour(),
-                zonedDateTime.getMinute(),
-                zonedDateTime.getSecond()));
-    }
-
-    private void setCoverToMusicTrack(TrackDto track, File trackFile, int musicTrackId) {
-        byte[] coverFromMusicTrack = getCoverFromMusicTrack(trackFile.getName());
-
-        track.setByteOfPicture(coverFromMusicTrack);
-        if (coverFromMusicTrack.length != 0) {
-            pictureService.addPictureToMusic(musicTrackId, coverFromMusicTrack);
-        } else {
-            FileInputStream fileInputStream;
-            byte[] imageInBytes = new byte[0];
-            try {
-                fileInputStream = new FileInputStream(Objects.requireNonNull(ClassLoader
-                        .getSystemClassLoader()
-                        .getResource("static/images/disk.jpg"))
-                        .getFile());
-                imageInBytes = Objects.requireNonNull(fileInputStream).readAllBytes();
-            } catch (IOException e) {
-                log.warn(e.toString());
-            }
-            pictureService.addPictureToMusic(musicTrackId, imageInBytes);
-        }
-    }
-
-    private byte[] getCoverFromMusicTrack(String trackTitle) {
-        try {
-            Mp3File mp3file = new Mp3File(pathToFolder + trackTitle);
-            if (mp3file.hasId3v2Tag()) {
-
-                ID3v2 id3v2Tag = mp3file.getId3v2Tag();
-                byte[] imageData = id3v2Tag.getAlbumImage();
-                if (imageData != null) {
-                    return imageData;
-                }
-            }
-        } catch (IOException | UnsupportedTagException | InvalidDataException e) {
-            log.warn(e.toString());
-        }
-        return new byte[0];
-    }
-
-    private void setAlbumYearAndGenreToMusicTrack(TrackDto track, File trackFile) {
-        try {
-            Mp3File mp3file = new Mp3File(pathToFolder + trackFile.getName());
-            if (mp3file.hasId3v1Tag()) {
-                ID3v1 id3v1Tag = mp3file.getId3v1Tag();
-                track.setAlbumTitle(id3v1Tag.getAlbum());
-                track.setYear(id3v1Tag.getYear());
-                track.setGenre(id3v1Tag.getGenreDescription());
-            }
-            if (mp3file.hasId3v2Tag()) {
-                ID3v2 id3v2Tag = mp3file.getId3v2Tag();
-                if (track.getAlbumTitle() == null || track.getAlbumTitle().isBlank()) {
-                    track.setAlbumTitle(id3v2Tag.getAlbum());
-                }
-                if (track.getYear() == null || track.getYear().isBlank()) {
-                    track.setYear(id3v2Tag.getYear());
-                }
-                if (track.getGenre() == null || track.getGenre().isBlank()) {
-                    track.setGenre(id3v2Tag.getGenreDescription());
-                }
-            }
-
-            if (track.getAlbumTitle() == null || isStringIsUTF8(track.getAlbumTitle())) {
-                track.setAlbumTitle(null);
-            }
-            if (track.getGenre() == null || isStringIsUTF8(track.getGenre())) {
-                track.setGenre(null);
-            }
-            if (track.getYear() == null || isStringIsUTF8(track.getYear())) {
-                track.setYear(null);
-            }
-
-        } catch (IOException | UnsupportedTagException | InvalidDataException e) {
-            log.warn(e.toString());
-        }
-    }
-
-    private boolean isStringIsUTF8(String string) {
-        try {
-            return !StandardCharsets.US_ASCII.newEncoder().canEncode(string);
-        } catch (NullPointerException e) {
-            return true;
-        }
-    }
-
-    public void checkIfTrackExistInSystem() {
-        File file = new File(pathToFolder);
-        File[] tracks = file.listFiles();
-
-        if (tracks != null && file.exists()) {
-            List<String> musicTitle = new ArrayList<>();
-            for (File element : tracks) {
-                if (element.getName().endsWith(".mp3")) {
-                    musicTitle.add(element.getName());
-                }
-            }
-
-            List<String> musicTitleFromTable = musicService.getMusicTitleFromTable();
-            musicTitleFromTable.removeAll(musicTitle);
-
-            for (String element : musicTitleFromTable) {
-                musicService.removeMusicTrackFromDbByFullTitle(element);
-                log.info("'" + element + "' - removed from db");
+            musicTrackFromDb = musicService.getMusicFromTable().stream().collect(Collectors.toMap(TrackDto::getId, Function.identity()));
+            if (musicService.checkIfTrackExistInSystem(pathToFolder, musicTrackFromDb)) {
+                return musicTrackFromDb;
             }
         }
+        return musicTrackFromDb;
     }
 
-    public List<TrackDto> getShuffleMusic(int page, boolean isShuffle) {
-        List<TrackDto> shuffledMusic;
+    public String getRandomTrackToPutInSearchPlaceholder() {
+        return searchPlaceholderService.getRandomTrackToPutInSearchPlaceholder(trackList.getMusicTracks());
+    }
 
-        if (listOfTracks == null || listOfTracks.isEmpty()) {
-            shuffledMusic = getMusic();
-        } else {
-            shuffledMusic = listOfTracks;
-            log.info("Load from RAM");
-        }
-
-        if (isShuffle) {
-            Collections.shuffle(shuffledMusic);
-        }
-        return shuffledMusic.stream()
+    public Set<TrackDto> getShuffleMusic(int page) {
+        List<TrackDto> listOfMusicTracks = new ArrayList<>(trackList.getMusicTracks().values());
+        Collections.shuffle(listOfMusicTracks);
+        log.info("Shuffled list");
+        return listOfMusicTracks.stream()
                 .limit(page)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private String getDuration(File file) {
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+    public Set<TrackDto> getSortedMusic(String sort, String directory, int page) {
+        Set<TrackDto> allTracks = new HashSet<>(trackList.getMusicTracks().values());
+        log.info("Load from RAM");
 
-            Bitstream bitstream = new Bitstream(Objects.requireNonNull(fileInputStream));
-            Header header = bitstream.readFrame();
-            long tn = fileInputStream.getChannel().size();
-            long ms = (long) (Objects.requireNonNull(header).total_ms((int) tn));
-            long second = (ms / 1000) % 60;
-            long minute = (ms / (1000 * 60)) % 60;
-            long hour = (ms / (1000 * 60 * 60)) % 24;
-
-            return String.format("%02d:%02d:%02d", hour, minute, second);
-        } catch (IOException | BitstreamException exception) {
-            log.warn(exception.toString());
-        }
-        return "";
-    }
-
-    public List<TrackDto> sort(String sort, String directory, int page) {
-        List<TrackDto> allTracks;
-
-        if (listOfTracks == null || listOfTracks.isEmpty()) {
-            allTracks = getMusic();
-        } else {
-            allTracks = listOfTracks;
-            log.info("Load from RAM");
-        }
-
+        Set<TrackDto> sortedTracks;
         switch (sort) {
             case "size":
-                if (directory.equals("DESC")) {
-                    allTracks.sort(sizeTrackComparator.reversed());
-                } else {
-                    allTracks.sort(sizeTrackComparator);
-                }
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getSize));
                 break;
             case "length":
-                if (directory.equals("DESC")) {
-                    allTracks.sort(lengthTrackComparator.reversed());
-                } else {
-                    allTracks.sort(lengthTrackComparator);
-                }
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getLength));
                 break;
             case "date":
-                if (directory.equals("DESC")) {
-                    allTracks.sort(dateTrackComparator.reversed());
-                } else {
-                    allTracks.sort(dateTrackComparator);
-                }
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getDateTime));
                 break;
             default:
-                if (directory.equals("DESC")) {
-                    allTracks.sort(fullTitleTrackComparator.reversed());
-                } else {
-                    allTracks.sort(fullTitleTrackComparator);
-                }
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getFullTitle));
         }
-        log.info("Selected sort: {} with directory {}",
-                sort.toUpperCase(), directory.toUpperCase());
-
-        return allTracks.stream()
-                .limit(page)
-                .collect(Collectors.toList());
+        log.info("Selected sort: {} with directory {}", sort.toUpperCase(), directory.toUpperCase());
+        return sortedTracks;
     }
 
-    public void addCountOfPlayedByMusicTitle(int musicId){
-        playedService.addCountOfPlayedByMusicId(musicId);
+    private Set<TrackDto> sortInSwitch(String directory, int page, Set<TrackDto> allTracks, Comparator<TrackDto> trackComparator) {
+        List<TrackDto> tempList = new ArrayList<>(allTracks);
+        if (directory.equals("DESC")) {
+            return tempList.stream().sorted(trackComparator.reversed()).limit(page).collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            return tempList.stream().sorted(trackComparator).limit(page).collect(Collectors.toCollection(LinkedHashSet::new));
+        }
     }
 
     public ResponseEntity<ByteArrayResource> mediaResourceProcessing(User user, String fullTitle, String process) {
@@ -378,9 +138,9 @@ public class MusicPlayerService {
         httpHeaders.setCacheControl(CacheControl.noCache().getHeaderValue());
 
         if (user != null) {
-            log.info("{} {}: {}", user.getUsername(), process, pathName);
+            log.info("'{}' - {}: {}", user.getUsername(), process, pathName);
         } else {
-            log.info("{}: {}", process, pathName);
+            log.info("'{}' - {}: {}", process, "guest", pathName);
         }
         return new ResponseEntity<>(byteArrayResource, httpHeaders, HttpStatus.OK);
     }

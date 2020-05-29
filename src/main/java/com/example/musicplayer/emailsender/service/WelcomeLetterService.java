@@ -1,6 +1,6 @@
 package com.example.musicplayer.emailsender.service;
 
-import com.example.musicplayer.authentication.model.UserDto;
+import com.example.musicplayer.sign.user.model.UserDto;
 import com.example.musicplayer.emailsender.model.EmailLetter;
 import org.springframework.stereotype.Service;
 

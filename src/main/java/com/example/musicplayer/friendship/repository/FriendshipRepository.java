@@ -1,11 +1,11 @@
 package com.example.musicplayer.friendship.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,7 +13,6 @@ import java.util.Objects;
 public class FriendshipRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Autowired
     public FriendshipRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -24,7 +23,7 @@ public class FriendshipRepository {
                 + "FROM friendship AS f INNER JOIN \"user\" AS u ON f.first_friend = u.id "
                 + "WHERE first_friend = :userId";
         List<Integer> allFriendsByUser = jdbcTemplate.queryForList(sql, new MapSqlParameterSource("userId", userId), Integer.class);
-        if (allFriendsByUser.size() == 0) {
+        if (allFriendsByUser.isEmpty()) {
             String sql2 = ""
                     + "SELECT f.second_friend "
                     + "FROM friendship AS f INNER JOIN \"user\" AS u ON f.first_friend = u.id "
@@ -54,13 +53,15 @@ public class FriendshipRepository {
     }
 
     public void createFriendship(int currentUserId, int secondUserId) {
-        String sql = "INSERT INTO friendship (first_friend, second_friend) VALUES(:first_friend, :second_friend)";
+        String sql = "INSERT INTO friendship (first_friend, second_friend, date_of_start_friendship) VALUES(:first_friend, :second_friend, :dateOfStartFriendship)";
         jdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("first_friend", currentUserId)
-                .addValue("second_friend", secondUserId));
+                .addValue("second_friend", secondUserId)
+                .addValue("dateOfStartFriendship", LocalDateTime.now()));
         jdbcTemplate.update(sql, new MapSqlParameterSource()
                 .addValue("first_friend", secondUserId)
-                .addValue("second_friend", currentUserId));
+                .addValue("second_friend", currentUserId)
+                .addValue("dateOfStartFriendship", LocalDateTime.now()));
     }
 
     public void deleteFriendship(int currentUserId, int secondUserId) {

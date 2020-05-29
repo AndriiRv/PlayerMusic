@@ -1,29 +1,21 @@
-package com.example.musicplayer.sign.authentication.service;
+package com.example.musicplayer.sign.user.service;
 
-import com.example.musicplayer.sign.authentication.model.User;
-import com.example.musicplayer.sign.authentication.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.musicplayer.sign.user.model.User;
+import com.example.musicplayer.sign.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();
-    }
-
-    public Set<String> getAllEmails() {
-        return new HashSet<>(userRepository.getAllEmails());
     }
 
     public User saveUser(User user) {
@@ -34,8 +26,8 @@ public class UserService {
         userRepository.updateUser(user, userId);
     }
 
-    public void updatePasswordByEmail(String email, String password) {
-        userRepository.updatePasswordByEmail(email, password);
+    public void updatePasswordByEmailRecover(String email, String password) {
+        userRepository.updatePasswordByEmailRecover(email, password);
     }
 
     public User getUserByUsername(String username) {
