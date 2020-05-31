@@ -12,7 +12,6 @@ $(document).ready(function () {
     turnDashboard();
     if ($("#usernameThymelyeaf").text() !== "") {
         currentUserUsername.show();
-        currentUserUsername.text($("#usernameThymelyeaf").text());
         signButton.hide();
         peopleButton.show();
         chatButton.show();
@@ -21,6 +20,7 @@ $(document).ready(function () {
 
 function turnDashboard() {
     if (checkDashboard) {
+        currentUserUsername.text($("#usernameThymelyeaf").text());
         $("#listOfTrack").hide();
         $('#dashboard').show();
         getDashboard();
@@ -30,6 +30,7 @@ function turnDashboard() {
         getDefaultList();
         $('#dashboard').hide();
         $("#listOfTrack").show();
+        showFilterOption();
         checkDashboard = true;
     }
 }
@@ -58,12 +59,14 @@ function getDashboard() {
     showDashboard();
     showDashboardDivs();
     openDashboard();
-    // getMusicByGenre();
 
     getBy("countOfPlayed", "Top by count of played", "/dashboard/countOfPlayed");
     getBy("countOfFavourite", "Top by count of favourite", "/dashboard/countOfFavourite");
+    getMusicByGenre();
+
     if (currentUserUsername.text() !== "") {
         getDashboardSideFavouriteAndHistory();
+        getListOnDashboard();
     } else {
         getListOnDashboard();
     }

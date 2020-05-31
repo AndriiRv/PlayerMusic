@@ -5,6 +5,7 @@ import com.example.musicplayer.player.music.model.TrackList;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,7 @@ public class SearchService {
                             || track.getGenre() != null && track.getGenre().toLowerCase().contains(searchString)
                             || track.getYear() != null && track.getYear().contains(searchString)
                             || track.getTitle().toLowerCase().contains(searchString))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
         return new HashSet<>();
     }

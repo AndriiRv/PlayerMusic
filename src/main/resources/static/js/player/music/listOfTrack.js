@@ -40,6 +40,14 @@ function getListFromUrl(url) {
     return list;
 }
 
+function filter(url) {
+    openListOfTrack();
+
+    getList(url);
+    lastUrl = url;
+    countInPage = 20;
+}
+
 function getList(url) {
     mainTableTBody.empty();
     getLoader();

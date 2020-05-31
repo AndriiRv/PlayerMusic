@@ -41,9 +41,9 @@ function getPeople() {
                         async: false,
                         success: function (data) {
                             if (data === 0) {
-                                html += '       <td><button onclick="addFriend(' + man.id + ')">Add friend</button></td>';
+                                html += '       <td><button class="menuElement" onclick="addFriend(' + man.id + ')">Add friend</button></td>';
                             } else {
-                                html += '       <td><button onclick="deleteFriend(' + man.id + ')">Delete friend</button></td>';
+                                html += '       <td><button class="menuElement" onclick="deleteFriend(' + man.id + ')">Delete friend</button></td>';
                             }
                         }
                     });
@@ -51,7 +51,7 @@ function getPeople() {
                 });
                 html += '   </tbody></table>';
                 html += '   </div>';
-                html += '<div id="friends"></div>';
+                html += '   <div id="friends"></div>';
                 html += '</div>';
                 supportDashboard.html(html);
                 closeLoader();

@@ -15,11 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.example.musicplayer.config.ExceptionOutput.exceptionStacktraceToString;
 
 @Service
 public class UploadTrackService {
@@ -54,7 +55,7 @@ public class UploadTrackService {
                     Files.write(Paths.get(pathToFolder + titleOfTrack), multipartFile.getBytes());
                     log.info("{} - was upload in db by: '{}'", titleOfTrack, user.getUsername());
                 } catch (IOException e) {
-                    log.warn(Arrays.toString(e.getStackTrace()));
+                    log.warn(exceptionStacktraceToString(e));
                 }
                 musicService.checkIfTrackExistInSystem(pathToFolder, trackList.getMusicTracks());
                 if (musicService.checkIfTrackExistInTable(titleOfTrack) == 0) {

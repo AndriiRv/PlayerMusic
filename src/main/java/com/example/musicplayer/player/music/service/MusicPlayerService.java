@@ -87,6 +87,14 @@ public class MusicPlayerService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    public Set<TrackDto> filteredMusic(String genreTitle, int page) {
+        return trackList.getMusicTracks().values().stream()
+                .filter(e -> e.getGenre() != null)
+                .filter(e -> e.getGenre().equals(genreTitle))
+                .limit(page)
+                .collect(Collectors.toSet());
+    }
+
     public Set<TrackDto> getSortedMusic(String sort, String directory, int page) {
         Set<TrackDto> allTracks = new HashSet<>(trackList.getMusicTracks().values());
         log.info("Load from RAM");

@@ -47,22 +47,8 @@ function getListOnDashboardSide(url, divId, countOf, divTitle, picturePath) {
 }
 
 function getListOnDashboard() {
-    // $("#footerInDashboardSide").detach();
-    // $("#dashboardFavourite").detach();
-    // $("#dashboardHistory").detach();
-    //
-    // let favouriteHtml = '<div>Sign in for access to your favourite music</div>';
-    // let historyHtml = '<div>List of history may be here, please sign in</div>';
-    //
-    // $("#dashboardFavourite").append(favouriteHtml);
-    // $("#dashboardHistory").append(historyHtml);
-
-    let footerHtml = '<footer id="footerInDashboardSide" style="text-align: center">\n' +
-        '        <p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii\n' +
-        '            Reva</a></p>\n' +
-        '       </footer>';
-
-    dashboardSide.append(footerHtml);
+    let footerHtml = '<p>Music Player, by <a href="https://www.linkedin.com/in/andrii-reva-795200141/">Andrii Reva</a></p>';
+    $("#footerInDashboardSide").html(footerHtml);
 }
 
 function getCountOfFavourite() {

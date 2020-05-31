@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,13 +36,19 @@ public class DashboardService {
     public Set<String> getAllGenre() {
         return tracks.stream()
                 .map(TrackDto::getGenre)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
     public Set<TrackDto> getMusicTrackByGenreTitle(String genre) {
-        return tracks.stream()
-                .filter(e -> e.getGenre().equals(genre))
+        Set<TrackDto> collect = tracks.stream()
+                .filter(e -> e.getGenre() != null && e.getGenre().equals(genre))
                 .collect(Collectors.toSet());
+
+        if (collect.size() >= 5) {
+            return collect;
+        }
+        return new HashSet<>();
     }
 
     public Set<TrackDto> getMusicByCountOfPlayed(int page) {

@@ -211,13 +211,14 @@
 <div id="dashboard">
     <div id="support"></div>
     <div id="dashboardCenter">
-        <div id="byGenre"></div>
         <div id="countOfPlayed"></div>
         <div id="countOfFavourite"></div>
+        <div id="byGenre"></div>
     </div>
     <div id="dashboardSide">
         <div id="dashboardFavourite"></div>
         <div id="dashboardHistory"></div>
+        <div id="footerInDashboardSide" style="text-align: center"></div>
     </div>
 </div>
 
@@ -229,12 +230,20 @@
             <th style="display: flex; flex-direction: row">
                 <div style="margin-right: 10px" class="shuffleButton"
                      title="Shuffle list of track"></div>
+
+                <label for="idFilter"></label>
+                <select id="idFilter"
+                        oninvalid="setCustomValidity('Select the filter')"
+                        oninput="setCustomValidity('')"
+                        class="custom-select" title="Choose sort"
+                        onChange="filter(this.value);">
+                </select>
+
                 <label for="idSort"></label>
-                <select size="1" id="idSort"
+                <select id="idSort"
                         oninvalid="setCustomValidity('Select the sort')"
                         oninput="setCustomValidity('')"
                         class="custom-select" title="Choose sort"
-                        required
                         onChange="sort(this.value);">
                     <option value="" selected>Choose sort</option>
                     <option value="/sort/date=DESC">Last added</option>

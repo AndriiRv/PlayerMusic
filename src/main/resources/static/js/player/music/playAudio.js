@@ -15,9 +15,9 @@ let intervalVolumeBoost = null;
 
 let musicTrackId = 0;
 
-let lyricObj;
-
 let musicTrackObject;
+
+let lyricObj = new Lyric();
 
 function highlightSelectTrack(titleOfTrackInTable, nameOfTrack) {
     titleOfTrackInTable.filter(function () {
@@ -46,6 +46,11 @@ function setTitleToNameOfTab(newNameOfTab) {
     $("#titleOfTab").html(newNameOfTab + " | Music Player");
 }
 
+function getLyricByTrack(musicTrack) {
+    lyricObj.setSinger(musicTrack.getSinger());
+    lyricObj.setTitle(musicTrack.getTitle());
+}
+
 $("body").on("click", ".titleOfTrackInTable", function () {
     let nameOfTrack = $(this).text();
     let trackId = $(this).siblings("#musicId").text();
@@ -55,10 +60,7 @@ $("body").on("click", ".titleOfTrackInTable", function () {
 
     musicTrackId = musicTrackObject.getId();
 
-    let lyric = new Lyric();
-    lyric.setSinger(musicTrackObject.getSinger());
-    lyric.setTitle(musicTrackObject.getTitle());
-    lyricObj = lyric;
+    getLyricByTrack(musicTrackObject);
 
     $("#bottomController").css({
         "display": "flex"

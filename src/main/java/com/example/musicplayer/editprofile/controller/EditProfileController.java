@@ -26,6 +26,6 @@ public class EditProfileController {
         if (isUserUpdated) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Not all data is filled or email not valid", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

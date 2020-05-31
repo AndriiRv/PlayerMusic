@@ -32,22 +32,33 @@ function searchTracks(searchInput) {
                     html += '<div style="display: flex; margin-left: 15px; margin-bottom: 15px;">';
                     html += '   <div id="musicId" hidden>' + track.id + '</div>';
                     html += '   <img id="cover" style="width: 173px; height: 173px;" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
-                    html += '       <div style="display: block;">';
-                    html += '           <div id="musicId" hidden>' + track.id + '</div>';
-                    html += '           <div class="titleOfTrackInTable" style="height: auto">' + track.fullTitle + '</div>';
-                    html += '           <div class="singer">Singer: ' + track.singer + '</div>';
-                    html += '           <div class="title">Title: ' + track.title + '</div>';
-                    html += '           <div class="length">Length: ' + track.length + '</div>';
+                    html += '      <div style="display: block; margin-left: 15px;">';
+                    html += '         <div id="musicId" hidden>' + track.id + '</div>';
+                    html += '         <div class="titleOfTrackInTable" style="height: auto">' + track.fullTitle + '</div>';
+                    html += '         <div id="statistic" style="display: flex; width: 100%">';
+                    html += '            <div title="Count of played from all users" style="align-self: flex-end; display: flex;">';
+                    html += '               <div style="background-image: url(../../../images/play.svg); background-size: 15px 15px; height: 15px; width: 15px;"></div>';
+                    html += '               <div style="align-self: flex-end;">' + track.countOfPlayed + '</div>';
+                    html += '            </div>';
+                    html += '            <div title="Count of liked from all users" style="align-self: flex-end; display: flex;">';
+                    html += '               <div style="background-image: url(../../../images/favourite/favourite.svg); background-size: 15px 15px; height: 15px; width: 15px;"></div>';
+                    html += '               <div style="align-self: flex-end;">' + track.countOfFavourite + '</div>';
+                    html += '            </div>';
+                    html += '         </div>';
+                    html += '         <div class="singer"><b>Singer</b>: ' + track.singer + '</div>';
+                    html += '         <div class="title"><b>Title</b>: ' + track.title + '</div>';
+                    html += '         <div class="length"><b>Length</b>: ' + track.length + '</div>';
                     if (track.albumTitle !== null && track.albumTitle !== '') {
-                        html += '       <div class="albumTitle">Album: ' + track.albumTitle + '</div>';
+                        html += '     <div class="albumTitle"><b>Album</b>: ' + track.albumTitle + '</div>';
                     }
                     if (track.year !== null && track.year !== '') {
-                        html += '       <div class="year">Year: ' + track.year + '</div>';
+                        html += '     <div class="year"><b>Year</b>: ' + track.year + '</div>';
                     }
                     if (track.genre !== null && track.genre !== '') {
-                        html += '       <div class="genre">Genre: ' + track.genre + '</div>';
+                        html += '     <div class="genre"><b>Genre</b>: ' + track.genre + '</div>';
                     }
-                    html += '       </div>';
+                    html += '      </div>';
+                    html += '</div>';
                     html += '</div>';
                 });
                 html += '</div>';

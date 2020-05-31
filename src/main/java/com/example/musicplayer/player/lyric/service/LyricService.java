@@ -4,13 +4,14 @@ import com.example.musicplayer.player.lyric.model.Lyric;
 import com.example.musicplayer.player.lyric.repository.LyricRepository;
 import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.service.MusicService;
+import com.example.musicplayer.sign.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
+import static com.example.musicplayer.config.ExceptionOutput.exceptionStacktraceToString;
 
 @Service
 public class LyricService {
@@ -31,11 +32,11 @@ public class LyricService {
         this.lyricApiKey = lyricApiKey;
     }
 
-    public Lyric getLyric(String nameOfTrack, String artistOfTrack) {
+    public Lyric getLyric(User user, String nameOfTrack, String artistOfTrack) {
         Track track = musicService.getTrackByFullTitle(artistOfTrack + " - " + nameOfTrack + ".mp3");
         String lyricByMusicId = lyricRepository.getLyricByMusicId(track.getId());
         if (!lyricByMusicId.equals("")) {
-            log.info("get lyric to {}, from db", track.getFullTitle());
+            log.info("{}, get lyric to {}, from db", user.getUsername(), track.getFullTitle());
             return new Lyric(lyricByMusicId, true);
         } else {
             RestTemplate restTemplate = new RestTemplate();
@@ -45,11 +46,11 @@ public class LyricService {
                 if (plainJson != null && !plainJson.isBlank()) {
                     lyricText = parseApiJson(plainJson);
                     lyricRepository.saveLyricToDb(null, track.getId(), lyricText);
-                    log.info("get lyric to {}, from api", track.getFullTitle());
+                    log.info("{}, get lyric to {}, from api", user.getUsername(), track.getFullTitle());
                     return new Lyric(lyricText, true);
                 }
             } catch (Exception e) {
-                log.error(Arrays.toString(e.getStackTrace()));
+                log.error(exceptionStacktraceToString(e));
                 return new Lyric(plainJson, false);
             }
         }

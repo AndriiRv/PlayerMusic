@@ -43,15 +43,6 @@ $("#listOfTrack").on("click", 'table tbody tr', function () {
     disableEnablePrevButton();
 });
 
-$("#dashboard").on("click", function () {
-    countOfIterationByListOfTrack = 0;
-    indexIteration = $(this).index();
-    countOfIterationByListOfTrack = countOfIterationByListOfTrack + indexIteration;
-
-    disableEnableNextButton();
-    disableEnablePrevButton();
-});
-
 function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, process) {
     titleOfTrackInPlayer.empty();
     let titleOfTrackInTable = $(".titleOfTrackInTable");
@@ -81,6 +72,9 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
     console.log(process + nextTrackTitle);
 
     musicTrackObject.setFullTitle(nextTrackTitle);
+
+    let musicTrack = new Track(listOfTrack[countOfIterationByListOfTrack].fullTitle);
+    getLyricByTrack(musicTrack);
 
     audio.attr("src", "play/" + nextTrackTitle);
 }

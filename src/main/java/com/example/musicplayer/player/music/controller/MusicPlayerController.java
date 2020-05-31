@@ -67,6 +67,12 @@ public class MusicPlayerController {
         return musicPlayerService.mediaResourceProcessing(user, musicTitle, process);
     }
 
+    @GetMapping("/filter/{genreTitle}")
+    @ResponseBody
+    public Set<TrackDto> filter(@PathVariable String genreTitle, Integer page) {
+        return musicPlayerService.filteredMusic(genreTitle, page);
+    }
+
     @GetMapping("/sort/{sortName}={directory}")
     @ResponseBody
     public Set<TrackDto> sort(@PathVariable String sortName, @PathVariable String directory, Integer page) {

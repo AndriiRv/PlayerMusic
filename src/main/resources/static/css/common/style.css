@@ -70,7 +70,7 @@ div#historyPic, div#likePic {
     padding: 5px;
     position: fixed;
     left: 5%;
-    width: 20%;
+    width: auto;
     overflow-y: auto;
     height: 50%;
     z-index: 3;
@@ -114,8 +114,8 @@ a, a:hover {
 
 @media screen and (min-width: 1024px) {
     #listOfTrack {
-        width: 30%;
-        margin-left: 35%;
+        width: 35%;
+        margin-left: 33%;
         height: 94%;
         overflow-y: auto;
     }
@@ -133,6 +133,16 @@ a, a:hover {
     background-size: 35px 35px;
     background-color: transparent;
     color: white;
+    width: 50%;
+}
+
+#idFilter {
+    background-image: url('../../images/filter.svg');
+    background-size: 35px 35px;
+    background-color: transparent;
+    color: white;
+    width: 50%;
+    margin-right: 5px;
 }
 
 #favouriteTracksButton {

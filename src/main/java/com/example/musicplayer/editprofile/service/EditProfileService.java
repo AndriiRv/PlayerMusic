@@ -1,11 +1,13 @@
 package com.example.musicplayer.editprofile.service;
 
+import com.example.musicplayer.sign.registration.model.UserRegistration;
 import com.example.musicplayer.sign.user.model.User;
 import com.example.musicplayer.sign.user.service.UserService;
-import com.example.musicplayer.sign.registration.model.UserRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.regex.Pattern;
 
 @Service
 public class EditProfileService {
@@ -17,9 +19,9 @@ public class EditProfileService {
     }
 
     public boolean updateUser(User user, Integer userId, UserRegistration userRegistration) {
-        if (!isAnyUserDataIsBlank(user, userRegistration)) {
+        if (!isAnyUserDataIsBlank(user, userRegistration) && validateEmailOnCorrect(userRegistration)) {
             userService.updateUser(user, userId);
-            log.info("'{}' - had updated his profile", user.getUsername());
+            log.info("'{}' - was updated his profile", user.getUsername());
             return true;
         }
         return false;
@@ -30,5 +32,9 @@ public class EditProfileService {
                 || userRegistration.getPassword().isBlank()
                 || user.getName().isBlank()
                 || user.getEmail().isBlank();
+    }
+
+    private boolean validateEmailOnCorrect(UserRegistration userRegistration) {
+        return !userRegistration.getEmail().isBlank() && Pattern.matches("^\\S+@\\S+$", userRegistration.getEmail());
     }
 }
