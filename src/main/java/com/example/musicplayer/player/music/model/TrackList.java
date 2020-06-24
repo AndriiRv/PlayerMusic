@@ -2,17 +2,17 @@ package com.example.musicplayer.player.music.model;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.Set;
 
 @Component
 public class TrackList {
-    private Map<Integer, TrackDto> musicTracks;
+    private Set<Track> musicTracks;
 
-    public Map<Integer, TrackDto> getMusicTracks() {
+    public Set<Track> getMusicTracks() {
         return musicTracks;
     }
 
-    public void setMusicTracks(Map<Integer, TrackDto> musicTracks) {
+    public void setMusicTracks(Set<Track> musicTracks) {
         this.musicTracks = musicTracks;
     }
 }

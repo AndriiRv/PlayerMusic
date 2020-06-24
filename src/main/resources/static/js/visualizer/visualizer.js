@@ -1,20 +1,18 @@
-let counter = 0;
+let isVisualizerTurnOff = true;
 
-window.onload = function () {
-    let soundWaveButton = document.getElementById("soundWaveButton");
+$(document).ready(function () {
+    let soundWaveButton = $("#soundWaveButton");
     let audio = document.getElementById("audioId");
-    soundWaveButton.onclick = function () {
-        counter++;
-        soundWaveButton.style.opacity = "1";
-        if (counter % 2 !== 0) {
+    soundWaveButton.on('click', function () {
+        soundWaveButton.css("opacity", "1");
+        if (isVisualizerTurnOff) {
+            isVisualizerTurnOff = false;
 
             let addR = getRandomInt(255);
             let addG = getRandomInt(255);
             let addB = getRandomInt(255);
 
             $("#canvas").css('display', 'block');
-            $("#soundWaveColorSlider").css('display', 'none');
-            $("#listOfTrack").css('position', 'absolute');
             let context = new AudioContext();
             let src = context.createMediaElementSource(audio);
             let analyser = context.createAnalyser();
@@ -62,13 +60,12 @@ window.onload = function () {
 
             renderFrame();
         } else {
-            soundWaveButton.style.opacity = "0.5";
+            isVisualizerTurnOff = true;
+            soundWaveButton.css("opacity", "0.5");
             $("#canvas").css('display', 'none');
-            $("#soundWaveColorSlider").css('display', 'none');
-            $("#listOfTrack").css('position', 'none');
         }
-    };
-};
+    });
+});
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));

@@ -28,7 +28,7 @@ public class EditProfileService {
     }
 
     private boolean isAnyUserDataIsBlank(User user, UserRegistration userRegistration) {
-        return user.getUsername().isBlank()
+        return user.getSurname().isBlank()
                 || userRegistration.getPassword().isBlank()
                 || user.getName().isBlank()
                 || user.getEmail().isBlank();

@@ -14,16 +14,11 @@ function getPeopleDiv() {
 
 function getPeople() {
     let html = '';
-
     $.get({
         url: '/people',
         async: false,
         success: function (data) {
             if (data.length !== 0) {
-                // defaultList = data;
-                listOfTrack = data;
-                countOfTrack = data.length;
-
                 html += '<div id="peopleAndFriends" style="display: flex; width: 1175px;">';
                 html += '   <div id="playlistList" style="flex-basis: 30%; margin-left: 15px;">';
                 html += '   <h3>People</h3>';
@@ -51,7 +46,7 @@ function getPeople() {
                 });
                 html += '   </tbody></table>';
                 html += '   </div>';
-                html += '   <div id="friends"></div>';
+                html += '   <div id="friends" style="margin-left: 15px;"></div>';
                 html += '</div>';
                 supportDashboard.html(html);
                 closeLoader();
@@ -70,13 +65,9 @@ function getFriend() {
     let html = '';
     $.getJSON("/friends", function (data) {
         if (data.length !== 0) {
-            // defaultList = data;
-            listOfTrack = data;
-            countOfTrack = data.length;
-
             html += '<h3>My friends</h3>';
             $.each(data, function (i, man) {
-                html += '<div style="margin-bottom: 10px;">' + man.name + ' ' + man.surname + '</div>';
+                html += '<div style="margin-top: 15px; margin-bottom: 25px;">' + man.name + ' ' + man.surname + '</div>';
             });
             $("#friends").html(html);
         }

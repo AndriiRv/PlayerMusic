@@ -1,7 +1,8 @@
 package com.example.musicplayer.player.music.controller;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.dto.TrackDto;
 import com.example.musicplayer.player.music.service.MusicPlayerService;
+import com.example.musicplayer.player.music.service.MusicTrackConverter;
 import com.example.musicplayer.sign.user.model.User;
 import com.example.musicplayer.sign.user.model.UserDto;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,14 +17,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class MusicPlayerController {
     private final MusicPlayerService musicPlayerService;
+    private final MusicTrackConverter converter;
 
-    public MusicPlayerController(MusicPlayerService musicPlayerService) {
+    public MusicPlayerController(MusicPlayerService musicPlayerService,
+                                 MusicTrackConverter converter) {
         this.musicPlayerService = musicPlayerService;
+        this.converter = converter;
     }
 
     @GetMapping("/")
@@ -48,7 +54,7 @@ public class MusicPlayerController {
     @GetMapping("/shuffle")
     @ResponseBody
     public Set<TrackDto> shuffle(@RequestParam int page) {
-        return musicPlayerService.getShuffleMusic(page);
+        return musicPlayerService.getShuffleMusic(page).stream().map(converter::convertToTrackDto).collect(Collectors.toSet());
     }
 
     @GetMapping(value = "/play/{musicTitle}")
@@ -70,13 +76,13 @@ public class MusicPlayerController {
     @GetMapping("/filter/{genreTitle}")
     @ResponseBody
     public Set<TrackDto> filter(@PathVariable String genreTitle, Integer page) {
-        return musicPlayerService.filteredMusic(genreTitle, page);
+        return musicPlayerService.filteredMusic(genreTitle, page).stream().map(converter::convertToTrackDto).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @GetMapping("/sort/{sortName}={directory}")
     @ResponseBody
     public Set<TrackDto> sort(@PathVariable String sortName, @PathVariable String directory, Integer page) {
-        return musicPlayerService.getSortedMusic(sortName, directory, page);
+        return musicPlayerService.getSortedMusic(sortName, directory, page).stream().map(converter::convertToTrackDto).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @GetMapping("/searchPlaceholder")

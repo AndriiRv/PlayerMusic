@@ -1,4 +1,6 @@
-package com.example.musicplayer.player.music.model;
+package com.example.musicplayer.player.music.dto;
+
+import com.example.musicplayer.player.music.model.Track;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +16,6 @@ public class TrackDto {
     private String albumTitle;
     private String year;
     private String genre;
-    private Integer countOfPlayed;
-    private Integer countOfFavourite;
 
     public static TrackDto of(Track track) {
         TrackDto trackDto = new TrackDto();
@@ -30,8 +30,6 @@ public class TrackDto {
         trackDto.setAlbumTitle(track.getAlbumTitle());
         trackDto.setYear(track.getYear());
         trackDto.setGenre(track.getGenre());
-        trackDto.setCountOfPlayed(track.getCountOfPlayed());
-        trackDto.setCountOfFavourite(track.getCountOfFavourite());
         return trackDto;
     }
 
@@ -121,21 +119,5 @@ public class TrackDto {
 
     public void setGenre(String genre) {
         this.genre = genre;
-    }
-
-    public Integer getCountOfPlayed() {
-        return countOfPlayed;
-    }
-
-    public void setCountOfPlayed(Integer countOfPlayed) {
-        this.countOfPlayed = countOfPlayed;
-    }
-
-    public Integer getCountOfFavourite() {
-        return countOfFavourite;
-    }
-
-    public void setCountOfFavourite(Integer countOfFavourite) {
-        this.countOfFavourite = countOfFavourite;
     }
 }

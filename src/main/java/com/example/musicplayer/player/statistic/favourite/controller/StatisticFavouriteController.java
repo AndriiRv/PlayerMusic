@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/statistic")
+@RequestMapping("/statistic/favourite")
 public class StatisticFavouriteController {
     private final StatisticFavouriteService statisticFavouriteService;
 
@@ -14,7 +14,7 @@ public class StatisticFavouriteController {
         this.statisticFavouriteService = statisticFavouriteService;
     }
 
-    @GetMapping("/favourite")
+    @GetMapping
     public Integer getCountOfFavouriteByMusicId(int musicId) {
         return statisticFavouriteService.getCountOfFavouriteByMusicId(musicId);
     }

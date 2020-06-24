@@ -2,6 +2,7 @@ let inputSearchTrack = $("#inputSearchTrack");
 
 inputSearchTrack.bind("enterKey", function () {
     let inputTitle = $(this).val().toLowerCase();
+    inputTitle = inputTitle.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     setTitleToNameOfTab("Search by: " + inputTitle);
 
@@ -14,7 +15,14 @@ inputSearchTrack.keyup(function (e) {
     }
 });
 
+function clearSearch() {
+    inputSearchTrack.val("");
+}
+
 function searchTracks(searchInput) {
+    getLoader();
+
+    setTitleToNameOfTab("Searched tracks by: " + searchInput);
     let html = '';
     $.get({
         url: '/search',
@@ -23,7 +31,7 @@ function searchTracks(searchInput) {
         },
         success: function (data) {
             if (data.length !== 0) {
-                listOfTrack = data;
+                listOfTrackObj.setListOfTrack(data);
                 countOfTrack = data.length;
 
                 html += '<div id="searchList" style="display: block; width: 1175px; z-index: 0">';
@@ -36,13 +44,13 @@ function searchTracks(searchInput) {
                     html += '         <div id="musicId" hidden>' + track.id + '</div>';
                     html += '         <div class="titleOfTrackInTable" style="height: auto">' + track.fullTitle + '</div>';
                     html += '         <div id="statistic" style="display: flex; width: 100%">';
-                    html += '            <div title="Count of played from all users" style="align-self: flex-end; display: flex;">';
+                    html += '            <div id="played" title="Count of played from all users" style="align-self: flex-end; display: flex;">';
                     html += '               <div style="background-image: url(../../../images/play.svg); background-size: 15px 15px; height: 15px; width: 15px;"></div>';
-                    html += '               <div style="align-self: flex-end;">' + track.countOfPlayed + '</div>';
+                    html += '               <div id="countOfPlayedByMusic" style="align-self: flex-end;">' + getCountOfPlayedByMusicId(track.id) + '</div>';
                     html += '            </div>';
-                    html += '            <div title="Count of liked from all users" style="align-self: flex-end; display: flex;">';
+                    html += '            <div id="allFavourite" title="Count of liked from all users" style="align-self: flex-end; display: flex;">';
                     html += '               <div style="background-image: url(../../../images/favourite/favourite.svg); background-size: 15px 15px; height: 15px; width: 15px;"></div>';
-                    html += '               <div style="align-self: flex-end;">' + track.countOfFavourite + '</div>';
+                    html += '               <div id="countOfFavourite" style="align-self: flex-end;">' + getCountOfFavouriteByMusicId(track.id) + '</div>';
                     html += '            </div>';
                     html += '         </div>';
                     html += '         <div class="singer"><b>Singer</b>: ' + track.singer + '</div>';
@@ -78,6 +86,7 @@ function searchTracks(searchInput) {
                     "margin-left": "25%",
                     "margin-top": "10%"
                 });
+                closeLoader();
             }
         }
     });

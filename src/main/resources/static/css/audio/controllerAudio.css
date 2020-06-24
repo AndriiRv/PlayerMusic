@@ -14,21 +14,13 @@
     width: 100%;
 }
 
-.controllerDiv {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    background-color: transparent;
-    color: white;
-    border-color: green;
-    border-style: dashed;
-}
-
-.closeDiv {
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
-    background-image: url('../../images/redCross.png');
+#currentListOfTrack {
+    display: none;
+    overflow-y: scroll;
+    height: 172px;
+    width: 300px;
+    position: absolute;
+    bottom: 100px;
 }
 
 #leftSideBottomController {
@@ -247,16 +239,5 @@
     height: 24px;
     width: 24px;
     margin-right: 5px;
-    z-index: 3;
-}
-
-.removeFromHistory {
-    background-color: transparent;
-    border: none;
-    background-image: url('../../images/redCross.png');
-    background-size: 24px 24px;
-    height: 24px;
-    width: 24px;
-    margin-right: 10px;
     z-index: 3;
 }

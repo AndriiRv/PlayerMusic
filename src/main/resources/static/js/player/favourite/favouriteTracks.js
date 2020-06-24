@@ -32,13 +32,15 @@ addToFavouriteButton.on('click', function () {
             },
             success: function (responseText, statusText, data) {
                 if (data.status === 201) {
-                    title.notify(responseText, {
+                    $.notify(responseText, {
                         position: 'top left',
                         className: 'success'
                     });
+                    getCounter(currentMusicTrackInListOfTrack, "#allFavourite", "#countOfFavourite")
+                        .text(getCountOfFavouriteByMusicId(musicTrackId));
                     changeFavouritePic();
                 } else if (data.status === 200) {
-                    title.notify(responseText, {
+                    $.notify(responseText, {
                         position: 'top left',
                         className: 'info'
                     });
@@ -60,13 +62,13 @@ favouriteTrackButton.on('click', function () {
 
 function getFavourite() {
     getLoader();
-    listOfTrack = null;
 
     let html = '';
     $.getJSON('/favourite', function (data) {
-        countOfTrack = data.length;
-        if (countOfTrack !== 0) {
-            listOfTrack = data;
+        if (data.length !== 0) {
+            listOfTrackObj.setListOfTrack(data);
+            countOfTrack = data.length;
+
             html += '<h2>Likes</h2>';
             html += '<div style="display: grid; grid-template-columns: 200px 200px 200px 200px 200px 175px; grid-auto-rows: 250px;">';
             $.each(data, function (i, track) {

@@ -2,8 +2,6 @@ let Track = function (fullTitle) {
     this.id = null;
     this.fullTitle = fullTitle;
     Track.prototype.parseFullTitle(fullTitle);
-    // this.singer = null;
-    // this.title = null;
 };
 
 Track.prototype.getId = function () {

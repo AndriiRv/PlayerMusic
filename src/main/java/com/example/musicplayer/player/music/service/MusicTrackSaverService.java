@@ -1,6 +1,6 @@
 package com.example.musicplayer.player.music.service;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.picture.service.PictureService;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
@@ -43,8 +43,8 @@ public class MusicTrackSaverService {
         this.pictureService = pictureService;
     }
 
-    public Map<Integer, TrackDto> addTrackToDb() {
-        Map<Integer, TrackDto> musicTrackFromDb = new HashMap<>();
+    public Map<Integer, Track> addTrackToDb() {
+        Map<Integer, Track> musicTrackFromDb = new HashMap<>();
 
         File file = new File(pathToFolder);
         File[] tracks = file.listFiles();
@@ -55,17 +55,17 @@ public class MusicTrackSaverService {
             for (File trackElement : tracks) {
                 String trackWithExtension = trackElement.getName();
                 if (trackWithExtension.endsWith("mp3") && musicService.checkIfTrackExistInTable(trackElement.getName()) != 1) {
-                    TrackDto trackDto = new TrackDto();
+                    Track track = new Track();
                     id++;
+                    track.setId(id);
+                    setFullTitleSingerAndTitle(track, trackElement);
+                    setSizeAndLength(track, trackElement);
+                    setDateTime(track, trackElement);
+                    setAlbumYearAndGenreToMusicTrack(track, trackElement);
 
-                    setFullTitleSingerAndTitle(trackDto, trackElement);
-                    setSizeAndLength(trackDto, trackElement);
-                    setDateTime(trackDto, trackElement);
-                    setAlbumYearAndGenreToMusicTrack(trackDto, trackElement);
-
-                    int musicTrackId = musicService.insertMusicToDb(trackDto);
-                    setCoverToMusicTrack(trackDto, trackElement, musicTrackId);
-                    musicTrackFromDb.put(musicTrackId, trackDto);
+                    int musicTrackId = musicService.insertMusicToDb(track);
+                    setCoverToMusicTrack(track, trackElement, musicTrackId);
+                    musicTrackFromDb.put(musicTrackId, track);
                     log.info("{}. save in db: {}", id, trackElement.getName());
                 }
             }
@@ -73,13 +73,13 @@ public class MusicTrackSaverService {
         return musicTrackFromDb;
     }
 
-    private void setFullTitleSingerAndTitle(TrackDto track, File trackElement) {
+    private void setFullTitleSingerAndTitle(Track track, File trackElement) {
         track.setFullTitle(trackElement.getName());
         track.setSinger(getManuallyTitleAndSinger(track).getSinger());
         track.setTitle(getManuallyTitleAndSinger(track).getTitle());
     }
 
-    private TrackDto getManuallyTitleAndSinger(TrackDto track) {
+    private Track getManuallyTitleAndSinger(Track track) {
         int indexDash = track.getFullTitle().indexOf(" - ");
         if (indexDash != -1) {
             int indexAfterTitle = track.getFullTitle().indexOf(".mp3");
@@ -98,7 +98,7 @@ public class MusicTrackSaverService {
         return track;
     }
 
-    private void setSizeAndLength(TrackDto track, File trackElement) {
+    private void setSizeAndLength(Track track, File trackElement) {
         double size;
         int convertFromByteToMb = 1048576;
         size = trackElement.length();
@@ -107,7 +107,7 @@ public class MusicTrackSaverService {
         track.setLength(getDuration(trackElement));
     }
 
-    private void setDateTime(TrackDto track, File trackElement) {
+    private void setDateTime(Track track, File trackElement) {
         Path dateCreatedOfTrack = Paths.get(String.valueOf(trackElement));
         BasicFileAttributes attr = null;
         try {
@@ -121,7 +121,7 @@ public class MusicTrackSaverService {
         track.setDateTime(zonedDateTime.toLocalDateTime());
     }
 
-    private void setCoverToMusicTrack(TrackDto track, File trackFile, int musicTrackId) {
+    private void setCoverToMusicTrack(Track track, File trackFile, int musicTrackId) {
         byte[] coverFromMusicTrack = getCoverFromMusicTrack(trackFile.getName());
 
         track.setByteOfPicture(coverFromMusicTrack);
@@ -160,7 +160,7 @@ public class MusicTrackSaverService {
         return new byte[0];
     }
 
-    private void setAlbumYearAndGenreToMusicTrack(TrackDto track, File trackFile) {
+    private void setAlbumYearAndGenreToMusicTrack(Track track, File trackFile) {
         try {
             Mp3File mp3file = new Mp3File(pathToFolder + trackFile.getName());
             if (mp3file.hasId3v1Tag()) {

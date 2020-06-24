@@ -3,7 +3,6 @@ package com.example.musicplayer.player.statistic.favourite.service;
 import com.example.musicplayer.player.statistic.favourite.repository.StatisticFavouriteRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -12,10 +11,6 @@ public class StatisticFavouriteService {
 
     public StatisticFavouriteService(StatisticFavouriteRepository statisticFavouriteRepository) {
         this.statisticFavouriteRepository = statisticFavouriteRepository;
-    }
-
-    public List<Integer> getCountOfFavouriteByMusicIds(List<Integer> musicTrackIds) {
-        return statisticFavouriteRepository.getCountOfFavouriteByMusicIds(musicTrackIds);
     }
 
     public Integer getCountOfFavouriteByMusicId(int musicId) {

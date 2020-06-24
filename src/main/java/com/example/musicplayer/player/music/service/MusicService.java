@@ -1,7 +1,6 @@
 package com.example.musicplayer.player.music.service;
 
 import com.example.musicplayer.player.music.model.Track;
-import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.repository.MusicRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,23 +33,17 @@ public class MusicService {
         return musicRepository.checkIfTrackExistInTable(fullTitle);
     }
 
-    int insertMusicToDb(TrackDto trackDto) {
-        return musicRepository.insertMusicToDb(Track.of(trackDto));
+    int insertMusicToDb(Track track) {
+        return musicRepository.insertMusicToDb(track);
     }
 
-    public Integer isMusicTableEmpty() {
-        return musicRepository.isMusicTableEmpty();
-    }
-
-    public Set<TrackDto> getMusicFromTable() {
-        Set<TrackDto> musicTracks = musicRepository.getTracks().stream()
-                .map(TrackDto::of)
-                .collect(Collectors.toSet());
+    public Set<Track> getMusicFromTable() {
+        Set<Track> musicTracks = new LinkedHashSet<>(musicRepository.getTracks());
         log.info("Load from bd");
         return musicTracks;
     }
 
-    public boolean checkIfTrackExistInSystem(String pathToFolder, Map<Integer, TrackDto> musicTracks) {
+    public void checkIfTrackExistInSystem(String pathToFolder, Set<Track> musicTracks) {
         File file = new File(pathToFolder);
         File[] tracks = file.listFiles();
 
@@ -60,8 +53,8 @@ public class MusicService {
                     .filter(nameOfFile -> nameOfFile.endsWith(".mp3"))
                     .collect(Collectors.toSet());
 
-            Set<String> musicTitleFromTable = musicTracks.values().stream()
-                    .map(TrackDto::getFullTitle)
+            Set<String> musicTitleFromTable = musicTracks.stream()
+                    .map(Track::getFullTitle)
                     .collect(Collectors.toSet());
 
             musicTitleFromTable.removeAll(allMusicTitle);
@@ -71,7 +64,6 @@ public class MusicService {
                 log.info("'{}' - removed from db", titleOfTrack);
             });
         }
-        return true;
     }
 
     private void removeMusicTrackFromDbByFullTitle(String fullTitle) {

@@ -1,7 +1,7 @@
 package com.example.musicplayer.player.favourite.service;
 
 import com.example.musicplayer.player.favourite.repository.FavouriteRepository;
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.service.MusicService;
 import com.example.musicplayer.player.statistic.favourite.service.StatisticFavouriteService;
 import com.example.musicplayer.sign.user.model.User;
@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class FavouriteService {
@@ -63,10 +62,8 @@ public class FavouriteService {
         return favouriteRepository.isTrackAlreadyInFavouriteByUserId(user.getId(), musicId);
     }
 
-    public Set<TrackDto> getFavouriteTracksByUser(int userId) {
-        return favouriteRepository.getFavouriteTracksByUserId(userId).stream()
-                .map(TrackDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    public Set<Track> getFavouriteTracksByUserId(int userId) {
+        return new LinkedHashSet<>(favouriteRepository.getFavouriteTracksByUserId(userId));
     }
 
     public void deleteTrackFromFavourite(int userId, int trackId) {

@@ -1,9 +1,8 @@
 package com.example.musicplayer.player.search.searchplaceholder;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.model.Track;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,10 +10,10 @@ import java.util.stream.Collectors;
 @Service
 public class SearchPlaceholderService {
 
-    public String getRandomTrackToPutInSearchPlaceholder(Map<Integer, TrackDto> musicTracks) {
-        Set<Integer> ids = musicTracks.values().stream().map(TrackDto::getId).collect(Collectors.toSet());
+    public String getRandomTrackToPutInSearchPlaceholder(Set<Track> musicTracks) {
+        Set<Integer> ids = musicTracks.stream().map(Track::getId).collect(Collectors.toSet());
         int randomId = getRandomIdFromMap(ids, musicTracks.size());
-        return musicTracks.values().stream().filter(e -> e.getId().equals(randomId)).map(TrackDto::getFullTitle).findFirst().orElse("");
+        return musicTracks.stream().filter(e -> e.getId().equals(randomId)).map(Track::getFullTitle).findFirst().orElse("");
     }
 
     private Integer getRandomIdFromMap(Set<Integer> ids, int musicTracksSize) {

@@ -24,8 +24,8 @@ public class EditProfileController {
     public ResponseEntity<Object> editProfileByUser(@AuthenticationPrincipal User user, UserRegistration userRegistration) {
         boolean isUserUpdated = editProfileService.updateUser(userRegistrationService.registerUser(userRegistration), user.getId(), userRegistration);
         if (isUserUpdated) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Profile \"" + user.getUsername() + "\" was updated", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Not all data is filled or email not valid", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Not all data is filled or email not valid", HttpStatus.CONFLICT);
     }
 }

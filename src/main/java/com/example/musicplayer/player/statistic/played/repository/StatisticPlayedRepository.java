@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -19,11 +18,6 @@ public class StatisticPlayedRepository {
 
     public StatisticPlayedRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public List<Integer> getCountOfPlayedByMusicIds(List<Integer> musicTrackIds) {
-        String sql = "SELECT counter_played FROM statistic WHERE music_id IN (:musicId)";
-        return jdbcTemplate.queryForList(sql, new MapSqlParameterSource("musicId", musicTrackIds), Integer.class);
     }
 
     public Integer getCountOfPlayedByMusicId(int musicId) {

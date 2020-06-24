@@ -1,7 +1,8 @@
 package com.example.musicplayer.player.uploadtrack.service;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.model.TrackList;
+import com.example.musicplayer.player.music.service.MusicPlayerService;
 import com.example.musicplayer.player.music.service.MusicService;
 import com.example.musicplayer.player.music.service.MusicTrackSaverService;
 import com.example.musicplayer.player.uploadtrack.repository.UploadTrackRepository;
@@ -15,10 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.example.musicplayer.config.ExceptionOutput.exceptionStacktraceToString;
 
@@ -27,6 +28,7 @@ public class UploadTrackService {
     private final UploadTrackRepository uploadTrackRepository;
     private final MusicService musicService;
     private final MusicTrackSaverService saverService;
+    private final MusicPlayerService musicPlayerService;
     private final TrackList trackList;
     private final String pathToFolder;
     private final Logger log = LoggerFactory.getLogger(UploadTrackService.class.getName());
@@ -35,16 +37,18 @@ public class UploadTrackService {
                               @Value("${music-player.directory}") String pathToFolder,
                               MusicService musicService,
                               MusicTrackSaverService saverService,
+                              MusicPlayerService musicPlayerService,
                               TrackList trackList) {
         this.uploadTrackRepository = uploadTrackRepository;
         this.pathToFolder = pathToFolder;
         this.musicService = musicService;
         this.saverService = saverService;
+        this.musicPlayerService = musicPlayerService;
         this.trackList = trackList;
     }
 
-    public Set<TrackDto> getUploadTracksByUserId(int userId) {
-        return uploadTrackRepository.getUploadTracksByUserId(userId).stream().map(TrackDto::of).collect(Collectors.toSet());
+    public Set<Track> getUploadTracksByUserId(int userId) {
+        return new LinkedHashSet<>(uploadTrackRepository.getUploadTracksByUserId(userId));
     }
 
     public boolean uploadTrack(User user, MultipartFile multipartFile) {
@@ -59,8 +63,9 @@ public class UploadTrackService {
                 }
                 musicService.checkIfTrackExistInSystem(pathToFolder, trackList.getMusicTracks());
                 if (musicService.checkIfTrackExistInTable(titleOfTrack) == 0) {
-                    Map<Integer, TrackDto> integerTrackDtoMap = saverService.addTrackToDb();
+                    Map<Integer, Track> integerTrackDtoMap = saverService.addTrackToDb();
                     uploadTrackRepository.uploadTrackByUserId(user.getId(), integerTrackDtoMap.keySet().stream().findFirst().orElse(0));
+                    musicPlayerService.postConstruct();
                     return true;
                 }
             }

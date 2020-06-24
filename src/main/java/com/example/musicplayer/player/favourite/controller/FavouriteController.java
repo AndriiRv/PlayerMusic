@@ -1,8 +1,8 @@
 package com.example.musicplayer.player.favourite.controller;
 
+import com.example.musicplayer.player.favourite.dto.FavouriteTrackDto;
 import com.example.musicplayer.player.favourite.service.FavouriteService;
-import com.example.musicplayer.player.music.model.Track;
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.favourite.service.FavouriteTrackConverter;
 import com.example.musicplayer.sign.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/favourite")
 public class FavouriteController {
     private final FavouriteService favouriteService;
+    private final FavouriteTrackConverter converter;
 
-    public FavouriteController(FavouriteService favouriteService) {
+    public FavouriteController(FavouriteService favouriteService,
+                               FavouriteTrackConverter converter) {
         this.favouriteService = favouriteService;
+        this.converter = converter;
     }
 
     @GetMapping("/count")
@@ -41,9 +44,9 @@ public class FavouriteController {
 
             if (map.values().stream().findFirst().orElse(false)) {
                 favouriteService.deleteTrackFromFavourite(user.getId(), trackId);
-                return new ResponseEntity<>("'" + fullTitle + "' - do not like you anymore", HttpStatus.OK);
+                return new ResponseEntity<>("'" + fullTitle + "'\ndo not like you anymore", HttpStatus.OK);
             }
-            return new ResponseEntity<>("'" + fullTitle + "' - added to your favourite", HttpStatus.CREATED);
+            return new ResponseEntity<>("'" + fullTitle + "'\nadded to your favourite", HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -54,8 +57,10 @@ public class FavouriteController {
     }
 
     @GetMapping
-    public Set<TrackDto> getFavouriteByUser(@AuthenticationPrincipal User user) {
-        return favouriteService.getFavouriteTracksByUser(user.getId());
+    public Set<FavouriteTrackDto> getFavouriteByUser(@AuthenticationPrincipal User user) {
+        return favouriteService.getFavouriteTracksByUserId(user.getId()).stream()
+                .map(converter::convertToFavouriteTrackDto)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @GetMapping("/already")

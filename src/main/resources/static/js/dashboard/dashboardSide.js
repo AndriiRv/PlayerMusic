@@ -2,18 +2,25 @@ let countOfFavourite = 0;
 let limitSideElementInDiv = 3;
 
 function getDashboardSideFavouriteAndHistory() {
-    getListOnDashboardSide("/favourite", '#dashboardFavourite', getCountOfFavourite(), "Your favourite", "../../images/favourite/favourite.svg");
-    getListOnDashboardSide("/history", '#dashboardHistory', getCountOfHistory(), "Your history", "../../images/play.svg");
+    getFavouriteInDashboard();
+    getHistoryInDashboard();
 }
 
-function getListOnDashboardSide(url, divId, countOf, divTitle, picturePath) {
-    listOfTrack = null;
+function getFavouriteInDashboard() {
+    getListOnDashboardSide("/dashboard/favourite", '#dashboardFavourite', getCountOfFavourite(), "Your favourite", "../../images/favourite/favourite.svg", "You dont like any music tracks yet");
+}
 
+function getHistoryInDashboard() {
+    getListOnDashboardSide("/dashboard/history", '#dashboardHistory', getCountOfHistory(), "Your history", "../../images/play.svg", "You dont played any music tracks yet");
+}
+
+function getListOnDashboardSide(url, divId, countOf, divTitle, picturePath, errorMessage) {
     let html = '';
     $.getJSON(url, function (data) {
         if (data.length !== 0) {
-            listOfTrack = data;
+            listOfTrackObj.setListOfTrack(data);
             countOfTrack = data.length;
+
             html += '<div style="display: flex">';
             html += '   <div style="display: flex; flex-basis: 100%;">';
             html += '       <div style="background-image: url(' + picturePath + '); background-size: 15px 15px; height: 15px; width: 15px;"></div>';
@@ -40,7 +47,7 @@ function getListOnDashboardSide(url, divId, countOf, divTitle, picturePath) {
             });
             $(divId).html(html);
         } else {
-            html += '<h3>You dont like any music tracks yet</h3>';
+            html += '<h3>' + errorMessage + '</h3>';
             $(divId).html(html);
         }
     });

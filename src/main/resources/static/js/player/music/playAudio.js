@@ -19,9 +19,12 @@ let musicTrackObject;
 
 let lyricObj = new Lyric();
 
-function highlightSelectTrack(titleOfTrackInTable, nameOfTrack) {
-    titleOfTrackInTable.filter(function () {
-        return $(this).text() === nameOfTrack;
+let currentMusicTrackInListOfTrack;
+
+function highlightByElement(element, title) {
+    element.filter(function () {
+        element.css("background", "transparent");
+        return $(this).text() === title;
     }).css({
         "background": "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(6,151,244,1) 0%, rgba(64,26,186,1) 49%, rgba(172,22,224,1) 86%)",
         "color": "white"
@@ -35,13 +38,6 @@ function clearSelectTrack(titleOfTrackInTable) {
     });
 }
 
-function setTrackToHistoryToUser(nameOfTrack) {
-    let currentUserName = $("#currentUserName").text();
-    if (currentUserName) {
-        addTrackToHistory(nameOfTrack);
-    }
-}
-
 function setTitleToNameOfTab(newNameOfTab) {
     $("#titleOfTab").html(newNameOfTab + " | Music Player");
 }
@@ -51,7 +47,13 @@ function getLyricByTrack(musicTrack) {
     lyricObj.setTitle(musicTrack.getTitle());
 }
 
+function getCounter(that, parentElement, childElement) {
+    let playedDiv = $(that).siblings(parentElement);
+    return playedDiv.find(childElement);
+}
+
 $("body").on("click", ".titleOfTrackInTable", function () {
+    currentMusicTrackInListOfTrack = $(this);
     let nameOfTrack = $(this).text();
     let trackId = $(this).siblings("#musicId").text();
 
@@ -78,6 +80,8 @@ $("body").on("click", ".titleOfTrackInTable", function () {
     numberOfTrack = $(this).siblings("#musicId").text();
 
     addCountOfPlayedByMusicId(numberOfTrack);
+    getCounter(currentMusicTrackInListOfTrack, "#played", "#countOfPlayedByMusic")
+        .text(getCountOfPlayedByMusicId(musicTrackId));
 
     getPictureByTrackId(trackId);
 
@@ -90,7 +94,7 @@ $("body").on("click", ".titleOfTrackInTable", function () {
         }
     }
     if (!currentUserName.text().includes("guest")) {
-        setTrackToHistoryToUser(nameOfTrack);
+        addTrackToHistory(nameOfTrack);
         changeFavouritePic();
     }
 
@@ -106,7 +110,7 @@ $("body").on("click", ".titleOfTrackInTable", function () {
         }
     }
 
-    highlightSelectTrack(titleOfTrackInTable, nameOfTrack);
+    highlightByElement(titleOfTrackInTable, nameOfTrack);
 
     hrefTitleForDownload = nameOfTrack;
     nameOfTrack = nameOfTrack.replace(".mp3", "");

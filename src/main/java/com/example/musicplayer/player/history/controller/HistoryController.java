@@ -1,8 +1,8 @@
 package com.example.musicplayer.player.history.controller;
 
+import com.example.musicplayer.player.history.dto.HistoryTrackDto;
 import com.example.musicplayer.player.history.service.HistoryService;
-import com.example.musicplayer.player.music.model.Track;
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.history.service.HistoryTrackConverter;
 import com.example.musicplayer.sign.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/history")
 public class HistoryController {
     private final HistoryService historyService;
+    private final HistoryTrackConverter converter;
 
-    public HistoryController(HistoryService historyService) {
+    public HistoryController(HistoryService historyService,
+                             HistoryTrackConverter converter) {
         this.historyService = historyService;
+        this.converter = converter;
     }
 
     @GetMapping("/count")
@@ -41,8 +44,10 @@ public class HistoryController {
     }
 
     @GetMapping
-    public Set<TrackDto> getHistoryTrackByUserId(@AuthenticationPrincipal User user) {
-        return historyService.getHistoryByUserId(user.getId());
+    public Set<HistoryTrackDto> getHistoryTrackByUserId(@AuthenticationPrincipal User user) {
+        return historyService.getHistoryByUserId(user.getId()).stream()
+                .map(converter::convertToHistoryTrackDto)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @DeleteMapping

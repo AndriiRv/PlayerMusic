@@ -1,7 +1,7 @@
 package com.example.musicplayer.player.music.service;
 
 import com.example.musicplayer.dashboard.service.DashboardService;
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.model.Track;
 import com.example.musicplayer.player.music.model.TrackList;
 import com.example.musicplayer.player.search.searchplaceholder.SearchPlaceholderService;
 import com.example.musicplayer.sign.user.model.User;
@@ -23,12 +23,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,73 +53,65 @@ public class MusicPlayerService {
     }
 
     @PostConstruct
-    private void postConstruct() {
+    public void postConstruct() {
         trackList.setMusicTracks(getMusicTracksFromDb());
         dashboardService.getMusicForDashboard();
     }
 
-    private Map<Integer, TrackDto> getMusicTracksFromDb() {
-        Map<Integer, TrackDto> musicTrackFromDb;
-        if (musicService.isMusicTableEmpty() == 0) {
-            return musicTrackSaverService.addTrackToDb();
-        } else {
-            musicTrackFromDb = musicService.getMusicFromTable().stream().collect(Collectors.toMap(TrackDto::getId, Function.identity()));
-            if (musicService.checkIfTrackExistInSystem(pathToFolder, musicTrackFromDb)) {
-                return musicTrackFromDb;
-            }
-        }
-        return musicTrackFromDb;
+    private Set<Track> getMusicTracksFromDb() {
+        musicTrackSaverService.addTrackToDb();
+        musicService.checkIfTrackExistInSystem(pathToFolder, musicService.getMusicFromTable());
+        return musicService.getMusicFromTable();
     }
 
     public String getRandomTrackToPutInSearchPlaceholder() {
         return searchPlaceholderService.getRandomTrackToPutInSearchPlaceholder(trackList.getMusicTracks());
     }
 
-    public Set<TrackDto> getShuffleMusic(int page) {
-        List<TrackDto> listOfMusicTracks = new ArrayList<>(trackList.getMusicTracks().values());
+    public Set<Track> getShuffleMusic(int page) {
+        List<Track> listOfMusicTracks = new ArrayList<>(trackList.getMusicTracks());
         Collections.shuffle(listOfMusicTracks);
         log.info("Shuffled list");
         return listOfMusicTracks.stream()
                 .limit(page)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toSet());
     }
 
-    public Set<TrackDto> filteredMusic(String genreTitle, int page) {
-        return trackList.getMusicTracks().values().stream()
+    public Set<Track> filteredMusic(String genreTitle, int page) {
+        return trackList.getMusicTracks().stream()
                 .filter(e -> e.getGenre() != null)
                 .filter(e -> e.getGenre().equals(genreTitle))
                 .limit(page)
                 .collect(Collectors.toSet());
     }
 
-    public Set<TrackDto> getSortedMusic(String sort, String directory, int page) {
-        Set<TrackDto> allTracks = new HashSet<>(trackList.getMusicTracks().values());
+    public Set<Track> getSortedMusic(String sort, String directory, int page) {
+        Set<Track> allTracks = new LinkedHashSet<>(trackList.getMusicTracks());
         log.info("Load from RAM");
 
-        Set<TrackDto> sortedTracks;
+        Set<Track> sortedTracks;
         switch (sort) {
             case "size":
-                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getSize));
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(Track::getSize));
                 break;
             case "length":
-                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getLength));
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(Track::getLength));
                 break;
             case "date":
-                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getDateTime));
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(Track::getDateTime));
                 break;
             default:
-                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(TrackDto::getFullTitle));
+                sortedTracks = sortInSwitch(directory, page, allTracks, Comparator.comparing(Track::getFullTitle));
         }
         log.info("Selected sort: {} with directory {}", sort.toUpperCase(), directory.toUpperCase());
         return sortedTracks;
     }
 
-    private Set<TrackDto> sortInSwitch(String directory, int page, Set<TrackDto> allTracks, Comparator<TrackDto> trackComparator) {
-        List<TrackDto> tempList = new ArrayList<>(allTracks);
+    private Set<Track> sortInSwitch(String directory, int page, Set<Track> allTracks, Comparator<Track> trackComparator) {
         if (directory.equals("DESC")) {
-            return tempList.stream().sorted(trackComparator.reversed()).limit(page).collect(Collectors.toCollection(LinkedHashSet::new));
+            return allTracks.stream().sorted(trackComparator.reversed()).limit(page).collect(Collectors.toCollection(LinkedHashSet::new));
         } else {
-            return tempList.stream().sorted(trackComparator).limit(page).collect(Collectors.toCollection(LinkedHashSet::new));
+            return allTracks.stream().sorted(trackComparator).limit(page).collect(Collectors.toCollection(LinkedHashSet::new));
         }
     }
 

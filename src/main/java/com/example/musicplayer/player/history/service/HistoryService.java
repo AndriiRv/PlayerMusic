@@ -2,13 +2,11 @@ package com.example.musicplayer.player.history.service;
 
 import com.example.musicplayer.player.history.repository.HistoryRepository;
 import com.example.musicplayer.player.music.model.Track;
-import com.example.musicplayer.player.music.model.TrackDto;
 import com.example.musicplayer.player.music.service.MusicService;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class HistoryService {
@@ -33,17 +31,8 @@ public class HistoryService {
         }
     }
 
-    public Set<TrackDto> getHistoryByUserId(int userId) {
-        Set<TrackDto> trackDtos = historyRepository.getHistoryByUserId(userId).stream()
-                .map(TrackDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        trackDtos.forEach(e -> {
-            if (e.getCountOfFavourite() == null) {
-                e.setCountOfFavourite(0);
-            }
-        });
-        return trackDtos;
+    public Set<Track> getHistoryByUserId(int userId) {
+        return new LinkedHashSet<>(historyRepository.getHistoryByUserId(userId));
     }
 
     private int isTrackAlreadyInHistoryByUserId(int userId, int musicId) {

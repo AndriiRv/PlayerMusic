@@ -27,7 +27,7 @@ public class UploadTrackRepository {
 
     public List<Track> getUploadTracksByUserId(int userId) {
         String sql = ""
-                + "SELECT ut.music_id AS id, m.full_title, tc.picture AS byteOfPicture "
+                + "SELECT m.id, m.full_title, tc.picture AS byteOfPicture, m.length, m.date_time, m.album, m.year, m.genre "
                 + "FROM uploaded_track AS ut "
                 + "INNER JOIN music AS m ON m.id = ut.music_id "
                 + "INNER JOIN track_cover AS tc ON tc.music_id = m.id "

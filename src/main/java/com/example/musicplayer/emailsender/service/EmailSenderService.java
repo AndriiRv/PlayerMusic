@@ -8,14 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.example.musicplayer.config.ExceptionOutput.exceptionStacktraceToString;
 
-@Component
+@Service
 public class EmailSenderService {
     private final JavaMailSender javaMailSender;
     private final PasswordRecover passwordRecover;
@@ -43,7 +43,10 @@ public class EmailSenderService {
     }
 
     public void sendWelcomeEmail(UserDto userDto) {
-        buildEmailMessage(welcomeLetterService.welcomeEmailMessage(userDto));
+        boolean check = buildEmailMessage(welcomeLetterService.welcomeEmailMessage(userDto));
+        if (check) {
+            log.info("Welcome letter was sent to: {}", userDto.getEmail());
+        }
     }
 
     private boolean buildEmailMessage(EmailLetter emailLetter) {

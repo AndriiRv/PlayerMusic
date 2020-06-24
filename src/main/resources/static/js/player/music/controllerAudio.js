@@ -64,7 +64,7 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
         changeFavouritePic();
     }
 
-    highlightSelectTrack(titleOfTrackInTable, nextTrackTitle);
+    highlightByElement(titleOfTrackInTable, nextTrackTitle);
     titleOfTrackInPlayer.append(nextTrackTitle.replace(".mp3", ""));
 
     setTitleToNameOfTab(nextTrackTitle);
@@ -72,6 +72,8 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
     console.log(process + nextTrackTitle);
 
     musicTrackObject.setFullTitle(nextTrackTitle);
+
+    musicTrackId = listOfTrack[countOfIterationByListOfTrack].id;
 
     let musicTrack = new Track(listOfTrack[countOfIterationByListOfTrack].fullTitle);
     getLyricByTrack(musicTrack);
@@ -82,7 +84,7 @@ function playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTr
 $(".audioClass").bind("ended", function () {
     countOfIterationByListOfTrack++;
 
-    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "After ended: ");
+    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrackObj.getListOfTrack(), "After ended: ");
     disableEnableNextButton();
     disableEnablePrevButton();
 });
@@ -95,7 +97,7 @@ nextTrackButton.on("click", function () {
 
     countOfIterationByListOfTrack++;
 
-    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "Next: ");
+    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrackObj.getListOfTrack(), "Next: ");
 
     disableEnableNextButton();
 });
@@ -108,7 +110,7 @@ prevTrackButton.on("click", function () {
 
     countOfIterationByListOfTrack = countOfIterationByListOfTrack - Number("1");
 
-    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrack, "Prev: ");
+    playMusic(titleOfTrackInPlayer, countOfIterationByListOfTrack, listOfTrackObj.getListOfTrack(), "Prev: ");
 
     disableEnablePrevButton();
 });

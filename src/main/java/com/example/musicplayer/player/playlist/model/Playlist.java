@@ -1,19 +1,8 @@
 package com.example.musicplayer.player.playlist.model;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class Playlist {
     private int id;
     private String title;
-
-    public Playlist(int id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
-    public Playlist() {
-    }
 
     public int getId() {
         return id;

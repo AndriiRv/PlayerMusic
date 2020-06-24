@@ -26,7 +26,10 @@ submitSignIn.on('click', function () {
             peopleButton.show();
             chatButton.show();
             currentUserUsername.show();
+            clearSearch();
             getDashboard();
+            checkDashboard = false;
+            changeFavouritePic();
             $("#closeModal").click();
         },
         error: function (data) {

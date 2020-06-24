@@ -1,3 +1,5 @@
+let lastPlaylistName = "";
+
 $("#playlist").on("click", function () {
     openPlaylistForm();
 
@@ -6,7 +8,14 @@ $("#playlist").on("click", function () {
 
 supportDashboard.on("click", "#createPlaylistButton", function () {
     let inputValue = $("#createPlaylist").val();
-    addPlaylist(inputValue);
+    if (inputValue.includes("&") || inputValue.includes("<") || inputValue.includes(">")) {
+        $.notify("Forbidden characters in name of playlist", {
+            position: 'top left',
+            className: 'error'
+        });
+    } else {
+        addPlaylist(inputValue);
+    }
 });
 
 function getPlaylists() {
@@ -16,7 +25,7 @@ function getPlaylists() {
 
     let html = '';
     html += '<input id="createPlaylist" placeholder="Input name new playlist" type="text"/>';
-    html += '<button id="createPlaylistButton">Create playlist</button>';
+    html += '<button id="createPlaylistButton" class="menuElement">Create playlist</button>';
     supportDashboard.html(html);
 
     $.getJSON('/playlist', function (data) {
@@ -43,6 +52,12 @@ function getPlaylists() {
         }
     });
 }
+
+// function createPlaylist() {
+//     let inputValue = $("#createPlaylist").val();
+//     inputValue = inputValue.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+//     addPlaylist(inputValue);
+// }
 
 function addPlaylist(titleOfPlaylist) {
     if (titleOfPlaylist !== '') {
@@ -73,6 +88,7 @@ function addPlaylist(titleOfPlaylist) {
 let isSelectingPlaylistOpen = true;
 
 function selectPlaylist() {
+    $("#selPlaylistId").val($("#selectPlaylistId option:first").val());
     if (currentUserUsername.text() !== "") {
         if (isSelectingPlaylistOpen) {
             isSelectingPlaylistOpen = false;
@@ -81,7 +97,7 @@ function selectPlaylist() {
             $.getJSON('/playlist', function (data) {
                 if (data.length !== 0) {
                     $("#selectPlaylistId").show();
-                    html += '<select onchange="addMusicToPlaylist(this.value, musicTrackId)">';
+                    html += '<select id="selPlaylistId" onchange="addMusicToPlaylist(this.value, musicTrackId)">';
                     html += '<option value=""></option>';
                     $.each(data, function (i, playlist) {
                         html += '<option value="' + playlist.title + '">' + playlist.title + '</option>';
@@ -104,6 +120,10 @@ function selectPlaylist() {
 }
 
 function showTrackInSelectPlaylist(titleOfPlaylist) {
+    lastPlaylistName = titleOfPlaylist;
+
+    highlightByElement($(".titleOfPlaylistInTable"), titleOfPlaylist);
+
     let html = '';
     $.getJSON('/playlist/music', {titleOfPlaylist: titleOfPlaylist}, function (data) {
         if (data.length !== 0) {
@@ -117,6 +137,7 @@ function showTrackInSelectPlaylist(titleOfPlaylist) {
             });
             $("#listMusicOfPlaylist").html(html);
         } else {
+            $("#listMusicOfPlaylist").empty();
             $.notify("You has not added track to playlist", {
                 position: 'top left',
                 className: 'error'
@@ -133,10 +154,12 @@ function addMusicToPlaylist(titleOfPlaylist, trackId) {
             trackId: trackId
         },
         success: function () {
-            $.notify("Add to playlist: \"" + titleOfPlaylist + "\n", {
+            $.notify("Add to playlist: \"" + titleOfPlaylist + "\"\n", {
                 position: 'top left',
                 className: 'success'
             });
+            $("#selectPlaylistId").hide();
+            isSelectingPlaylistOpen = true;
             console.log(titleOfPlaylist + " - add to \"" + titleOfPlaylist + "\n");
         }
     });
@@ -168,7 +191,7 @@ function removeTrackFromPlaylist(titleOfPlaylist, trackId) {
                 trackId: trackId
             },
             success: function () {
-                getPlaylists();
+                showTrackInSelectPlaylist(lastPlaylistName);
                 console.log(trackId + ", deleted music from playlist")
             }
         });

@@ -46,7 +46,7 @@ volumeMin.on('click', function () {
         document.querySelector('input[type=range]').value = 0;
         audio.get(0).volume = 0;
         console.log("Volume mute");
-        volumeMax.css("background-image", "url('../images/volumeMute.svg')");
+        volumeMax.css("background-image", "url('../images/volume/volumeMute.svg')");
     } else {
         audio.get(0).muted = false;
         if (currentValueVolume === 0) {
@@ -56,11 +56,11 @@ volumeMin.on('click', function () {
         audio.get(0).volume = currentValueVolume;
         console.log("Volume unmute: " + audio.get(0).volume);
         if (audio.get(0).volume === 0) {
-            volumeMax.css("background-image", "url('../images/volumeMute.svg')");
+            volumeMax.css("background-image", "url('../images/volume/volumeMute.svg')");
         } else if (audio.get(0).volume < 0.4) {
-            volumeMax.css("background-image", "url('../images/volumeMedium.svg')");
+            volumeMax.css("background-image", "url('../images/volume/volumeMedium.svg')");
         } else {
-            volumeMax.css("background-image", "url('../images/volumeMax.svg')");
+            volumeMax.css("background-image", "url('../images/volume/volumeMax.svg')");
         }
     }
 });

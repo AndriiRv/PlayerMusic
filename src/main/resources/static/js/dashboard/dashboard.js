@@ -10,7 +10,7 @@ let countInPageByCountOfFavourite = 10;
 
 $(document).ready(function () {
     turnDashboard();
-    if ($("#usernameThymelyeaf").text() !== "") {
+    if ($("#usernameThymeleaf").text() !== "") {
         currentUserUsername.show();
         signButton.hide();
         peopleButton.show();
@@ -19,16 +19,23 @@ $(document).ready(function () {
 });
 
 function turnDashboard() {
+    countInPage = 20;
+    clearSearch();
+    getRandomTrackInSearchPlaceholder();
     if (checkDashboard) {
-        currentUserUsername.text($("#usernameThymelyeaf").text());
+        if ($("#usernameThymeleaf").text() !== "") {
+            currentUserUsername.text($("#usernameThymeleaf").text());
+        }
         $("#listOfTrack").hide();
         $('#dashboard').show();
         getDashboard();
         checkDashboard = false;
         dashboardAlreadyOpen++;
     } else {
+        setTitleToNameOfTab("All list of music track");
         getDefaultList();
         $('#dashboard').hide();
+        supportDashboard.empty();
         $("#listOfTrack").show();
         showFilterOption();
         checkDashboard = true;
@@ -56,6 +63,7 @@ function hideDashboard() {
 }
 
 function getDashboard() {
+    setTitleToNameOfTab("Explore!");
     showDashboard();
     showDashboardDivs();
     openDashboard();
@@ -77,24 +85,26 @@ function getBy(idTitle, title, url) {
 
     url = url + '?page=' + countInPage;
 
-    listOfTrack = getListFromUrl(url);
-
     let html = '';
-    $.getJSON(url, function (listOfTrack) {
-        html += '<h2>' + title + '</h2>';
-        html += '<div style="display: flex; overflow-x: auto;">';
-        $.each(listOfTrack, function (i, track) {
-            html += '<div style="min-width: 173px; margin-right: 1%;">';
-            html += '    <div>';
-            html += '        <div id="musicId" hidden>' + track.id + '</div>';
-            html += '        <img id="cover" style="width: 173px; height: 173px; margin-right: 3%" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
-            html += '        <div class="titleOfTrackInTable" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">' + track.fullTitle + '</div>';
-            html += '    </div>';
-            html += '</div>'
-        });
-        html += '</div>';
-        $('#' + idTitle + '').html(html);
-        getRandomTrackInSearchPlaceholder();
-        closeLoader();
+    $.getJSON(url, function (data) {
+        if (data.length !== 0) {
+            listOfTrackObj.setListOfTrack(data);
+            countOfTrack = data.length;
+
+            html += '<h2>' + title + '</h2>';
+            html += '<div style="display: flex; overflow-x: auto;">';
+            $.each(data, function (i, track) {
+                html += '<div style="min-width: 173px; margin-right: 1%;">';
+                html += '    <div>';
+                html += '        <div id="musicId" hidden>' + track.id + '</div>';
+                html += '        <img id="cover" style="width: 173px; height: 173px; margin-right: 3%" src="data:image/jpeg;charset=utf-8;base64,' + track.byteOfPicture + '"/>';
+                html += '        <div class="titleOfTrackInTable" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">' + track.fullTitle + '</div>';
+                html += '    </div>';
+                html += '</div>'
+            });
+            html += '</div>';
+            $('#' + idTitle + '').html(html);
+            closeLoader();
+        }
     });
 }

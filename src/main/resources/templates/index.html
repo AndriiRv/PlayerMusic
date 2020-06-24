@@ -12,7 +12,6 @@
     <link th:href="@{css/loader/preload.css}" rel="stylesheet"/>
     <link th:href="@{css/menu/menu.css}" rel="stylesheet"/>
     <link th:href="@{css/common/style.css}" rel="stylesheet"/>
-    <link th:href="@{css/player/player.css}" rel="stylesheet"/>
     <link th:href="@{css/audio/controllerAudio.css}" rel="stylesheet"/>
     <link th:href="@{css/audio/volume.css}" rel="stylesheet"/>
     <link th:href="@{css/common/backToTop.css}" rel="stylesheet"/>
@@ -97,7 +96,7 @@
     <div id="leftFromSearch">
         <div id="dashboardButton" class="menuElement" onclick="turnDashboard();">Turn</div>
         <div id="homeButton" class="menuElement" onclick="getDashboard()">Home</div>
-        <div id="usernameThymelyeaf" style="display: none" th:text="${username}"></div>
+        <div id="usernameThymeleaf" style="display: none" th:text="${username}"></div>
         <div id="currentUserUsername" style="display: none" class="menuElement"></div>
         <div id="currentUserName" hidden></div>
         <div id="currentUserSurname" hidden></div>
@@ -120,7 +119,7 @@
     <div id="searchTrack">
         <input type="text" name="trackTitle" class="form-control" placeholder=""
                id="inputSearchTrack" maxlength="60"
-               value="">
+               value="" autocomplete="off">
     </div>
     <div id="rightFromSearch">
         <div id="signButton" class="menuElement" rel="modal:open" href="#container">Sign in</div>
@@ -168,9 +167,10 @@
         </div>
         <div id="leftSideBottomController">
             <div id="soundWaveButton" title="Try visualization!"></div>
+            <div id="currentListOfTrack"></div>
             <div id="picAndTitleOfTrack">
                 <img class="picture" style="width: 49px; height: 49px;" src="" alt="">
-                <div id="showInfoAboutTrack" class="titleOfTrackInPlayer"></div>
+                <div id="showInfoAboutTrack" class="titleOfTrackInPlayer" title="Current list of track"></div>
             </div>
             <div id="additionalButtons">
                 <div class="lyricButton" title="Lyric"></div>
@@ -216,7 +216,7 @@
         <div id="byGenre"></div>
     </div>
     <div id="dashboardSide">
-        <div id="dashboardFavourite"></div>
+        <div id="dashboardFavourite" style="margin-top:20px;"></div>
         <div id="dashboardHistory"></div>
         <div id="footerInDashboardSide" style="text-align: center"></div>
     </div>
@@ -269,9 +269,9 @@
     <a href="#" id="backToTop">&uarr;</a>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://rawgit.com/notifyjs/notifyjs/master/dist/notify.js"></script>
+<script th:src="@{/js/config/jquery.min.js}"></script>
+<script th:src="@{/js/config/jquery-ui.min.js}"></script>
+<script th:src="@{/js/config/notify.min.js}"></script>
 
 <script th:src="@{/js/common/backToTop.js}"></script>
 <script th:src="@{/js/common/downloadTrack.js}"></script>
@@ -311,7 +311,6 @@
 <script th:src="@{/js/player/statistic/played/playedCounter.js}"></script>
 <script th:src="@{/js/player/statistic/favourite/favouriteCounter.js}"></script>
 <script th:src="@{/js/player/uploadtrack/uploadTrack.js}"></script>
-<script th:src="@{/js/player/infoAboutTrack.js}"></script>
 
 <script th:src="@{/js/sign/login.js}"></script>
 <script th:src="@{/js/sign/logout.js}"></script>

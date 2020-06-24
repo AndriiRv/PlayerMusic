@@ -6,16 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@RequestMapping("/login")
 public class LoginController {
     private final Logger log = LoggerFactory.getLogger(LoginController.class.getName());
 
-    @GetMapping("/login")
+    @GetMapping
     public ResponseEntity<Object> getLoginPage(@RequestParam(value = "error", required = false) String error) {
         if (error != null) {
             return new ResponseEntity<>("Invalid username and/or password.", HttpStatus.CONFLICT);
@@ -23,7 +25,7 @@ public class LoginController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<Object> performLogin(@RequestParam("username") String username,
                                                @RequestParam("password") String password,
                                                HttpServletRequest request) {

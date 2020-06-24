@@ -1,7 +1,10 @@
 package com.example.musicplayer.dashboard.controller;
 
+import com.example.musicplayer.dashboard.dto.DashboardDto;
+import com.example.musicplayer.dashboard.dto.DashboardSideDto;
 import com.example.musicplayer.dashboard.service.DashboardService;
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.sign.user.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,17 +27,27 @@ public class DashboardController {
     }
 
     @GetMapping("/byGenre")
-    public Set<TrackDto> getMusicTrackByGenreTitle(@RequestParam String genre) {
+    public Set<DashboardDto> getMusicTrackByGenreTitle(@RequestParam String genre) {
         return dashboardService.getMusicTrackByGenreTitle(genre);
     }
 
     @GetMapping("/countOfPlayed")
-    public Set<TrackDto> getMusicByCountOfPlayed(@RequestParam Integer page) {
+    public Set<DashboardDto> getMusicByCountOfPlayed(@RequestParam Integer page) {
         return dashboardService.getMusicByCountOfPlayed(page);
     }
 
     @GetMapping("/countOfFavourite")
-    public Set<TrackDto> getMusicByCountOfFavourite(@RequestParam Integer page) {
+    public Set<DashboardDto> getMusicByCountOfFavourite(@RequestParam Integer page) {
         return dashboardService.getMusicByCountOfFavourite(page);
+    }
+
+    @GetMapping("/favourite")
+    public Set<DashboardSideDto> getFavouriteByUser(@AuthenticationPrincipal User user) {
+        return dashboardService.getFavouriteMusicByUserId(user.getId());
+    }
+
+    @GetMapping("/history")
+    public Set<DashboardSideDto> getHistoryByUser(@AuthenticationPrincipal User user) {
+        return dashboardService.getHistoryMusicByUserId(user.getId());
     }
 }

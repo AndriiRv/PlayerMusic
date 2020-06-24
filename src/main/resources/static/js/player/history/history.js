@@ -1,4 +1,3 @@
-let historyList = null;
 let historyTrackButton = $("#historyTrack");
 
 function addTrackToHistory(fullTitleTrack) {
@@ -24,14 +23,13 @@ historyTrackButton.on("click", function () {
 
 function getHistory() {
     getLoader();
-    listOfTrack = null;
 
     let html = '';
     $.getJSON('/history', function (data) {
         if (data.length !== 0) {
-            historyList = data;
-            listOfTrack = data;
+            listOfTrackObj.setListOfTrack(data);
             countOfTrack = data.length;
+
             html += '<h2>History</h2>';
             html += '<div style="display: grid; grid-template-columns: 200px 200px 200px 200px 200px 175px; grid-auto-rows: 250px;">';
             $.each(data, function (i, track) {

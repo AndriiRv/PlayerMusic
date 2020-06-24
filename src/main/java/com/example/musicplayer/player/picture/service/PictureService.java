@@ -1,6 +1,6 @@
 package com.example.musicplayer.player.picture.service;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.dto.TrackDto;
 import com.example.musicplayer.player.picture.model.Picture;
 import com.example.musicplayer.player.picture.repository.PictureRepository;
 import org.springframework.stereotype.Service;

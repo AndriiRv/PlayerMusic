@@ -69,14 +69,14 @@ function updateProfile() {
             password: $("#editProfilePassword").val(),
             username: currentUserUsername.text()
         },
-        success: function () {
-            $.notify(currentUserUsername.text() + " was updated!", {
+        success: function (response) {
+            $.notify(response, {
                 position: 'top left',
                 className: 'success'
             });
         },
-        error: function (data) {
-            $.notify(data.responseText, {
+        error: function (response) {
+            $.notify(response.responseText, {
                 position: 'top left',
                 className: 'error'
             });

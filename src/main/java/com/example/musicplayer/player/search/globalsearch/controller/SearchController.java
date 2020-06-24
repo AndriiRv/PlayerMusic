@@ -1,6 +1,6 @@
 package com.example.musicplayer.player.search.globalsearch.controller;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.search.dto.SearchTrackDto;
 import com.example.musicplayer.player.search.globalsearch.service.SearchService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +16,7 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public Set<TrackDto> searchTracks(String searchString) {
+    public Set<SearchTrackDto> searchTracks(String searchString) {
         return searchService.searchTracks(searchString);
     }
 }

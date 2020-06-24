@@ -8,8 +8,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -19,11 +19,6 @@ public class StatisticFavouriteRepository {
 
     public StatisticFavouriteRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public List<Integer> getCountOfFavouriteByMusicIds(List<Integer> musicTrackIds) {
-        String sql = "SELECT count(counter_favourite) FROM statistic WHERE music_id IN (:musicId)";
-        return jdbcTemplate.queryForList(sql, new MapSqlParameterSource("musicId", musicTrackIds), Integer.class);
     }
 
     public Integer getCountOfFavouriteByMusicId(int musicId) {
@@ -50,7 +45,7 @@ public class StatisticFavouriteRepository {
                 return map;
             });
         } catch (EmptyResultDataAccessException e) {
-            log.error(e.toString());
+            log.error(Arrays.toString(e.getStackTrace()));
         }
 
         if (musicIdCounterFavouriteMap == null || musicIdCounterFavouriteMap.get(musicId) == null) {

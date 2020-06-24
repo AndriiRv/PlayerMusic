@@ -3,7 +3,6 @@ package com.example.musicplayer.player.statistic.played.service;
 import com.example.musicplayer.player.statistic.played.repository.StatisticPlayedRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -12,10 +11,6 @@ public class StatisticPlayedService {
 
     public StatisticPlayedService(StatisticPlayedRepository statisticPlayedRepository) {
         this.statisticPlayedRepository = statisticPlayedRepository;
-    }
-
-    public List<Integer> getCountOfPlayedByMusicIds(List<Integer> musicTrackIds) {
-        return statisticPlayedRepository.getCountOfPlayedByMusicIds(musicTrackIds);
     }
 
     public Integer getCountOfPlayedByMusicId(int musicId) {

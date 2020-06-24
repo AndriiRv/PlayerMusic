@@ -64,6 +64,7 @@ div#historyPic, div#likePic {
 
 #lyric {
     display: none;
+    background-color: rgba(44, 17, 154, 0.9);
     text-align: justify;
     color: white;
     bottom: 10%;

@@ -1,5 +1,6 @@
 let chatButton = $("#chatButton");
 let messageDiv = $("#messageDiv");
+let lastInterlocutor = null;
 
 let isOpenChat = true;
 chatButton.on("click", function () {
@@ -28,13 +29,22 @@ function getChats() {
                     "display": "flex"
                 });
 
+                let counter = 0;
                 $.each(data, function (i, chat) {
                     html += '<div style="display: block">';
                     html += '   <div id="chatId" hidden>' + chat.id + '</div>';
-                    html += '   <div style="cursor:pointer; text-decoration: underline;" onclick="setChatId(\'' + chat.id + '\')">' + chat.title + '</div>';
+                    html += '   <div class="titleOfFriendInChat" style="cursor: pointer; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" ' +
+                        'onclick="setChatId(\'' + chat.id + '\',\'' + chat.title + '\');">' + ++counter + '. ' + chat.title + '</div>';
                     html += '</div>';
                 });
                 $("#chat").html(html);
+
+                $(".titleOfFriendInChat").css({
+                    "cursor": "pointer",
+                    "text-overflow": "ellipsis",
+                    "white-space": "nowrap",
+                    "overflow": "hidden"
+                });
             } else {
                 $.notify("You're haven't any friends", {
                     position: 'top left',
@@ -47,12 +57,18 @@ function getChats() {
 
 let globalChatId = null;
 
-function setChatId(chatId) {
+function setChatId(chatId, chatTitle) {
     globalChatId = chatId;
-    getMessages();
+    getMessages(chatTitle);
+    lastInterlocutor = chatTitle;
 }
 
-function getMessages() {
+function getMessages(chatTitle) {
+    if (chatTitle === undefined) {
+        setTitleToNameOfTab(lastInterlocutor);
+    } else {
+        setTitleToNameOfTab(chatTitle);
+    }
     let html = '';
     $.get({
         url: "/message",
@@ -81,6 +97,7 @@ function getMessages() {
 
 function sendMessage() {
     let messageText = $("#messageText").val();
+    messageText = messageText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     if (messageText !== '') {
         $.post({
             url: "/message",

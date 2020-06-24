@@ -1,9 +1,8 @@
 package com.example.musicplayer.player.playlist.service;
 
-import com.example.musicplayer.player.playlist.model.Playlist;
 import com.example.musicplayer.player.music.model.Track;
+import com.example.musicplayer.player.playlist.model.Playlist;
 import com.example.musicplayer.player.playlist.repository.PlaylistRepository;
-import com.example.musicplayer.player.music.service.MusicService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +10,9 @@ import java.util.List;
 @Service
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
-    private final MusicService musicService;
 
-    public PlaylistService(PlaylistRepository playlistRepository,
-                           MusicService musicService) {
+    public PlaylistService(PlaylistRepository playlistRepository) {
         this.playlistRepository = playlistRepository;
-        this.musicService = musicService;
     }
 
     public void createPlaylist(int userId, String titleOfPlaylist) {

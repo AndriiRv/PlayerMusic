@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import static com.example.musicplayer.config.ExceptionOutput.exceptionStacktraceToString;
-
 @Service
 public class LyricService {
     private final LyricRepository lyricRepository;
@@ -50,7 +48,7 @@ public class LyricService {
                     return new Lyric(lyricText, true);
                 }
             } catch (Exception e) {
-                log.error(exceptionStacktraceToString(e));
+                log.error(e.toString());
                 return new Lyric(plainJson, false);
             }
         }

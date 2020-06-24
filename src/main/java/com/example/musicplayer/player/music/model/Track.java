@@ -19,27 +19,6 @@ public class Track {
     private Integer countOfPlayed;
     private Integer countOfFavourite;
 
-    public static Track of(TrackDto trackDto) {
-        Track track = new Track();
-        track.setId(trackDto.getId());
-        track.setFullTitle(trackDto.getFullTitle());
-        track.setSinger(trackDto.getSinger());
-        track.setTitle(trackDto.getTitle());
-        track.setSize(trackDto.getSize());
-        track.setLength(trackDto.getLength());
-        track.setDateTime(trackDto.getDateTime());
-        track.setByteOfPicture(trackDto.getByteOfPicture());
-        track.setAlbumTitle(trackDto.getAlbumTitle());
-        track.setYear(trackDto.getYear());
-        track.setGenre(trackDto.getGenre());
-        track.setCountOfPlayed(trackDto.getCountOfPlayed());
-        track.setCountOfFavourite(trackDto.getCountOfFavourite());
-        return track;
-    }
-
-    private Track() {
-    }
-
     public Integer getId() {
         return id;
     }

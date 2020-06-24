@@ -1,6 +1,6 @@
 package com.example.musicplayer.player.picture.controller;
 
-import com.example.musicplayer.player.music.model.TrackDto;
+import com.example.musicplayer.player.music.dto.TrackDto;
 import com.example.musicplayer.player.picture.service.PictureService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

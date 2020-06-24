@@ -1,4 +1,3 @@
-let title = $("#showInfoAboutTrack");
 let lyricDiv = $("#lyric");
 
 class Lyric {
@@ -71,7 +70,7 @@ messageLyricNotFound = function (errorMessage) {
     lyricDiv.css({
         "display": "none"
     });
-    title.notify(errorMessage, {
+    $.notify(errorMessage, {
         position: 'top left',
         className: 'error'
     });
